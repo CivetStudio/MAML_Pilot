@@ -1,0 +1,32 @@
+<ROOT>
+
+	<VariableBinders>
+
+		<SensorBinder type="accelerometer" vibrate="0" shakeTime="400" delay="0" >
+			<Variable name="x_acc" index="0" />
+			<Variable name="y_acc" index="1" />
+			<Variable name="z_acc" index="2" />
+		</SensorBinder>
+
+		<SensorBinder type="gravity" rate="0" >
+			<Variable name="gra_x" index="0" />
+			<Variable name="gra_y" index="1" />
+			<Variable name="gra_z" index="2" />
+		</SensorBinder>
+
+	</VariableBinders>
+
+	<ValueHolder name="ShakeVal" />
+
+	<Var name="GX" expression="ifelse(ne(#gra_x,0),#gra_x,#x_acc)" type="number" />
+	<Var name="GY" expression="ifelse(ne(#gra_y,0),#gra_y,#y_acc)" type="number" />
+	<Var name="GZ" expression="ifelse(ne(#gra_z,0),#gra_z,#z_acc)" type="number" />
+	<Var name="va_thr" expression="ShakeVal" type="number" />
+
+	<Var name="shake_record" expression="#shake" threshold="1" >
+		<Trigger>
+			<PlaceHolder name="ShakeCommand" />
+		</Trigger>
+	</Var>
+
+</ROOT>

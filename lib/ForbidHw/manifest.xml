@@ -1,0 +1,27 @@
+<Template>
+
+	<Props>
+		<item name="visibility" type="string" description="可见性" default="eq(#LangsId,2)" />
+		<item name="content" type="string" description="自定义" default="&#83;&#108;&#105;&#100;&#101;&#32;&#117;&#112;&#32;&#116;&#111;&#32;&#117;&#110;&#108;&#111;&#99;&#107;" />
+	</Props>
+
+	<Group visibility="$visibility" >
+		
+		<Rectangle x="0" y="0" w="#screen_width" h="#screen_height" fillColor="#000000" />
+		<DateTime align="center" color="#FFFFFFFF" format="hh:mm" size="150" x="#screen_width/2" y="270+#unlocker.move_y" />
+		<DateTime align="center" color="#FFFFFFFF" format="yyyy.MM.dd EEEE" size="54" x="#screen_width/2" y="450+#unlocker.move_y" />
+		<Text align="center" color="#FFFFFFFF" size="54" text="$content" x="#screen_width/2" y="1710+#unlocker.move_y" />
+
+	</Group>
+	<Unlocker name="unlocker" visibility="$visibility" >
+	<!-- <Unlocker name="unlocker" visibility="eq($#LangsId$,2)" > -->
+		<StartPoint x="0" y="0" w="1080" h="#screen_height" easeType="CubicEaseOut" easeTime="500" />
+		<EndPoint x="0" y="-#screen_height-300" w="1080" h="#screen_height" >
+			<Path x="0" y="0" tolerance="2000" >
+				<Position x="0" y="0" />
+				<Position x="0" y="-#screen_height" />
+			</Path>
+		</EndPoint>
+	</Unlocker>
+
+</Template>

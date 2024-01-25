@@ -1,0 +1,15 @@
+<Template>
+
+	<Props>
+		<item name="condition" type="string" description="条件判断" default="$#tc$" />
+	</Props>
+
+	<!-- 设置 -->
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.android.settings" class="com.android.settings.MainSettings" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.android.settings" class="com.android.settings.MiuiSettings" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.android.settings" class="com.android.settings.Settings" />
+	<!-- alias="mCivetCode_5" -->	<!-- vivo -->
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.android.settings" class="com.oppo.settings.SettingsActivity" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.android.settings" class="com.android.settings.HWSettings" />
+
+</Template>

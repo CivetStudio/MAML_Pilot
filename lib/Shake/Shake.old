@@ -1,0 +1,39 @@
+
+	<i_Hidden>
+
+		<!-- <Var name="mForceVar" expression="int(#time%25)" threshold="1">
+		<Trigger>
+			<VariableCommand name="GX" expression="ifelse(ne(#gra_x,0),#gra_x,#va_x)" type="number" />
+			<VariableCommand name="GY" expression="ifelse(ne(#gra_y,0),#gra_y,#va_y)" type="number" />
+			<VariableCommand name="GZ" expression="ifelse(ne(#gra_z,0),#gra_z,#va_z)" type="number" />
+		</Trigger>
+	</Var> -->
+
+		<Var name="mShakeVaX" expression="#GX" threshold="1">
+			<Trigger>
+				<VariableCommand name="va_num" expression="abs(#GX*10)" persist="true" condition="gt(abs(#GX*10),#va_num)*gt(abs(#GX*10),#va_thr)" />
+
+			</Trigger>
+		</Var>
+
+		<Var name="mShakeVaXd" expression="gt(abs(#GX*10),(0.8*#va_num))" threshold="1">
+			<Trigger>
+				<VariableCommand name="mShakeFlag" expression="#mShakeFlag+1" persist="true" condition="gt(abs(#GX*10),(0.8*#va_num))*gt(abs(#GX*10),#va_thr)" />
+				<!-- <VariableCommand name="mShakeVar" expression="#mShakeVar+1" persist="true" condition="gt(abs(#GX*10),(0.8*#va_num))*gt(abs(#GX*10),#va_thr)" /> -->
+			</Trigger>
+		</Var>
+
+		<!-- <Var name="mShaking" expression="#shake" threshold="1">
+			<Trigger>
+				<VariableCommand name="mShakeFlag" expression="#mShakeFlag+1" persist="true" condition="1" />
+				<VariableCommand dis="1" name="mShakeVar" expression="#mShakeVar+1" persist="true" _condition="eq(#mShakeFlag,3)" />
+			</Trigger>
+		</Var> -->
+
+		<Var name="mShakeStart" expression="#mShakeFlag" threshold="1">
+			<Trigger>
+				<PlaceHolder name="ShakeCommand" />
+			</Trigger>
+		</Var>
+
+	</i_Hidden>

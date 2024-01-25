@@ -1,0 +1,9 @@
+<Template>
+
+	<Props>
+		<item name="condition" type="string" description="条件判断" default="1" />
+	</Props>
+
+	<ExternCommand condition="($condition)*($#tc$)" command="unlock" />
+
+</Template>

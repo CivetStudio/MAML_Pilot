@@ -1,0 +1,10 @@
+<Template>
+
+	<Props>
+		<item name="condition" type="string" description="条件判断" default="$#tc$" />
+	</Props>
+
+    <!-- WPS -->
+    <IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="cn.wps.moffice_eng" class="cn.wps.moffice.documentmanager.PreStartActivity" />
+
+</Template>

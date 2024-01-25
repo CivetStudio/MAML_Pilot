@@ -1,0 +1,53 @@
+<Template>
+
+	<Props>
+		<item name="x" type="string" description="X坐标" default="0" />
+		<item name="y" type="string" description="Y坐标" default="0" />
+		<item name="w" type="string" description="宽度" default="#screen_width" />
+		<item name="h" type="string" description="高度" default="#screen_height" />
+		<item name="dx_max" type="string" description="X偏移值最大" default="#screen_width/2" />
+		<item name="dx_min" type="string" description="X偏移值最小" default="-#screen_width/2" />
+		<item name="dy_max" type="string" description="Y偏移值最大" default="#screen_height/2" />
+		<item name="dy_min" type="string" description="Y偏移值最小" default="-#screen_height/2" />
+		<item name="visibility" type="string" description="可见性" default="1" />
+		<item name="suffix" type="string" description="变量绑定后缀" default="_0" />
+		<item name="double_clear" type="string" description="按钮双击清空" default="0" />
+	</Props>
+
+	<Var name="posOffset$suffix.x" expression="max(min(#touchOffset$suffix.x+ifelse(#touchDown$suffix,#touch_x-#touchDown$suffix.x,0),$dx_max),$dx_min)" />
+	<Var name="posOffset$suffix.y" expression="max(min(#touchOffset$suffix.y+ifelse(#touchDown$suffix,#touch_y-#touchDown$suffix.y,0),$dy_max),$dy_min)" />
+
+	<Var name="__clearPosData" expression="#clearPosData$suffix" threshold="1" >
+		<Trigger>
+			<VariableCommand name="touchDown$suffix" expression="0" />
+			<VariableCommand name="touchDown$suffix.x" expression="#touch_x" persist="true" />
+			<VariableCommand name="touchDown$suffix.y" expression="#touch_y" persist="true" />
+			<VariableCommand name="touchOffset$suffix.x" expression="0" persist="true" />
+			<VariableCommand name="touchOffset$suffix.y" expression="0" persist="true" />
+		</Trigger>
+	</Var>
+
+	<Button x="$x+#posOffset$suffix.x" y="$y+#posOffset$suffix.y" w="$w" h="$h" visibility="$visibility" >
+		<Triggers>
+			<Trigger action="down">
+				<VariableCommand name="touchDown$suffix" expression="1" />
+				<VariableCommand name="touchDown$suffix.x" expression="#touch_x" />
+				<VariableCommand name="touchDown$suffix.y" expression="#touch_y" />
+			</Trigger>
+			<Trigger action="up">
+				<VariableCommand name="touchDown$suffix" expression="0"/>
+				<VariableCommand name="touchOffset$suffix.x" expression="#touchOffset$suffix.x+#touch_x-#touchDown$suffix.x" persist="true"/>
+				<VariableCommand name="touchOffset$suffix.y" expression="#touchOffset$suffix.y+#touch_y-#touchDown$suffix.y" persist="true"/>
+			</Trigger>
+			<Trigger action="cancel">
+				<VariableCommand name="touchDown$suffix" expression="0"/>
+				<VariableCommand name="touchOffset$suffix.x" expression="#touchOffset$suffix.x+#touch_x-#touchDown$suffix.x" persist="true"/>
+				<VariableCommand name="touchOffset$suffix.y" expression="#touchOffset$suffix.y+#touch_y-#touchDown$suffix.y" persist="true"/>
+			</Trigger>
+			<Trigger action="double" >
+				<VariableCommand name="clearPosData$suffix" expression="#clearPosData$suffix+1" type="number" condition="$double_clear*($#tc$)" />
+			</Trigger>
+		</Triggers>
+	</Button>
+
+</Template>

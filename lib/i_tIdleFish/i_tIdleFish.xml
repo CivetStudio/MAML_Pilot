@@ -1,0 +1,10 @@
+<Template>
+
+	<Props>
+		<item name="condition" type="string" description="条件判断" default="$#tc$" />
+	</Props>
+
+	<!-- 闲鱼 -->
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.taobao.idlefish" class="com.taobao.fleamarket.home.activity.InitActivity" />
+
+</Template>

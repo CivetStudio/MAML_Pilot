@@ -1,0 +1,36 @@
+<ROOT>
+
+	<ValueHolder name="UnlockX" />
+	<ValueHolder name="UnlockY" />
+	<ValueHolder name="UnlockW" />
+	<ValueHolder name="UnlockH" />
+	<ValueHolder name="UnlockDirection" alias="0上滑 1下滑 2向右滑 3向左滑" />
+	<ValueHolder name="UnlockVisibility" />
+	<ValueHolder name="UnlockCondition" />
+	<ValueHolder name="UnlockMoveVal" />
+	
+	<!-- <Var name="mUnlockOrnt" expression="UnlockDirection" type="number" />
+
+	<Button x="UnlockX" y="UnlockY" w="UnlockW" h="UnlockH" visibility="UnlockVisibility" >
+		<Triggers>
+			<Trigger action="up" >
+				<ExternCommand command="unlock" condition="ge(#touch_begin_y-#touch_y,UnlockMoveVal)*UnlockCondition*eq(#mUnlockOrnt,0)" />
+				<ExternCommand command="unlock" condition="ge(#touch_y-#touch_begin_y,UnlockMoveVal)*UnlockCondition*eq(#mUnlockOrnt,1)" />
+				<ExternCommand command="unlock" condition="ge(#touch_x-#touch_begin_x,UnlockMoveVal)*UnlockCondition*eq(#mUnlockOrnt,2)" />
+				<ExternCommand command="unlock" condition="ge(#touch_begin_x-#touch_x,UnlockMoveVal)*UnlockCondition*eq(#mUnlockOrnt,3)" />
+			</Trigger>
+		</Triggers>
+	</Button> -->
+
+	<Button x="UnlockX" y="UnlockY" w="UnlockW" h="UnlockH" visibility="UnlockVisibility" >
+		<Triggers>
+			<Trigger action="up" >
+				<ExternCommand command="unlock" condition="ge(#touch_begin_y-#touch_y,UnlockMoveVal)*UnlockCondition*eq(UnlockDirection,0)" />
+				<ExternCommand command="unlock" condition="ge(#touch_y-#touch_begin_y,UnlockMoveVal)*UnlockCondition*eq(UnlockDirection,1)" />
+				<ExternCommand command="unlock" condition="ge(#touch_x-#touch_begin_x,UnlockMoveVal)*UnlockCondition*eq(UnlockDirection,2)" />
+				<ExternCommand command="unlock" condition="ge(#touch_begin_x-#touch_x,UnlockMoveVal)*UnlockCondition*eq(UnlockDirection,3)" />
+			</Trigger>
+		</Triggers>
+	</Button>
+
+</ROOT>

@@ -1,0 +1,13 @@
+<ROOT>
+
+	<ValueHolder name="Constel_M" />
+	<ValueHolder name="Constel_D" />
+	<Var name="__Constel_Constel_M_Constel_D" expression="ifelse(ne(#LangsId,2),#time+#time_sys,round(#S_TimeLoop)+#second)" threshold="1" >
+		<Trigger>
+			<VariableCommand name="mConstelMonth" expression="Constel_M" type="number" />
+			<VariableCommand name="mConstelDate" expression="Constel_D" type="number" />
+			<VariableCommand name="mConstelId" expression="ifelse(eq(#mConstelMonth,3)*ge(#mConstelDate,21)+eq(#mConstelMonth,4)*le(#mConstelDate,20),0,eq(#mConstelMonth,4)*ge(#mConstelDate,21)+eq(#mConstelMonth,5)*le(#mConstelDate,21),1,eq(#mConstelMonth,5)*ge(#mConstelDate,22)+eq(#mConstelMonth,6)*le(#mConstelDate,21),2,eq(#mConstelMonth,6)*ge(#mConstelDate,22)+eq(#mConstelMonth,7)*le(#mConstelDate,22),3,eq(#mConstelMonth,7)*ge(#mConstelDate,23)+eq(#mConstelMonth,8)*le(#mConstelDate,23),4,eq(#mConstelMonth,8)*ge(#mConstelDate,24)+eq(#mConstelMonth,9)*le(#mConstelDate,23),5,eq(#mConstelMonth,9)*ge(#mConstelDate,24)+eq(#mConstelMonth,10)*le(#mConstelDate,23),6,eq(#mConstelMonth,10)*ge(#mConstelDate,24)+eq(#mConstelMonth,11)*le(#mConstelDate,22),7,eq(#mConstelMonth,11)*ge(#mConstelDate,23)+eq(#mConstelMonth,12)*le(#mConstelDate,21),8,eq(#mConstelMonth,12)*ge(#mConstelDate,22)+eq(#mConstelMonth,1)*le(#mConstelDate,20),9,eq(#mConstelMonth,1)*ge(#mConstelDate,21)+eq(#mConstelMonth,2)*le(#mConstelDate,19),10,eq(#mConstelMonth,2)*ge(#mConstelDate,20)+eq(#mConstelMonth,3)*le(#mConstelDate,20),11,0)" type="number" />
+		</Trigger>
+	</Var>
+
+</ROOT>

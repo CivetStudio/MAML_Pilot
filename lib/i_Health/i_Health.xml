@@ -1,0 +1,13 @@
+<Template>
+
+	<Props>
+		<item name="condition" type="string" description="条件判断" default="$#tc$" />
+	</Props>
+
+	<!-- 运动健康 -->
+	<IntentCommand condition="($condition)" action="com.mi.health.action.ROUTER" package="com.mi.health" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.vivo.health" class="com.vivo.health.main.activity.GuideActivity" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.heytap.health" class="com.heytap.health.oobe.LaunchActivity" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.huawei.health" class="com.huawei.health.MainActivity" />
+
+</Template>

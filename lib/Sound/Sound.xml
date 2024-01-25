@@ -1,0 +1,26 @@
+<ROOT>
+
+	<NameHolder name="mPlayAudio" />
+	<ValueHolder name="mSoundFile" />
+	<ValueHolder name="mSoundX" />
+	<ValueHolder name="mSoundY" />
+	<ValueHolder name="mSoundW" />
+	<ValueHolder name="mSoundH" />
+	<ValueHolder name="mSoundVisibility" />
+	<ValueHolder name="mSoundCondition" />
+	<ValueHolder name="mSoundKeepCur" />
+
+	<Button x="mSoundX" y="mSoundY" w="mSoundW" h="mSoundH" visibility="mSoundVisibility" >
+		<Triggers>
+			<Trigger action="up" >
+				<VariableCommand condition="mSoundCondition" name="mPlayAudio" expression="#mPlayAudio+1" type="number" />
+			</Trigger>
+		</Triggers>
+	</Button>
+	<Var name="mPlayAudioTrigger" expression="#mPlayAudio" threshold="1" >
+		<Trigger>
+			<SoundCommand sound="mSoundFile" loop="false" volume="1" keepCur="mSoundKeepCur" />
+		</Trigger>
+	</Var>
+
+</ROOT>

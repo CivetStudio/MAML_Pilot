@@ -1,0 +1,60 @@
+<Template>
+
+	<Props>
+		<item name="x" type="string" description="X坐标" default="0" />
+		<item name="y" type="string" description="Y坐标" default="0" />
+		<item name="w" type="string" description="宽度" default="#screen_width" />
+		<item name="h" type="string" description="高度" default="#screen_height" />
+		<item name="visibility" type="string" description="可见性" default="1" />
+		<item name="long_press_time" type="string" description="长按触发时间" default="800" />
+		<item name="long_var" type="string" description="变量绑定名称" default="mLongPressOn" />
+	</Props>
+
+	<ExternalCommands>
+		<Trigger action="resume" >
+			<VariableCommand name="__S_TimeLoop_D" expression="round(#__S_TimeLoop)" type="number" />
+			<VariableCommand name="mLongPressVar" expression="0" type="number" />
+		</Trigger>
+		<Trigger action="pause" >
+			<VariableCommand name="__S_TimeLoop_D" expression="round(#__S_TimeLoop)" type="number" />
+			<VariableCommand name="mLongPressVar" expression="0" type="number" />
+		</Trigger>
+	</ExternalCommands>
+
+	<Var name="__S_TimeLoop" >
+		<VariableAnimation>
+			<AniFrame time="0" value="1" />
+			<AniFrame time="864000" value="864000" />
+		</VariableAnimation>
+	</Var>
+
+	<Button x="$x" y="$y" w="$w" h="$h" visibility="$visibility" >
+		<Triggers>
+			<Trigger action="down" >
+				<VariableCommand name="__S_TimeLoop_D" expression="round(#__S_TimeLoop)" type="number" />
+			</Trigger>
+		</Triggers>
+	</Button>
+
+	<Var name="$long_var" expression="ge(int(#__S_TimeLoop-#__S_TimeLoop_D),$long_press_time)*eq($#TimeStart$,0)" type="number" />
+
+	<Var name="mTimeCounter" expression="ge(int(#__S_TimeLoop-#__S_TimeLoop_D),$long_press_time)" threshold="1" >
+		<Trigger>
+			<VariableCommand name="mLongPress" expression="1" type="number" persist="true" condition="ge(int(#__S_TimeLoop-#__S_TimeLoop_D),$long_press_time)*eq($#TimeStart$,0)" />
+			<PlaceHolder name="Slot" />
+			<!-- <VariableCommand name="mLongPressVar" expression="#mLongPressVar+1" type="number" condition="ge(int(#__S_TimeLoop-#__S_TimeLoop_D),$long_press_time)*eq($#TimeStart$,0)" /> -->
+		</Trigger>
+	</Var>
+
+	<Var name="mTimeCounter2" expression="eq(#mLongPress,1)" threshold="1" >
+		<Trigger>
+			<VariableCommand name="__S_TimeLoop_D" expression="round(#__S_TimeLoop)" type="number" />
+		</Trigger>
+	</Var>
+	
+	<!-- <Var name="mTimeCounter3" expression="#mLongPressVar" threshold="1" >
+		<Trigger>
+		</Trigger>
+	</Var> -->
+
+</Template>

@@ -1,0 +1,346 @@
+<ROOT>
+
+	<Var name="TimeLoop" >
+		<VariableAnimation>
+			<AniFrame value="0" time="0" />
+			<AniFrame value="86400" time="86400" />
+	 	</VariableAnimation>
+	</Var>
+	<Var name="TimeLord" expression="ifelse(ne(#LangsId,4),#TimeLoop,#time)" />
+
+	<Var name="realtime_refresh_constel" expression="eq(#ConstelCount,0)*(#TimeLord+#TimeStart)" threshold="1" >
+		<Trigger>
+			<VariableCommand name="constellationsId" expression="ifelse(eq(#mConstelId,0),'0003004',eq(#mConstelId,1),'0003005',eq(#mConstelId,2),'0003006',eq(#mConstelId,3),'0003007',eq(#mConstelId,4),'0003008',eq(#mConstelId,5),'0003009',eq(#mConstelId,6),'0003010',eq(#mConstelId,7),'0003011',eq(#mConstelId,8),'0003012',eq(#mConstelId,9),'0003001',eq(#mConstelId,10),'0003002',eq(#mConstelId,11),'0003003','0003004')" type="string" />
+
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Love_0"  expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Love_1"  expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Love_2"  expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Love_3"  expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Love_4"  expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Love_5"  expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Love_6"  expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Love_7"  expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Love_8"  expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Love_9"  expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Love_10" expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Love_11" expression="40+rand()*59" />
+
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Money_0"  expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Money_1"  expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Money_2"  expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Money_3"  expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Money_4"  expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Money_5"  expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Money_6"  expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Money_7"  expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Money_8"  expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Money_9"  expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Money_10" expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Money_11" expression="40+rand()*59" />
+
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Work_0"  expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Work_1"  expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Work_2"  expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Work_3"  expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Work_4"  expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Work_5"  expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Work_6"  expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Work_7"  expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Work_8"  expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Work_9"  expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Work_10" expression="40+rand()*59" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Work_11" expression="40+rand()*59" />
+
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Health_0"  expression="50+rand()*49" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Health_1"  expression="50+rand()*49" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Health_2"  expression="50+rand()*49" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Health_3"  expression="50+rand()*49" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Health_4"  expression="50+rand()*49" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Health_5"  expression="50+rand()*49" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Health_6"  expression="50+rand()*49" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Health_7"  expression="50+rand()*49" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Health_8"  expression="50+rand()*49" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Health_9"  expression="50+rand()*49" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Health_10" expression="50+rand()*49" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="ConstelStar_Health_11" expression="50+rand()*49" />
+
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Match_0"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Match_1"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Match_2"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Match_3"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Match_4"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Match_5"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Match_6"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Match_7"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Match_8"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Match_9"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Match_10" expression="max(min(rand()*13,11),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Match_11" expression="max(min(rand()*13,11),0)" />
+
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Color_0"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Color_1"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Color_2"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Color_3"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Color_4"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Color_5"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Color_6"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Color_7"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Color_8"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Color_9"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Color_10" expression="max(min(rand()*13,11),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Color_11" expression="max(min(rand()*13,11),0)" />
+
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Number_0"  expression="max(min(rand()*10,9),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Number_1"  expression="max(min(rand()*10,9),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Number_2"  expression="max(min(rand()*10,9),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Number_3"  expression="max(min(rand()*10,9),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Number_4"  expression="max(min(rand()*10,9),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Number_5"  expression="max(min(rand()*10,9),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Number_6"  expression="max(min(rand()*10,9),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Number_7"  expression="max(min(rand()*10,9),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Number_8"  expression="max(min(rand()*10,9),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Number_9"  expression="max(min(rand()*10,9),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Number_10" expression="max(min(rand()*10,9),0)" />
+			<VariableCommand delay="1" persist="true" condition="lt(#InitVar,1)" name="mConstelId_Number_11" expression="max(min(rand()*10,9),0)" />
+
+			<VariableCommand delay="2" persist="true" name="ConstelCount" expression="#ConstelCount+1" type="number" />
+		</Trigger>
+	</Var>
+
+	<!-- Init Variables -->
+
+	<Button w="#screen_width" h="#screen_height" >
+		<Triggers>
+			<Trigger action="down" >
+				<VariableCommand name="StartCount" expression="0" />
+				<VariableCommand name="InitVar" expression="#InitVar+1" persist="true" />
+			</Trigger>
+			<Trigger action="up" >
+				<VariableCommand name="StartCount" expression="0" />
+				<VariableCommand name="InitVar" expression="#InitVar+1" persist="true" />
+			</Trigger>
+			<Trigger action="double" >
+				<VariableCommand name="StartCount" expression="0" />
+				<VariableCommand name="InitVar" expression="#InitVar+1" persist="true" />
+			</Trigger>
+		</Triggers>
+	</Button>
+
+
+	<!-- 
+	{"constellationsId": "0003001","name": "摩羯座"},
+	{"constellationsId": "0003002","name": "水瓶座"},
+	{"constellationsId": "0003003","name": "双鱼座"},
+
+	{"constellationsId": "0003004","name": "白羊座"},
+	{"constellationsId": "0003005","name": "金牛座"},
+	{"constellationsId": "0003006","name": "双子座"},
+	{"constellationsId": "0003007","name": "巨蟹座"},
+	{"constellationsId": "0003008","name": "狮子座"},
+	{"constellationsId": "0003009","name": "处女座"},
+	{"constellationsId": "0003010","name": "天秤座"},
+	{"constellationsId": "0003011","name": "天蝎座"},
+	{"constellationsId": "0003012","name": "射手座"},
+	-->
+	<!-- <Var name="constellationsId" expression="0003004" type="string" persist="true" /> -->
+
+	<Var name="constellationsId" expression="0003007" type="string" persist="true" />
+	<Var name="ConstelName" expression="ifelse(eq(#mConstelId,0),'白羊座',eq(#mConstelId,1),'金牛座',eq(#mConstelId,2),'双子座',eq(#mConstelId,3),'巨蟹座',eq(#mConstelId,4),'狮子座',eq(#mConstelId,5),'处女座',eq(#mConstelId,6),'天秤座',eq(#mConstelId,7),'天蝎座',eq(#mConstelId,8),'射手座',eq(#mConstelId,9),'摩羯座',eq(#mConstelId,10),'水瓶座',eq(#mConstelId,11),'双鱼座','白羊座')" type="string" />
+
+	<Calendar card="Constellations" >
+		<Var name="Constellations.signName" expression="巨蟹座" type="string" />
+		<Var name="Constellations.today.summaryStar" expression="5" type="int" />
+		<Var name="Constellations.today.loveStar" expression="5" type="int" />
+		<Var name="Constellations.today.moneyStar" expression="5" type="int" />
+		<Var name="Constellations.today.workStar" expression="5" type="int" />
+		<Var name="Constellations.today.matchSign" expression="金牛座" type="string" />
+		<Var name="Constellations.today.healthStar" expression="5" type="number" />
+		<Var name="Constellations.today.luckyNumber" expression="8" type="string" />
+		<Var name="Constellations.today.luckyColor" expression="青色" type="string" />
+	</Calendar>
+	
+	<Var name="ConstelStar_Sum" expression="ifelse(eq(#mConstelId,0),#ConstelStar_Sum_0,eq(#mConstelId,1),#ConstelStar_Sum_1,eq(#mConstelId,2),#ConstelStar_Sum_2,eq(#mConstelId,3),#ConstelStar_Sum_3,eq(#mConstelId,4),#ConstelStar_Sum_4,eq(#mConstelId,5),#ConstelStar_Sum_5,eq(#mConstelId,6),#ConstelStar_Sum_6,eq(#mConstelId,7),#ConstelStar_Sum_7,eq(#mConstelId,8),#ConstelStar_Sum_8,eq(#mConstelId,9),#ConstelStar_Sum_9,eq(#mConstelId,10),#ConstelStar_Sum_10,eq(#mConstelId,11),#ConstelStar_Sum_11,#ConstelStar_Sum_0)" />
+
+	<Var name="ConstelStar_Sum_0" expression="round((#ConstelStar_Love_0+#ConstelStar_Money_0+#ConstelStar_Work_0+#ConstelStar_Health_0)/4)" />
+	<Var name="ConstelStar_Sum_1" expression="round((#ConstelStar_Love_1+#ConstelStar_Money_1+#ConstelStar_Work_1+#ConstelStar_Health_1)/4)" />
+	<Var name="ConstelStar_Sum_2" expression="round((#ConstelStar_Love_2+#ConstelStar_Money_2+#ConstelStar_Work_2+#ConstelStar_Health_2)/4)" />
+	<Var name="ConstelStar_Sum_3" expression="round((#ConstelStar_Love_3+#ConstelStar_Money_3+#ConstelStar_Work_3+#ConstelStar_Health_3)/4)" />
+	<Var name="ConstelStar_Sum_4" expression="round((#ConstelStar_Love_4+#ConstelStar_Money_4+#ConstelStar_Work_4+#ConstelStar_Health_4)/4)" />
+	<Var name="ConstelStar_Sum_5" expression="round((#ConstelStar_Love_5+#ConstelStar_Money_5+#ConstelStar_Work_5+#ConstelStar_Health_5)/4)" />
+	<Var name="ConstelStar_Sum_6" expression="round((#ConstelStar_Love_6+#ConstelStar_Money_6+#ConstelStar_Work_6+#ConstelStar_Health_6)/4)" />
+	<Var name="ConstelStar_Sum_7" expression="round((#ConstelStar_Love_7+#ConstelStar_Money_7+#ConstelStar_Work_7+#ConstelStar_Health_7)/4)" />
+	<Var name="ConstelStar_Sum_8" expression="round((#ConstelStar_Love_8+#ConstelStar_Money_8+#ConstelStar_Work_8+#ConstelStar_Health_8)/4)" />
+	<Var name="ConstelStar_Sum_9" expression="round((#ConstelStar_Love_9+#ConstelStar_Money_9+#ConstelStar_Work_9+#ConstelStar_Health_9)/4)" />
+	<Var name="ConstelStar_Sum_10" expression="round((#ConstelStar_Love_10+#ConstelStar_Money_10+#ConstelStar_Work_10+#ConstelStar_Health_10)/4)" />
+	<Var name="ConstelStar_Sum_11" expression="round((#ConstelStar_Love_11+#ConstelStar_Money_11+#ConstelStar_Work_11+#ConstelStar_Health_11)/4)" />
+
+	<Var name="ConstelStar_Love" expression="ifelse(eq(#mConstelId,0),#ConstelStar_Love_0,eq(#mConstelId,1),#ConstelStar_Love_1,eq(#mConstelId,2),#ConstelStar_Love_2,eq(#mConstelId,3),#ConstelStar_Love_3,eq(#mConstelId,4),#ConstelStar_Love_4,eq(#mConstelId,5),#ConstelStar_Love_5,eq(#mConstelId,6),#ConstelStar_Love_6,eq(#mConstelId,7),#ConstelStar_Love_7,eq(#mConstelId,8),#ConstelStar_Love_8,eq(#mConstelId,9),#ConstelStar_Love_9,eq(#mConstelId,10),#ConstelStar_Love_10,eq(#mConstelId,11),#ConstelStar_Love_11,#ConstelStar_Love_0)" />
+
+	<Var name="ConstelStar_Money" expression="ifelse(eq(#mConstelId,0),#ConstelStar_Money_0,eq(#mConstelId,1),#ConstelStar_Money_1,eq(#mConstelId,2),#ConstelStar_Money_2,eq(#mConstelId,3),#ConstelStar_Money_3,eq(#mConstelId,4),#ConstelStar_Money_4,eq(#mConstelId,5),#ConstelStar_Money_5,eq(#mConstelId,6),#ConstelStar_Money_6,eq(#mConstelId,7),#ConstelStar_Money_7,eq(#mConstelId,8),#ConstelStar_Money_8,eq(#mConstelId,9),#ConstelStar_Money_9,eq(#mConstelId,10),#ConstelStar_Money_10,eq(#mConstelId,11),#ConstelStar_Money_11,#ConstelStar_Money_0)" />
+
+	<Var name="ConstelStar_Work" expression="ifelse(eq(#mConstelId,0),#ConstelStar_Work_0,eq(#mConstelId,1),#ConstelStar_Work_1,eq(#mConstelId,2),#ConstelStar_Work_2,eq(#mConstelId,3),#ConstelStar_Work_3,eq(#mConstelId,4),#ConstelStar_Work_4,eq(#mConstelId,5),#ConstelStar_Work_5,eq(#mConstelId,6),#ConstelStar_Work_6,eq(#mConstelId,7),#ConstelStar_Work_7,eq(#mConstelId,8),#ConstelStar_Work_8,eq(#mConstelId,9),#ConstelStar_Work_9,eq(#mConstelId,10),#ConstelStar_Work_10,eq(#mConstelId,11),#ConstelStar_Work_11,#ConstelStar_Work_0)" />
+
+	<Var name="ConstelStar_Health" expression="ifelse(eq(#mConstelId,0),#ConstelStar_Health_0,eq(#mConstelId,1),#ConstelStar_Health_1,eq(#mConstelId,2),#ConstelStar_Health_2,eq(#mConstelId,3),#ConstelStar_Health_3,eq(#mConstelId,4),#ConstelStar_Health_4,eq(#mConstelId,5),#ConstelStar_Health_5,eq(#mConstelId,6),#ConstelStar_Health_6,eq(#mConstelId,7),#ConstelStar_Health_7,eq(#mConstelId,8),#ConstelStar_Health_8,eq(#mConstelId,9),#ConstelStar_Health_9,eq(#mConstelId,10),#ConstelStar_Health_10,eq(#mConstelId,11),#ConstelStar_Health_11,#ConstelStar_Health_0)" />
+
+	<VarArray type="string" >
+		<Vars>
+			<Var name="ConstelMatch" index="#ConstelMatchId" />
+		</Vars>
+		<Items>
+			<Item value="白羊座" />
+			<Item value="金牛座" />
+			<Item value="双子座" />
+			<Item value="巨蟹座" />
+			<Item value="狮子座" />
+			<Item value="处女座" />
+			<Item value="天秤座" />
+			<Item value="天蝎座" />
+			<Item value="射手座" />
+			<Item value="摩羯座" />
+			<Item value="水瓶座" />
+			<Item value="双鱼座" />
+		</Items>
+	</VarArray>
+
+	<Var name="ConstelMatchId" expression="ifelse(eq(#mConstelId,0),#mConstelId_Match_0,eq(#mConstelId,1),#mConstelId_Match_1,eq(#mConstelId,2),#mConstelId_Match_2,eq(#mConstelId,3),#mConstelId_Match_3,eq(#mConstelId,4),#mConstelId_Match_4,eq(#mConstelId,5),#mConstelId_Match_5,eq(#mConstelId,6),#mConstelId_Match_6,eq(#mConstelId,7),#mConstelId_Match_7,eq(#mConstelId,8),#mConstelId_Match_8,eq(#mConstelId,9),#mConstelId_Match_9,eq(#mConstelId,10),#mConstelId_Match_10,eq(#mConstelId,11),#mConstelId_Match_11,#mConstelId_Match_0)" />
+
+	<VarArray type="string" >
+		<Vars>
+			<Var name="ConstelLuckyCol" index="#ConstelColorId" />
+		</Vars>
+		<Items>
+			<Item value="橙色" />
+			<Item value="青色" />
+			<Item value="黄色" />
+			<Item value="白色" />
+			<Item value="深红色" />
+			<Item value="米色" />
+			<Item value="青蓝色" />
+			<Item value="暗红色" />
+			<Item value="紫罗兰色" />
+			<Item value="咖啡色" />
+			<Item value="蓝色" />
+			<Item value="银灰色" />
+		</Items>
+	</VarArray>
+
+	<Var name="ConstelColorId" expression="ifelse(eq(#mConstelId,0),#mConstelId_Color_0,eq(#mConstelId,1),#mConstelId_Color_1,eq(#mConstelId,2),#mConstelId_Color_2,eq(#mConstelId,3),#mConstelId_Color_3,eq(#mConstelId,4),#mConstelId_Color_4,eq(#mConstelId,5),#mConstelId_Color_5,eq(#mConstelId,6),#mConstelId_Color_6,eq(#mConstelId,7),#mConstelId_Color_7,eq(#mConstelId,8),#mConstelId_Color_8,eq(#mConstelId,9),#mConstelId_Color_9,eq(#mConstelId,10),#mConstelId_Color_10,eq(#mConstelId,11),#mConstelId_Color_11,#mConstelId_Color_0)" />
+
+	<VarArray type="number" >
+		<Vars>
+			<Var name="ConstelLuckyNum" index="#ConstelNumberId" />
+		</Vars>
+		<Items>
+			<Item value="0" />
+			<Item value="1" />
+			<Item value="2" />
+			<Item value="3" />
+			<Item value="4" />
+			<Item value="5" />
+			<Item value="6" />
+			<Item value="7" />
+			<Item value="8" />
+			<Item value="9" />
+		</Items>
+	</VarArray>
+
+	<Var name="ConstelNumberId" expression="ifelse(eq(#mConstelId,0),#mConstelId_Number_0,eq(#mConstelId,1),#mConstelId_Number_1,eq(#mConstelId,2),#mConstelId_Number_2,eq(#mConstelId,3),#mConstelId_Number_3,eq(#mConstelId,4),#mConstelId_Number_4,eq(#mConstelId,5),#mConstelId_Number_5,eq(#mConstelId,6),#mConstelId_Number_6,eq(#mConstelId,7),#mConstelId_Number_7,eq(#mConstelId,8),#mConstelId_Number_8,eq(#mConstelId,9),#mConstelId_Number_9,eq(#mConstelId,10),#mConstelId_Number_10,eq(#mConstelId,11),#mConstelId_Number_11,#mConstelId_Number_0)" />
+
+	<Var name="ConstelUpdate" expression="#date" threshold="1" >
+		<Trigger>
+			
+			<VariableCommand persist="true" name="ConstelStar_Love_0"  expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Love_1"  expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Love_2"  expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Love_3"  expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Love_4"  expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Love_5"  expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Love_6"  expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Love_7"  expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Love_8"  expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Love_9"  expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Love_10" expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Love_11" expression="40+rand()*59" />
+
+			<VariableCommand persist="true" name="ConstelStar_Money_0"  expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Money_1"  expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Money_2"  expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Money_3"  expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Money_4"  expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Money_5"  expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Money_6"  expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Money_7"  expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Money_8"  expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Money_9"  expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Money_10" expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Money_11" expression="40+rand()*59" />
+
+			<VariableCommand persist="true" name="ConstelStar_Work_0"  expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Work_1"  expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Work_2"  expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Work_3"  expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Work_4"  expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Work_5"  expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Work_6"  expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Work_7"  expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Work_8"  expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Work_9"  expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Work_10" expression="40+rand()*59" />
+			<VariableCommand persist="true" name="ConstelStar_Work_11" expression="40+rand()*59" />
+
+			<VariableCommand persist="true" name="ConstelStar_Health_0"  expression="50+rand()*49" />
+			<VariableCommand persist="true" name="ConstelStar_Health_1"  expression="50+rand()*49" />
+			<VariableCommand persist="true" name="ConstelStar_Health_2"  expression="50+rand()*49" />
+			<VariableCommand persist="true" name="ConstelStar_Health_3"  expression="50+rand()*49" />
+			<VariableCommand persist="true" name="ConstelStar_Health_4"  expression="50+rand()*49" />
+			<VariableCommand persist="true" name="ConstelStar_Health_5"  expression="50+rand()*49" />
+			<VariableCommand persist="true" name="ConstelStar_Health_6"  expression="50+rand()*49" />
+			<VariableCommand persist="true" name="ConstelStar_Health_7"  expression="50+rand()*49" />
+			<VariableCommand persist="true" name="ConstelStar_Health_8"  expression="50+rand()*49" />
+			<VariableCommand persist="true" name="ConstelStar_Health_9"  expression="50+rand()*49" />
+			<VariableCommand persist="true" name="ConstelStar_Health_10" expression="50+rand()*49" />
+			<VariableCommand persist="true" name="ConstelStar_Health_11" expression="50+rand()*49" />
+
+			<VariableCommand persist="true" name="mConstelId_Match_0"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand persist="true" name="mConstelId_Match_1"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand persist="true" name="mConstelId_Match_2"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand persist="true" name="mConstelId_Match_3"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand persist="true" name="mConstelId_Match_4"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand persist="true" name="mConstelId_Match_5"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand persist="true" name="mConstelId_Match_6"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand persist="true" name="mConstelId_Match_7"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand persist="true" name="mConstelId_Match_8"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand persist="true" name="mConstelId_Match_9"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand persist="true" name="mConstelId_Match_10" expression="max(min(rand()*13,11),0)" />
+			<VariableCommand persist="true" name="mConstelId_Match_11" expression="max(min(rand()*13,11),0)" />
+
+			<VariableCommand persist="true" name="mConstelId_Color_0"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand persist="true" name="mConstelId_Color_1"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand persist="true" name="mConstelId_Color_2"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand persist="true" name="mConstelId_Color_3"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand persist="true" name="mConstelId_Color_4"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand persist="true" name="mConstelId_Color_5"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand persist="true" name="mConstelId_Color_6"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand persist="true" name="mConstelId_Color_7"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand persist="true" name="mConstelId_Color_8"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand persist="true" name="mConstelId_Color_9"  expression="max(min(rand()*13,11),0)" />
+			<VariableCommand persist="true" name="mConstelId_Color_10" expression="max(min(rand()*13,11),0)" />
+			<VariableCommand persist="true" name="mConstelId_Color_11" expression="max(min(rand()*13,11),0)" />
+
+			<VariableCommand persist="true" name="mConstelId_Number_0"  expression="max(min(rand()*10,9),0)" />
+			<VariableCommand persist="true" name="mConstelId_Number_1"  expression="max(min(rand()*10,9),0)" />
+			<VariableCommand persist="true" name="mConstelId_Number_2"  expression="max(min(rand()*10,9),0)" />
+			<VariableCommand persist="true" name="mConstelId_Number_3"  expression="max(min(rand()*10,9),0)" />
+			<VariableCommand persist="true" name="mConstelId_Number_4"  expression="max(min(rand()*10,9),0)" />
+			<VariableCommand persist="true" name="mConstelId_Number_5"  expression="max(min(rand()*10,9),0)" />
+			<VariableCommand persist="true" name="mConstelId_Number_6"  expression="max(min(rand()*10,9),0)" />
+			<VariableCommand persist="true" name="mConstelId_Number_7"  expression="max(min(rand()*10,9),0)" />
+			<VariableCommand persist="true" name="mConstelId_Number_8"  expression="max(min(rand()*10,9),0)" />
+			<VariableCommand persist="true" name="mConstelId_Number_9"  expression="max(min(rand()*10,9),0)" />
+			<VariableCommand persist="true" name="mConstelId_Number_10" expression="max(min(rand()*10,9),0)" />
+			<VariableCommand persist="true" name="mConstelId_Number_11" expression="max(min(rand()*10,9),0)" />
+
+		</Trigger>
+	</Var>
+
+</ROOT>

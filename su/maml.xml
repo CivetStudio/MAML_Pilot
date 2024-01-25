@@ -1,0 +1,680 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Lockscreen frameRate="240" screenWidth="1080" version="1" vibrate="false" _dev="civet" _devTime="$_devTime" _splitExt="1" _splitGroup="1" _preload="1" _getSource="0" compiler="true" >
+
+	<!-- <几何图形 x="300" y="400" color="#ffffff" w="500" h="600" /> -->
+
+	<!-- 欢迎定制锁屏：灵貓 QQ 1876461209 -->
+
+	<!-- 违规抄袭将依据《中华人民共和国民法典》《中华人民共和国民法通则》《中华人民共和国著作权法》《计算机软件保护条例》《软件产品管理办法》《侵权责任法》《中华人民共和国知识产权法》追究法律责任 -->
+
+	<!-- <Layer visibility="1" >
+		<ForbidHw alias="禁止华为" _port="LangsId" visibility="eq(#LangsId,4)" content="C&#8202;o&#8202;n&#8202;t&#8202;a&#8202;c&#8202;t Q&#8202;Q:&#8202;1&#8202;8&#8202;7&#8202;6&#8202;4&#8202;6&#8202;1&#8202;2&#8202;0&#8202;9" />
+	</Layer> -->
+
+	<i_Hidden alias="流体 / 3D翻转 - OPPO" >
+
+		<Var name="mFluidsRatio" expression="(#screen_height/2160)" type="number" />
+
+		<!-- bgSrc="bz.jpg" srcid="#mScreenId"  -->
+		<FluidsView gravityRatio="1" viscosity="1" color="#FFFFFF" waterAlpha="1" bgSrc="ifelse(eq(#mScreenId,1),'bz_1.jpg','bz_0.jpg')" name="fluids_view" x="0" y="0" w="#screen_width" h="#screen_height" >
+			<CircleShape radius="1.3" xPosition="0.7" yPosition="0.3" />
+			<!-- <CircleShape radius="1.3" xPosition="0.7" yPosition="0.1" /> -->
+		</FluidsView>
+
+	<StereoView fixed="1" sAngle="90" can3D="1" resistance="1.8" x="#StereoView.x" y="#StereoView.y" w="#StereoView.w" h="#StereoView.h" alpha="#StereoView.a" visibility="#StereoView.v" >
+		<StereoGroup>
+
+		</StereoGroup>
+		<StereoGroup>
+
+		</StereoGroup>
+		<StereoGroup>
+
+		</StereoGroup>
+	</StereoView>
+
+	</i_Hidden>
+
+	<i_Hidden alias="步数" >
+
+		<VariableBinders>
+
+			<ContentProviderBinder name="health1" columns="step" uri="content://deepthinker_data_expositor/health?query_func=step">
+				<Variable name="step" column="step" type="int" />
+			</ContentProviderBinder>
+
+			<ContentProviderBinder name="MiSteps" uri="content://com.mi.health.provider.main/activity/steps/brief" column="steps,goal,distance,energy,strength_duration,summary" countName="hasSteps">
+				<Variable name="MiSteps_steps" type="int" column="steps" />
+			</ContentProviderBinder>
+
+		</VariableBinders>
+
+		<Var name="mSteps" expression="ifelse(eq(#LangsId,4),#MiSteps_steps,max(#steps_value,#step))" type="number" />
+
+	</i_Hidden>
+
+	<!-- del /f "_port=*" -->
+	<!-- del /f "alias=*" -->
+	<!-- del /f "description=*" -->
+
+	<!-- <Import name="mGlobalVar" globalPersist="true" /> -->
+
+	<i_Hidden>
+
+		<Image x="(#screen_width)/2" y="(1-int(#screen_height/#mBzImg.bmp_height))*ifelse(eq(#mAlignStyle,0),0,eq(#mAlignStyle,1),(#screen_height-(#mBzImg.bmp_height))/2,(#screen_height-(#mBzImg.bmp_height)))" align="center" alignV="top" src="bz.jpg" name="mBzImg" />
+		<Wallpaper src="bs.jpg" w="#screen_width" h="#screen_height" />
+		<Image x="(#screen_width)/2" y="(1-int(#screen_height/#mBzImg.bmp_height))*ifelse(eq(#mAlignStyle,0),0,eq(#mAlignStyle,1),(#screen_height-(#mBzImg.bmp_height))/2,(#screen_height-(#mBzImg.bmp_height)))" align="center" alignV="top" src="bz.jpg" w="(#mBzImg.bmp_width)*(1+#BgScaleA)" h="(#mBzImg.bmp_height)*(1+#BgScaleA)" pivotX="(#mBzImg.bmp_width)/2" pivotY="(#mBzImg.bmp_height)/2*#mAlignStyle" />
+
+	</i_Hidden>
+
+	<Var name="BgW" expression="1080" type="number" />
+	<Var name="BgH" expression="2700" type="number" />
+	<Var name="BgRatio" expression="max(#screen_width/#BgW,#screen_height/#BgH)" type="number" />
+
+	<!-- 壁纸对齐方式 0:顶部对齐 1:居中对齐 2:居底对齐 -->
+	<Var name="mAlignStyle" expression="0" const="true" />
+
+	<!-- 壁纸区域 修改bz.jpg -->
+
+	<Wallpaper src="bs.jpg" w="#screen_width" h="#screen_height" />
+	<Image visibility="eq(#mAlignStyle,0)" src="bz.jpg" x="#screen_width/2" y="0" align="center" alignV="top" w="#BgW*#BgRatio" h="#BgH*#BgRatio" />
+	<Image visibility="eq(#mAlignStyle,1)" src="bz.jpg" x="#screen_width/2" y="#screen_height/2" align="center" alignV="center" w="#BgW*#BgRatio" h="#BgH*#BgRatio" />
+	<Image visibility="eq(#mAlignStyle,2)" src="bz.jpg" x="#screen_width/2" y="#screen_height" align="center" alignV="bottom" w="#BgW*#BgRatio" h="#BgH*#BgRatio" />
+
+	<!-- Root -->
+
+	<Var name="mEyesAni_t">
+		<VariableAnimation>
+			<AniFrame value="0" time="0" />
+			<AniFrame value="1" time="200" />
+			<AniFrame value="0" time="300" />
+			<AniFrame value="1" time="500" />
+			<AniFrame value="0" time="600" />
+			<AniFrame value="0" time="3600" />
+		</VariableAnimation>
+	</Var>
+
+	<Var name="mEyesAni" >
+		<VariableAnimation>
+			<AniFrame value="0" time="0" />
+			<AniFrame value="1" time="200" />
+			<AniFrame value="0" time="300" />
+			<AniFrame value="0" time="2100" />
+		</VariableAnimation>
+	</Var>
+
+	<Var name="mBezierAni_R" alias="0.2" >
+		<VariableAnimation>
+			<AniFrame easeType="BackEaseOut" varSpeedFlag="BackFun_Out" value="0" time="0" />
+			<AniFrame easeType="CubicEaseOut" varSpeedFlag="CubicFun_Out" value="1" time="100" />
+			<AniFrame easeType="BackEaseOut" varSpeedFlag="BackFun_Out" value="0" time="200" />
+			<AniFrame easeType="CubicEaseOut" varSpeedFlag="CubicFun_Out" value="1" time="300" />
+			<AniFrame easeType="BackEaseOut" varSpeedFlag="BackFun_Out" value="0" time="400" />
+			<AniFrame easeType="BackEaseOut" varSpeedFlag="BackFun_Out" value="0" time="1876461209000" />
+		</VariableAnimation>
+	</Var>
+
+	<Var name="mBezierAni" >
+		<VariableAnimation>
+			<AniFrame value="0" time="0" />
+			<AniFrame easeType="CubicEaseOut" varSpeedFlag="CubicFun_Out" value="1" time="300" />
+			<AniFrame easeType="BackEaseOut" varSpeedFlag="BackFun_Out" value="0" time="1000" />
+			<AniFrame easeType="BackEaseOut" varSpeedFlag="BackFun_Out" value="0" time="1876461209000" />
+		</VariableAnimation>
+	</Var>
+
+	<FreeMove disabled="1" alias="自由移动" x="0" y="0" w="300" h="300" visibility="1" suffix="_0" double_clear="0" _port="#posOffset{$suffix}.x, #posOffset{$suffix}.y, #clearPosData{$suffix}" />
+
+	<Su alias="超级用户" _port="LangsId(0,2,4,5),mOversea,mInitVar" />
+
+	<SysTime alias="实时刷新" _port="hours,months,dates,weeks,{hrs.0,hrs.1,min.0,min.1},WeatherIsNight(6,18),isTestMode" >
+		<SysCommand >
+
+			<!-- 按钮点击防误触 -->
+			<VariableCommand name="tc" expression="ifelse(eq(#LangsId,50),1,le(abs(#touch_x-#touch_begin_x),24)*le(abs(#touch_y-#touch_begin_y),24))" />
+			<!-- 不同分辨率偏移量 -->
+			<VariableCommand name="Va" expression="(#screen_height-2700)" type="number" />
+			<!-- 问候语 0/上午6:00-11:59 1/下午12:00-17:59 2/晚上18:00-次日5:59 -->
+			<VariableCommand name="mGreetingStr" expression="ifelse(ge(#CurrentHour,6)*lt(#CurrentHour,12),0,ge(#CurrentHour,12)*lt(#CurrentHour,18),1,2)" />
+
+			<VariableCommand name="DayWeek_f1" expression="(#day_of_week-1-1+7)%7" />
+			<VariableCommand name="DayWeek_0" expression="#day_of_week-1" />
+			<VariableCommand name="DayWeek_1" expression="(#day_of_week-1+1)%7" />
+
+			<!-- fo;shichen;0;0;/assets;子时=丑时=寅时=卯时=辰时=巳时=午时=未时=申时=酉时=戌时=亥时 -->
+			<VariableCommand name="mShichen" expression="ifelse(
+				ge(#CurrentHour,1)*lt(#CurrentHour,3),1,
+				ge(#CurrentHour,3)*lt(#CurrentHour,5),2,
+				ge(#CurrentHour,5)*lt(#CurrentHour,7),3,
+				ge(#CurrentHour,7)*lt(#CurrentHour,9),4,
+				ge(#CurrentHour,9)*lt(#CurrentHour,11),5,
+				ge(#CurrentHour,11)*lt(#CurrentHour,13),6,
+				ge(#CurrentHour,13)*lt(#CurrentHour,15),7,
+				ge(#CurrentHour,15)*lt(#CurrentHour,17),8,
+				ge(#CurrentHour,17)*lt(#CurrentHour,19),9,
+				ge(#CurrentHour,19)*lt(#CurrentHour,21),10,
+				ge(#CurrentHour,21)*lt(#CurrentHour,23),11,
+				0)" />
+
+			<!-- <VariableCommand name="mStrAni_11" expression="ifelse(#_dt,min(max(#_mStrAni,11)-11,1),1)" type="number" />
+			<VariableCommand name="mStrAni_10" expression="ifelse(#_dt,min(max(#_mStrAni,10)-10,1),1)" type="number" />
+			<VariableCommand name="mStrAni_9" expression="ifelse(#_dt,min(max(#_mStrAni,9)-9,1),1)" type="number" />
+			<VariableCommand name="mStrAni_8" expression="ifelse(#_dt,min(max(#_mStrAni,8)-8,1),1)" type="number" />
+			<VariableCommand name="mStrAni_7" expression="ifelse(#_dt,min(max(#_mStrAni,7)-7,1),1)" type="number" />
+			<VariableCommand name="mStrAni_6" expression="ifelse(#_dt,min(max(#_mStrAni,6)-6,1),1)" type="number" />
+			<VariableCommand name="mStrAni_5" expression="ifelse(#_dt,min(max(#_mStrAni,5)-5,1),1)" type="number" />
+			<VariableCommand name="mStrAni_4" expression="ifelse(#_dt,min(max(#_mStrAni,4)-4,1),1)" type="number" />
+			<VariableCommand name="mStrAni_3" expression="ifelse(#_dt,min(max(#_mStrAni,3)-3,1),1)" type="number" />
+			<VariableCommand name="mStrAni_2" expression="ifelse(#_dt,min(max(#_mStrAni,2)-2,1),1)" type="number" />
+			<VariableCommand name="mStrAni_1" expression="ifelse(#_dt,min(max(#_mStrAni,1)-1,1),1)" type="number" />
+			<VariableCommand name="mStrAni_0" expression="ifelse(#_dt,min(#_mStrAni,1),1)" type="number" /> -->
+
+		</SysCommand>
+	</SysTime>
+
+	<TGDZ alias="天干地支" disabled="1" tg="#year" dz="#year" sx="#year" _port="@TG,@DZ,@SX" />
+
+	<!-- <Var name="_replayAnimation" expression="#mScreenId_Var" threshold="1" >
+		<Trigger>
+			<Command target="_mStrAni.animation" value="stop" />
+			<Command target="_mStrAni.animation" value="play" />
+		</Trigger>
+	</Var>
+
+	<Var name="_mStrAni" >
+		<VariableAnimation >
+			<AniFrame value="0" time="0" />
+			<AniFrame value="12" time="3500" />
+			<AniFrame value="12" time="5500" />
+		</VariableAnimation>
+	</Var> -->
+
+	<VarArray type="string">
+		<Vars>
+			<Var name="WeekStr_0" index="#DayWeek_0" />
+		</Vars>
+		<Items>
+			<Item value="日" />
+			<Item value="一" />
+			<Item value="二" />
+			<Item value="三" />
+			<Item value="四" />
+			<Item value="五" />
+			<Item value="六" />
+		</Items>
+	</VarArray>
+	<VarArray type="string">
+		<Vars>
+			<Var name="WeekStr_f1" index="#DayWeek_f1" />
+		</Vars>
+		<Items>
+			<Item value="日" />
+			<Item value="一" />
+			<Item value="二" />
+			<Item value="三" />
+			<Item value="四" />
+			<Item value="五" />
+			<Item value="六" />
+		</Items>
+	</VarArray>
+	<VarArray type="string">
+		<Vars>
+			<Var name="WeekStr_1" index="#DayWeek_1" />
+		</Vars>
+		<Items>
+			<Item value="日" />
+			<Item value="一" />
+			<Item value="二" />
+			<Item value="三" />
+			<Item value="四" />
+			<Item value="五" />
+			<Item value="六" />
+		</Items>
+	</VarArray>
+
+	<!-- Var -->
+
+	<!-- <TextSize alias="系统字体" _port="mTextSize_" >
+		<SampleText x="0" y="0-#mTextSize_" color="#ffffff" size="1" textExp="'该变量是在使用系统文字时需加入的，由于系统字体上下对齐有偏差，而进行的二次修正'" />
+		<ValueHolder name="TextSizeVal_0" value="100" />
+		<ValueHolder name="TextSizeVal_1" value="90" />
+		<ValueHolder name="TextSizeVal_2" value="80" />
+		<ValueHolder name="TextSizeVal_3" value="70" />
+		<ValueHolder name="TextSizeVal_4" value="60" />
+		<ValueHolder name="TextSizeVal_5" value="50" />
+	</TextSize> -->
+	<!-- <TextSize alias="系统字体" _port="mTextSize_" value="100,90,80,70,60,50" /> -->
+
+	<Count alias="倒计时相关" _port="
+		CountYear,CountYearNum_0,CountYearNum_1,CountYearNum_2,
+		CountMonth,CountWeek,CountHour,CountMin,CountSec,
+		CurrentHour,
+		mYearLevel,mMonthLevel,mWeekLevel,mHourLevel,
+		mDisFriday,seconds,
+		HourR,MinuteR,SecondR" />
+
+	<BattLevel alias="充电动画" _port="mBattLevel,BatteryAni" />
+	<BattImage disalbed="1" id="_0" x="540" y="#screen_height/2" align="1" alignV="center" src="assets/general_num.png" src_unit="assets/general_num_pct.png" number="#battery_level" unit_space="0" space="0" />
+
+	<ResumeAni alias="开屏动画" _port="mResumeAni_(0,5),S_TimeLoop,mScreenId_Var,mResumeSpeed,mResumeEaseAdd" >
+		<ResumeAniCommand alias="其他贝塞尔同步" >
+
+			<!-- 88 -->
+			<VariableCommand name="mWidgetAni_t" persist="true" expression="min(#mWidgetAni_t+(198/2/2.2/1000/#mResumeTimeV),1)" condition="eq(#mWidgetFlag,1)" />
+			<VariableCommand name="mWidgetAni_t" persist="true" expression="max(#mWidgetAni_t-(198/2/2.2/1000/#mResumeTimeV),0)" condition="eq(#mWidgetFlag,0)" />
+			<VariableCommand name="mWidgetAni" persist="true" expression="1+#_ease.c3*(#mWidgetAni_t-1)*(#mWidgetAni_t-1)*(#mWidgetAni_t-1)+(#_ease.c3-1)*(#mWidgetAni_t-1)*(#mWidgetAni_t-1)" />
+
+			<!-- <VariableCommand name="mExChangeAni" persist="true" expression="min(#mExChangeAni+(88/1.6/2.2/1000/#mResumeTimeV),1)" condition="eq(#mExChangeFlag,1)*ne(#mExChangeAni,1)" />
+			<VariableCommand name="mExChangeAni" persist="true" expression="max(#mExChangeAni-(88/2.2/2.2/1000/#mResumeTimeV),0)" condition="eq(#mExChangeFlag,0)*ne(#mExChangeAni,0)" />
+			<VariableCommand name="mExChangeAni_O" persist="true" expression="ifelse(#mExChangeFlag,-(-(#mExChangeAni-1)*(#mExChangeAni-1)*(#mExChangeAni-1)-1),1-(1-#mExChangeAni)*(1-#mExChangeAni)*(1-#mExChangeAni))" /> -->
+
+		</ResumeAniCommand>
+	</ResumeAni>
+
+	<ExternalCommands>
+		<Trigger action="resume" >
+
+			<VariableCommand name="mWidgetAni_t" expression="0" />
+			<VariableCommand name="mWidgetAni" expression="0" />
+			<VariableCommand name="mWidgetFlag" expression="0" />
+
+		</Trigger>
+		<Trigger action="pause" >
+
+			<VariableCommand name="mWidgetAni_t" expression="0" />
+			<VariableCommand name="mWidgetAni" expression="0" />
+			<VariableCommand name="mWidgetFlag" expression="0" />
+
+		</Trigger>
+	</ExternalCommands>
+
+	<ScreenId alias="多屏切换" _port="mScreenId,mScreenId.Num" >
+		<ValueHolder name="ScreenId_S" value="0" alias="0单向滑动(OPPO) 1双向滑动" />
+		<ValueHolder name="ScreenId_N" value="2" alias="2屏滑动" />
+		<ValueHolder name="ScreenId_D" value="180" alias="滑动触发距离" />
+		<ValueHolder name="ScreenId_R" value="1" alias="滑动触发开屏动画" />
+		<ValueHolder name="ScreenId_Visibility" value="1" alias="按钮可见性" />
+	</ScreenId>
+
+	<Button x="0" y="0" w="#screen_width" h="#screen_height" visibility="1" >
+		<Triggers>
+			<Trigger action="up" >
+				<VariableCommand name="mScreenId" expression="int(#mScreenId-1+(#mScreenId.Num))%(#mScreenId.Num)" type="number" persist="true" condition="ge(#touch_y-#touch_begin_y,250)" />
+				<VariableCommand name="mScreenId_Var" expression="int(#mScreenId_Var+1)" type="number" persist="false" condition="ge(#touch_y-#touch_begin_y,250)" />
+			</Trigger>
+		</Triggers>
+	</Button>
+
+	<!-- <Button x="" y="" w="" h="" alias="系统" >
+		<Triggers>
+			<Trigger action="up" >
+
+				<Tips alias="已内置 condition='#tc' 防误触变量"  />
+
+				<i_AppStore/>
+				<i_Battery_H/>
+				<i_Battery_M/>
+				<i_Browser/>
+				<i_Calculator/>
+				<i_Calendar/>
+				<i_Camera _unlock="1" />
+				<i_Cleaner/>
+				<i_Clock/>
+				<i_Compass/>
+				<i_Contacts/>
+				<i_Dial/>
+				<i_Email/>
+				<i_Files/>
+				<i_Flash _unlock="1" _port="flashlightValue" />
+				<i_Flash_M _port="lightSwitch" />
+				<i_Gallery/>
+				<i_GameCenter/>
+				<i_Health/>
+				<i_Mms/>
+				<i_Music/>
+				<i_Notes/>
+				<i_Onekeylock_H/>
+				<i_Recorder/>
+				<i_Scanner_M/>
+				<i_Search/>
+				<i_Settings/>
+				<i_ShopMall/>
+				<i_Theme/>
+				<i_Video/>
+				<i_Wallet/>
+				<i_Weather/>
+
+			</Trigger>
+		</Triggers>
+	</Button>
+	<Button x="" y="" w="" h="" alias="第三方" >
+		<Triggers>
+			<Trigger action="up" >
+
+				<Tips alias="已内置 condition='#tc' 防误触变量"  />
+
+				<i_tWechat/>
+				<i_tWechatScan/>
+				<i_tWechatPay/>
+				<i_tWechatSns/>
+				<i_tWechatMyQR/>
+				<i_tWechatHealthCode/>
+				<i_tQQ/>
+				<i_tAlipay/>
+				<i_tAlipayScan/>
+				<i_tAlipayPay/>
+				<i_tAlipayHealthCode/>
+				<i_tAlipayBusCode/>
+
+				<i_tEleme/>
+				<i_tBeautyCam/>
+				<i_tMeituan/>
+				<i_tMeituanTakeOut/>
+				<i_tDianping/>
+
+				<i_tTaobao/>
+				<i_tTmall/>
+				<i_tJd/>
+				<i_tPdd/>
+				<i_tVipshop/>
+				<i_tCainiao/>
+				<i_tIdleFish/>
+
+				<i_tToutiao/>
+				<i_tCoolapk/>
+				<i_tWeibo/>
+				<i_tBaidu/>
+				<i_tBaiduTieba/>
+				<i_tBaiduNetdisk/>
+
+				<i_tZhihu/>
+				<i_tWifiLocating/>
+				<i_tQQPim/>
+				<i_tTencentNews/>
+				<i_tNeteaseNews/>
+
+				<i_tDingding/>
+				<i_tFeishu/>
+				<i_tXhs/>
+				<i_tMtxx/>
+				<i_tQQMail/>
+				<i_tWps/>
+				<i_tWuba/>
+				<i_tAutohome/>
+
+				<i_tDouyin/>
+				<i_tKuaishou/>
+				<i_tWeishi/>
+				<i_tYouku/>
+				<i_tQiyi/>
+				<i_tQQLive/>
+				<i_tBili/>
+				<i_tBilibili/>
+				<i_tXiguaVideo/>
+
+				<i_tUC/>
+				<i_tQQBrowser/>
+				<i_tQuark/>
+
+				<i_tGaode/>
+				<i_tBaiduMap/>
+				<i_tTencentMap/>
+				<i_tQunar/>
+				<i_tDidi/>
+
+				<i_tCloudMusic/>
+				<i_tQQMusic/>
+				<i_tKugou/>
+				<i_tKuwo/>
+				<i_tXiami/>
+				<i_tQishui/>
+				<i_tXimalaya/>
+				<i_tMigu/>
+
+				<i_tPubg alias="和平精英" />
+				<i_tTmgp alias="王者荣耀" />
+				<i_tLol alias="英雄联盟" />
+				<i_tYuanshen alias="原神" />
+				<i_tGuangyu alias="光遇" />
+
+			</Trigger>
+		</Triggers>
+	</Button> -->
+
+	<Lehua alias="乐划锁屏" >
+		<ValueHolder name="LehuaVisibility" value="1" />
+		<ValueHolder name="LehuaCondition" value="1" />
+	</Lehua>
+
+	<Unlock alias="解锁" >
+		<ValueHolder name="UnlockX" value="0" />
+		<ValueHolder name="UnlockY" value="0" />
+		<ValueHolder name="UnlockW" value="#screen_width" />
+		<ValueHolder name="UnlockH" value="#screen_height" />
+		<ValueHolder name="UnlockDirection" value="0" alias="0上滑 1下滑 2向右滑 3向左滑" />
+		<ValueHolder name="UnlockVisibility" value="1" />
+		<ValueHolder name="UnlockCondition" value="1" />
+		<ValueHolder name="UnlockMoveVal" value="300" alias="滑动触发解锁距离" />
+	</Unlock>
+
+	<Slider name="unlocker" haptic="false" bounceInitSpeed="2000" bounceAcceleration="1000" >
+		<StartPoint x="0" y="0" w="1080" h="#screen_height" easeType="CubicEaseOut" easeTime="800" />
+		<EndPoint x="0" y="-#screen_height-300" w="1080" h="#screen_height" >
+			<Path x="0" y="0" tolerance="2000" >
+				<Position x="0" y="0" />
+				<Position x="0" y="-#screen_height" />
+			</Path>
+		</EndPoint>
+	</Slider>
+
+	<!-- Extra Function -->
+
+	<Calendar disabled="1" alias="日历" >
+		<ValueHolder name="CalendarCode" value="0" alias="0为srcid写法(31张图) 1为ImageNumber写法(0-9共10张图)" />
+		<ValueHolder name="CalendarX" value="540" alias="日历X坐标" description="该坐标为第一天数字的中心坐标" />
+		<ValueHolder name="CalendarY" value="1320" alias="日历Y坐标" />
+		<ValueHolder name="CalendarW" value="60" alias="数字左右间隔(两中心点距离)" />
+		<ValueHolder name="CalendarH" value="60" alias="数字上下间隔(两中心点距离)" />
+		<ValueHolder name="CalendarD" value="0" alias="1显示过去将来日期 0不显示" />
+		<ValueHolder name="CalendarStart" value="0" alias="起始日:0周日 1周一" />
+		<ValueHolder name="CalendarNum" value="calendar/calendar_num.png" alias="日历数字" />
+		<ValueHolder name="CalendarTodayBg" value="calendar/today_bg.png" alias="当日背景图" />
+		<ValueHolder name="CalendarTodayNum" value="calendar/calendar_num.png" alias="当日数字" />
+	</Calendar>
+
+	<WeekCalendar disabled="1" alias="周历" _port="mDateWeek_0,..,mDateWeek_6" >
+		<ValueHolder name="CalendarCode" value="0" alias="0为srcid写法(31张图) 1为ImageNumber写法(0-9共10张图) 2为系统字体" />
+		<ValueHolder name="CalendarX" value="540" alias="日历X坐标" description="该坐标为第一天数字的中心坐标" />
+		<ValueHolder name="CalendarY" value="1320" alias="日历Y坐标" />
+		<ValueHolder name="CalendarW" value="60" alias="数字左右间隔(两中心点距离)" />
+		<ValueHolder name="CalendarSize" value="60" alias="系统字体大小(px)" />
+		<ValueHolder name="CalendarColor" value="#ffffff" alias="系统字体颜色" />
+		<ValueHolder name="CalendarTodayColor" value="#ffffff" alias="系统字体当日颜色" />
+		<ValueHolder name="CalendarNum" value="calendar/calendar_num.png" alias="日历数字" />
+		<ValueHolder name="CalendarTodayBg" value="calendar/today_bg.png" alias="当日背景图" />
+		<ValueHolder name="CalendarTodayNum" value="calendar/calendar_num.png" alias="当日数字" />
+	</WeekCalendar>
+
+	<!-- <WeekCalendar x="" y="" w="" h="" today_bg="" /> -->
+
+	<DrinkCup disabled="1" alias="喝水打卡" _port="mDrinkCup,mDrinkCount,mClearDaily" />
+
+	<Shake disabled="1" alias="摇一摇" _port="va_x,gra_x,GX...(x,y,z)" >
+		<ValueHolder name="ShakeVal" value="80" alias="摇一摇灵敏度（越小越灵敏）" />
+		<ShakeCommand alias="摇一摇触发" _port="mShakeVar" >
+			<VariableCommand name="mMamlId" expression="int(#mMamlId+1)%5" persist="true" type="number" />
+		</ShakeCommand>
+	</Shake>
+
+	<InputDate disabled="1" alias="自定义倒计时+输入框" _port="CountDateSet,Exam_CountDays,Exam_Age,CountBgNum_(0,2),CountBgNumF_(0,4)" >
+
+		<InputDateVar alias="变量声明" description="若为oppo平台时去除" >
+			<!-- 默认日期：2023/1/1 -->
+			<Var name="EventYear_0" expression="2" type="number" persist_const="true" _const="true" />
+			<Var name="EventYear_1" expression="0" type="number" persist_const="true" _const="true" />
+			<Var name="EventYear_2" expression="2" type="number" persist_const="true" _const="true" />
+			<Var name="EventYear_3" expression="4" type="number" persist_const="true" _const="true" />
+			<Var name="EventMonth_0" expression="0" type="number" persist_const="true" _const="true" />
+			<Var name="EventMonth_1" expression="1" type="number" persist_const="true" _const="true" />
+			<Var name="EventDate_0" expression="0" type="number" persist_const="true" _const="true" />
+			<Var name="EventDate_1" expression="1" type="number" persist_const="true" _const="true" />
+		</InputDateVar>
+
+		<ValueHolder name="CountStartVal" value="0" alias="倒计时输入格式：0年月日(yyyy/MM/dd) 1月日(MM/dd) 2日(dd)" />
+		<ValueHolder name="CountDigitVal" value="8" alias="0年月日最大输入位数" />
+
+		<!-- 打开倒计时设置面板按钮 -->
+		<ValueHolder name="CountActBtnX" value="100" alias="X坐标" />
+		<ValueHolder name="CountActBtnY" value="100" alias="Y坐标" />
+		<ValueHolder name="CountActBtnW" value="500" alias="宽度" />
+		<ValueHolder name="CountActBtnH" value="500" alias="高度" />
+		<ValueHolder name="CountActBtnA" value="0" alias="0点击 1双击" />
+
+		<!-- 倒计时设置面板 -->
+		<ValueHolder name="CountSetBgX" value="100" alias="X坐标" />
+		<ValueHolder name="CountSetBgY" value="100" alias="Y坐标" />
+		<ValueHolder name="CountSetBgSrc" value="assets/count_set_bg.png" alias="背景图片路径" />
+		<ValueHolder name="CountSetBgV" value="1" alias="可见性" />
+
+		<!-- 倒计时设置面板-下划线数字素材 -->
+		<ValueHolder name="CountSetNumX_0" value="100" alias="年份X坐标" />
+		<ValueHolder name="CountSetNumX_1" value="200" alias="月份X坐标" />
+		<ValueHolder name="CountSetNumX_2" value="300" alias="日期X坐标" />
+		<ValueHolder name="CountSetNumY" value="100" alias="Y坐标" />
+		<!-- <ValueHolder name="CountSetNumW" value="30" alias="单个数字图片宽度" /> -->
+		<ValueHolder name="CountSetNumImg_W" value="30" alias="数字图片宽度" />
+		<ValueHolder name="CountSetNumImg_H" value="30" alias="数字图片高度" />
+		<ValueHolder name="CountSetNumSrc" value="assets/count_num.png" alias="图片路径" />
+
+		<!-- 数字输入按钮 -->
+		<ValueHolder name="CountSetBtnX_1" value="140" alias="数字1-按钮X坐标" />
+		<ValueHolder name="CountSetBtnX_2" value="220" alias="数字2-按钮X坐标" />
+		<ValueHolder name="CountSetBtnX_3" value="300" alias="数字3-按钮X坐标" />
+		<ValueHolder name="CountSetBtnX_4" value="380" alias="数字4-按钮X坐标" />
+		<ValueHolder name="CountSetBtnX_5" value="460" alias="数字5-按钮X坐标" />
+
+		<ValueHolder name="CountSetBtnY_1" value="1146" alias="数字1-按钮Y坐标" />
+		<ValueHolder name="CountSetBtnY_2" value="1146" alias="数字2-按钮Y坐标" />
+		<ValueHolder name="CountSetBtnY_3" value="1146" alias="数字3-按钮Y坐标" />
+		<ValueHolder name="CountSetBtnY_4" value="1146" alias="数字4-按钮Y坐标" />
+		<ValueHolder name="CountSetBtnY_5" value="1146" alias="数字5-按钮Y坐标" />
+
+		<ValueHolder name="CountSetBtnX_6" value="140" alias="数字6-按钮X坐标" />
+		<ValueHolder name="CountSetBtnX_7" value="220" alias="数字7-按钮X坐标" />
+		<ValueHolder name="CountSetBtnX_8" value="300" alias="数字8-按钮X坐标" />
+		<ValueHolder name="CountSetBtnX_9" value="380" alias="数字9-按钮X坐标" />
+		<ValueHolder name="CountSetBtnX_0" value="460" alias="数字0-按钮X坐标" />
+
+		<ValueHolder name="CountSetBtnY_6" value="1230" alias="数字6-按钮Y坐标" />
+		<ValueHolder name="CountSetBtnY_7" value="1230" alias="数字7-按钮Y坐标" />
+		<ValueHolder name="CountSetBtnY_8" value="1230" alias="数字8-按钮Y坐标" />
+		<ValueHolder name="CountSetBtnY_9" value="1230" alias="数字9-按钮Y坐标" />
+		<ValueHolder name="CountSetBtnY_0" value="1230" alias="数字0-按钮Y坐标" />
+
+		<ValueHolder name="CountSetBtnW_a" value="80" alias="数字-按钮宽度" />
+		<ValueHolder name="CountSetBtnH_a" value="80" alias="数字-按钮高度" />
+
+		<!-- 清除+确定并退出 -->
+		<ValueHolder name="CountSetBtnX_C" value="140" alias="清除-按钮X坐标" />
+		<ValueHolder name="CountSetBtnX_D" value="380" alias="确定并退出-按钮X坐标" />
+
+		<ValueHolder name="CountSetBtnY_C" value="1314" alias="清除-按钮Y坐标" />
+		<ValueHolder name="CountSetBtnY_D" value="1314" alias="确定并退出-按钮Y坐标" />
+
+		<ValueHolder name="CountSetBtnW_b" value="80" alias="清除/确定-按钮宽度" />
+		<ValueHolder name="CountSetBtnH_b" value="80" alias="清除/确定-按钮高度" />
+
+	</InputDate>
+
+	<Sound disabled="2" alias="播放音效" _port="Sound1mPlayAudio" >
+		<ValueHolder name="mSoundFile" value="assets/audio1.mp3" />
+		<ValueHolder name="mSoundX" value="0" />
+		<ValueHolder name="mSoundY" value="0" />
+		<ValueHolder name="mSoundW" value="100" />
+		<ValueHolder name="mSoundH" value="100" />
+		<ValueHolder name="mSoundVisibility" value="1" />
+		<ValueHolder name="mSoundCondition" value="1" />
+		<ValueHolder name="mSoundKeepCur" value="false" />
+	</Sound>
+
+	<Sound disabled="2" alias="播放音效" _port="Sound2mPlayAudio" >
+		<ValueHolder name="mSoundFile" value="assets/audio2.mp3" />
+		<ValueHolder name="mSoundX" value="100" />
+		<ValueHolder name="mSoundY" value="200" />
+		<ValueHolder name="mSoundW" value="300" />
+		<ValueHolder name="mSoundH" value="400" />
+		<ValueHolder name="mSoundVisibility" value="1" />
+		<ValueHolder name="mSoundCondition" value="#tc" />
+		<ValueHolder name="mSoundKeepCur" value="true" />
+	</Sound>
+
+	<SoundCharge disabled="2" alias="充电音效" _port="mChargeAudio" >
+		<ValueHolder name="mSoundChargeFile" value="assets/audio3.mp3" />
+		<ValueHolder name="mSoundChargeKeepCur" value="false" />
+	</SoundCharge>
+
+	<!-- 04.13 Clear->Slot -->
+	<!-- PlaceHolder多行传值 / Slot传单值 -->
+	<!-- PlaceHolder在每个lib只能有一个 -->
+	<Daily disabled="2" alias="次日清空" _port="__count" >
+		<Slot>
+			<VariableCommand name="mDailyVar" expression="0" type="number" />
+			<VariableCommand name="mDailyVar2" expression="0" type="number" />
+		</Slot>
+	</Daily>
+
+	<!-- <Daily alias="亮屏次数" _port="__count" /> -->
+
+	<Constel disabled="2" alias="星座" _port="mConstelId" >
+		<ValueHolder name="Constel_M" value="3" alias="星座-月" />
+		<ValueHolder name="Constel_D" value="21" alias="星座-日" />
+		<!-- fo;constel_str;0;0;/assets;白羊座=金牛座=双子座=巨蟹座=狮子座=处女座=天秤座=天蝎座=射手座=摩羯座=水瓶座=双鱼座 -->
+		<!-- 0白羊座 1金牛座 2双子座 3巨蟹座 4狮子座 5处女座 6天秤座 7天蝎座 8射手座 9摩羯座 10水瓶座 11双鱼座  -->
+	</Constel>
+
+	<VarArray type="string" >
+		<Vars>
+			<Var name="mConstelStr" index="#mConstelId" />
+		</Vars>
+		<Items>
+			<Item value="白羊座" />
+			<Item value="金牛座" />
+			<Item value="双子座" />
+			<Item value="巨蟹座" />
+			<Item value="狮子座" />
+			<Item value="处女座" />
+			<Item value="天秤座" />
+			<Item value="天蝎座" />
+			<Item value="射手座" />
+			<Item value="摩羯座" />
+			<Item value="水瓶座" />
+			<Item value="双鱼座" />
+		</Items>
+	</VarArray>
+
+	<Constels disabled="2" alias="星座运势" _importlib="$Constel" _globalport="mConstelId" _newport="
+		@ConstelName(星座名称：金牛座),
+		#ConstelStar_Sum(综合：69),
+		#ConstelStar_Love(爱情：64),
+		#ConstelStar_Money(财富：45),
+		#ConstelStar_Work(事业：88),
+		@ConstelMatch(速配星座：水瓶座),
+		#ConstelStar_Health(健康运势：76),
+		#ConstelLuckyNum(幸运数字：0),
+		@ConstelLuckyCol(幸运颜色：银灰色)" >
+
+	</Constels>
+
+	<!-- <LongPress alias="长按触发 || 不可用" x="0" y="0" w="#screen_width" h="#screen_height" visibility="1" long_press_time="800" >
+		<Slot>
+
+		</Slot>
+	</LongPress> -->
+
+	<Statusbar alias="顶部遮罩" />
+
+	<unTc disabled="3" condition="1" alias="解锁命令" />
+
+	<ForbidHw disabled="3" alias="禁止华为" _port="LangsId" visibility="eq(#LangsId,2)+eq(#LangsId,4)" content="C&#8202;o&#8202;n&#8202;t&#8202;a&#8202;c&#8202;t Q&#8202;Q:&#8202;1&#8202;8&#8202;7&#8202;6&#8202;4&#8202;6&#8202;1&#8202;2&#8202;0&#8202;9" />
+
+</Lockscreen>

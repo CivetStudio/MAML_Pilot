@@ -1,0 +1,6 @@
+<ROOT>
+
+	<!-- 白色壁纸下的顶部遮罩 -->
+	<Image src="statusbar.png" w="#screen_width" />
+
+</ROOT>

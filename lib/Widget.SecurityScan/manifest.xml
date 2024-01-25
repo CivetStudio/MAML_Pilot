@@ -1,0 +1,17 @@
+<Template>
+
+	<ExternalCommands>
+		<Trigger action="init,resume">
+			<!-- ContentProvider接口在切屏时必须主动更新一次  -->
+			<BinderCommand name="getSecurityScanData" command="refresh" />
+		</Trigger>
+	</ExternalCommands>
+	
+	<VariableBinders>
+		<ContentProviderBinder name="getSecurityScanData" uri="content://com.miui.securitycenter.widgetProvider/getSecurityScanData" columns="scanScore,scanSafe" countName="hasGetSecurityScanData">
+			<Variable name="_scanScore" type="int" column="scanScore" />
+			<Variable name="_scanSafe" type="int" column="scanSafe" />
+		</ContentProviderBinder>
+	</VariableBinders>
+
+</Template>

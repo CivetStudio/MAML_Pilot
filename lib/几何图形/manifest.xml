@@ -1,0 +1,14 @@
+<Template>
+	<Props>
+		<item name="x" type="string" description="X坐标" default="0" />
+		<item name="y" type="string" description="Y坐标" default="10" />
+		<item name="w" type="string" description="宽度" default="60" />
+		<item name="h" type="string" description="高度" default="80" />
+		<item name="颜色" type="string" description="颜色" default="#ff00ff00" />
+	</Props>
+	<Rectangle x="$x" y="$y" w="$w" h="$h" fillColor="$颜色" />
+
+	<Group>
+		<Slots slotName="几何图形" />
+	</Group>
+</Template>

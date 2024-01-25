@@ -1,0 +1,103 @@
+<ROOT>
+
+	<Image src="assets/assets.png" srcid="round(#mBlockAni)" alpha="0" />
+	<Image src="oversea.jpg" name="mOverseaImg" />
+
+	<Image x="-1" y="-1" w="1" h="1" src="close.png" visibility="eq(#flashlight,0)" />
+	<Image x="-1" y="-1" w="1" h="1" src="open.png" visibility="eq(#flashlight,1)" />
+
+	<Var name="vivo_length" expression="len(@weather_cur_temp)" />
+
+	<ExternalCommands>
+		<Trigger action="resume" >
+			<VariableCommand name="LangsId" expression="ifelse(#__thememanager_version,4,#lunarDay,2,ge(#vivo_length,2),5,eq(#lunarDay,0)*eq(#cur_weather_temp,0)*eq(#__thememanager_version,0),5,eq(#lunarDay,0)*eq(#cur_weather_temp,0)*eq(#__thememanager_version,0)*ne(#mCountDown,0),5,eq(#lunarDay,0)*eq(#cur_weather_temp,0)*eq(#__thememanager_version,0)*ne(#mCountDownA,0),5,eq(#lunarDay,0)*eq(#cur_weather_temp,0)*eq(#__thememanager_version,0)*ne(#steps_value,0),5,0)" persist="true" />
+			<VariableCommand name="mOversea" expression="ifelse(eq(#mOverseaImg.bmp_width,0),1,0)" persist="true" delay="3" />
+			<VariableCommand name="TimeStart" expression="1" />
+		</Trigger>
+		<Trigger action="pause" >
+			<VariableCommand name="TimeStart" expression="1" />
+			<!-- 播放空音效（适用于有音效播放的主题） -->
+			<SoundCommand sound="null.mp3" loop="false" volume="0" keepCur="false" />
+		</Trigger>
+	</ExternalCommands>
+
+	<Var name="mBlockAni" >
+		<VariableAnimation>
+			<AniFrame value="0" time="0" varSpeedFlag="SineFun_Out" />
+			<AniFrame value="360" time="6000" varSpeedFlag="SineFun_Out" />
+			<AniFrame value="360" time="6600" varSpeedFlag="SineFun_Out" />
+		</VariableAnimation>
+	</Var>
+	<Var name="looping" >
+		<VariableAnimation>
+			<AniFrame value="0" time="0" />
+			<AniFrame value="1" time="100" />
+	 	</VariableAnimation>
+	</Var>
+
+	<!-- 开屏动画 -->
+	<Var name="S_TimeLoop" >
+		<VariableAnimation>
+			<AniFrame value="1" time="0" />
+			<AniFrame value="864000000" time="864000000" />
+	 	</VariableAnimation>
+	</Var>
+
+	<Var name="notification" expression="1" />
+	<!-- <Var name="hours" expression="ifelse(eq(#LangsId,0),#hours_oppo,#hours_vivo)" /> -->
+	<!-- <Var name="mTextSize_Var" expression="ne(#LangsId,4)*ifelse(eq(#LangsId,2),0,eq(#LangsId,0),0,1)" type="number" /> -->
+	<Var name="mTextSize_Var" expression="ne(#LangsId,4)*ifelse(eq(#LangsId,2),0,eq(#LangsId,0)*ne(#frame_rate,0),0-0.2,1)" type="number" />
+
+	<CountDownTime name="mCountDown" date="12-31" countDownType="loop" unit="day" />
+	<CountDownTime name="mCountDownA" date="theDayAfterTomorrow" countDownType="loop" unit="day" />
+
+	<Button x="0" y="0" w="#screen_width" h="#screen_height" >
+		<Triggers>
+			<Trigger action="down" >
+				<VariableCommand condition="ge(#mResumeAni,1)" name="TimeStart" expression="0" />
+				<VariableCommand name="mInitVar" expression="#mInitVar+1" persist="true" type="number" />
+			</Trigger>
+			<Trigger action="up" >
+				<VariableCommand condition="ge(#mResumeAni,1)" name="TimeStart" expression="0" />
+				<VariableCommand name="mInitVar" expression="#mInitVar+1" persist="true" type="number" />
+				<VariableCommand name="noticeDown" expression="0" type="number" />
+			</Trigger>
+			<Trigger action="cancel" >
+				<VariableCommand name="noticeDown" expression="0" type="number" />
+			</Trigger>
+			<Trigger action="double" >
+				<VariableCommand name="DoubleTap" expression="#DoubleTap+1" persist="true" />
+			</Trigger>
+		</Triggers>
+	</Button>
+
+	<VariableBinders>
+
+		<!--步数-->
+		<!-- <ContentProviderBinder name="health1" columns="step" uri="content://deepthinker_data_expositor/health?query_func=step" >
+			<Variable name="step" column="step" type="int" />
+		</ContentProviderBinder> -->
+
+		<!-- oppo天气（勿删，判断平台的标准之一） -->
+		<ContentProviderBinder name="weather1" columns="_id,city_name,city_name_en,city_name_tw" countName="hasWeather" uri="content://com.oppo.weather.provider.data/attent_city" notifyUri="content://com.oppo.weather.provider.data/attent_city" where="current=1" >
+			<Variable name="cityid" column="_id" type="int" />
+			<Variable name="cityname" column="city_name" type="string" />
+			<Variable name="cityname_en" column="city_name_en" type="string" />
+			<Variable name="cityname_tw" column="city_name_tw" type="string" />
+		</ContentProviderBinder>
+		<ContentProviderBinder name="weather2" columns="weather_id,current_weather,current_temp,current_wind_direct,current_wind_power,day_temp,night_temp,day_weather_id,night_weather_id" countName="hasWeather" uri="content://com.oppo.weather.provider.data/weather_info" notifyUri="content://com.oppo.weather.provider.data/weather_info" whereExp="'city_id='+#cityid+' and weather_index=1'" dependency="weather1" >
+			<!-- 当前天气string类型 -->
+			<Variable name="cur_weather" column="current_weather" type="string" />
+			<!-- 当前温度 -->
+			<Variable name="cur_weather_temp" column="current_temp" type="int" />
+			<!-- 白天气温 -->
+			<Variable name="day_temp" column="day_temp" type="int" />
+			<!-- 夜间气温 -->
+			<Variable name="night_temp" column="night_temp" type="int" />
+			<!-- AQI均值 -->
+			<Variable name="cur_avg_aqi" column="avg_aqi" type="int" />
+		</ContentProviderBinder>
+
+	</VariableBinders>
+
+</ROOT>

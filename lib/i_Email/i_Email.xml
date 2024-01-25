@@ -1,0 +1,15 @@
+<Template>
+
+	<Props>
+		<item name="condition" type="string" description="条件判断" default="$#tc$" />
+	</Props>
+
+	<!-- 电子邮件 -->
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.android.email" class="com.wps.multiwindow.main.HomeActivity" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.vivo.email" class="com.vivo.email.activity.Welcome" />
+	<!-- alias="mCivetCode_5" -->
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.android.email" class="com.android.email.activity.Welcome" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.android.email" class="com.android.email.login.activity.WelcomeActivity" />
+	<!-- C13 -->
+
+</Template>

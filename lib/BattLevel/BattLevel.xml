@@ -1,0 +1,15 @@
+<ROOT>
+
+	<!-- 充电动画：0-100 -->
+	<Var name="BatteryAni" >
+		<VariableAnimation>
+			<AniFrame value="0" time="0" />
+			<AniFrame value="100" time="800" />
+			<AniFrame value="100" time="1200" />
+	 	</VariableAnimation>
+	</Var>
+
+	<!-- 充电时为充电动画0-100，非充电时为实际电量 -->
+	<Var name="mBattLevel" expression="ifelse(eq(#battery_state,1)+eq(#battery_state,3),#BatteryAni,#battery_level)" type="number" />
+
+</ROOT>

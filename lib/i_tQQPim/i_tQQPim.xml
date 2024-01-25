@@ -1,0 +1,10 @@
+<Template>
+
+	<Props>
+		<item name="condition" type="string" description="条件判断" default="$#tc$" />
+	</Props>
+
+    <!-- 腾讯手机管家 -->
+    <IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.tencent.qqpimsecure" class="com.tencent.server.fore.DefaultAliasActivity" />
+
+</Template>

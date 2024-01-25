@@ -1,0 +1,33 @@
+<Template>
+
+	<ExternalCommands>
+		<Trigger action="init,resume">
+			<!-- ContentProvider接口在切屏时必须主动更新一次  -->
+			<BinderCommand name="clockProvider" command="refresh" />
+		</Trigger>
+	</ExternalCommands>
+
+	<!-- 作息 -->
+	<VariableBinders>
+		<ContentProviderBinder name="clockProvider" uri="content://com.android.deskclock.bedtimeProvider/bedtime" countName="hasdeskclock">
+			<!-- 未设置作息管理，获取的睡眠数据无效 -->
+			<Variable name="clock_bedtime_state" type="int" column="bedtime_state" />
+			<!-- 入睡时间的小时,24小时制 -->
+			<Variable name="clock_sleep_hour" type="int" column="sleep_hour" />
+			<!-- 入睡时间的分 -->
+			<Variable name="clock_sleep_minute" type="int" column="sleep_minute" />
+			<!-- 起床时间的小时,24小时制 -->
+			<Variable name="clock_wake_hour" type="int" column="wake_hour" />
+			<!-- 起床时间的分 -->
+			<Variable name="clock_wake_minute" type="int" column="wake_minute" />
+			<!-- 重复周期 -->
+			<Variable name="clock_repeat_type" type="int" column="repeat_type" />
+		</ContentProviderBinder>
+	</VariableBinders>
+	
+	<!-- 起床时间ms -->
+	<Var name="wake" expression="#clock_wake_hour*60*60*1000+#clock_wake_minute*60*1000-8*60*60*1000" type="number" />
+	<!-- 入睡时间ms -->
+	<Var name="sleep" expression="#clock_sleep_hour*60*60*1000+#clock_sleep_minute*60*1000-8*60*60*1000" type="number" />
+
+</Template>

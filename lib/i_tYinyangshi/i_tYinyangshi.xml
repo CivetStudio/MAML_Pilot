@@ -1,0 +1,22 @@
+<Template>
+
+	<Props>
+		<item name="condition" type="string" description="条件判断" default="$#tc$" />
+	</Props>
+
+	<!-- 阴阳师 -->
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.netease.onmyoji" class="com.netease.onmyoji.Launcher" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.netease.onmyoji.uc" class="com.netease.onmyoji.Launcher" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.tencent.tmgp.yys.zqb" class="com.netease.onmyoji.Launcher" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.netease.onmyoji" class="com.netease.ntunisdk.external.protocol.ProtocolLauncher" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.netease.onmyoji.bili" class="com.netease.onmyoji.Launcher" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.netease.onmyoji.wdj" class="com.netease.onmyoji.Launcher" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.netease.onmyoji.sumsung" class="com.netease.onmyoji.Launcher" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.netease.onmyoji.nearme.gamecenter" class="com.netease.onmyoji.Launcher" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.netease.onmyoji.mi" class="com.netease.onmyoji.Launcher" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.netease.onmyoji.qihoo" class="com.netease.onmyoji.Launcher" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.netease.onmyoji.leshi" class="com.netease.onmyoji.Launcher" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.netease.onmyoji.yixin" class="com.netease.onmyoji.Launcher" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.netease.onmyoji.huawei" class="com.netease.onmyoji.Launcher" />
+
+</Template>

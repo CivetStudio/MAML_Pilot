@@ -1,0 +1,15 @@
+<Template>
+
+	<Props>
+		<item name="condition" type="string" description="条件判断" default="$#tc$" />
+	</Props>
+
+	<!-- 联系人 -->
+	<IntentCommand condition="($condition)*ne(#LangsId,0)" action="android.intent.action.MAIN" package="com.android.contacts" class="com.android.contacts.DialtactsContactsEntryActivity" />
+	<!-- alias="mCivetCode_5" -->
+	<IntentCommand condition="($condition)*ne(#LangsId,0)" action="android.intent.action.MAIN" package="com.android.contacts" class="com.android.contacts.activities.DialtactsActivity" />
+	<!-- OPPO -->
+	<IntentCommand condition="($condition)*eq(#LangsId,0)" action="android.intent.action.MAIN" package="com.android.contacts" class="com.android.contacts.PeopleActivityAlias" />
+	<IntentCommand condition="($condition)*ne(#LangsId,0)" action="android.intent.action.MAIN" package="com.android.contacts" class="com.android.contacts.activities.PeopleActivity" />
+
+</Template>

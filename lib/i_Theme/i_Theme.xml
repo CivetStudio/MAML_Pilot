@@ -1,0 +1,29 @@
+<Template>
+
+	<Props>
+		<item name="condition" type="string" description="条件判断" default="$#tc$" />
+		<item name="designId" type="string" description="设计师ID" default="863607124" />
+		<!-- 季节： 687391457 -->
+		<!-- 迪士尼： 863607124 -->
+		<!-- 灵貓： 369121310 -->
+		<!-- 萌星球： 125454817 -->
+		<!-- 图虫萌星球： 667986330 -->
+		<!-- 熊猫猫： 254307554 -->
+		<!-- 幻灵文化： 201619408 -->
+		<!-- 软萌壁纸酱： 877882709 -->
+	</Props>
+
+	<!-- 主题 -->
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.bbk.theme" class="com.bbk.theme.Theme" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.miui.themestore" class="com.miui.themestore.ThemeResourceTabActivity" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.android.thememanager" class="com.android.thememanager.ThemeResourceTabActivity" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.nearme.themespace" class="com.nearme.themespace.activities.ThemeActivity" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.nearme.themestore" class="com.nearme.themespace.activities.ThemeActivity" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.heytap.themestore" class="com.nearme.themespace.activities.ThemeActivity" />
+	<!-- <IntentCommand condition="($condition)*eq($#LangsId$,0)" action="android.intent.action.VIEW" uri="oaps://theme/home?enterId=100038" /> -->
+	<IntentCommand condition="($condition)*eq($#LangsId$,0)" uri="oaps://theme/home?_SWL_=1&amp;swl=1&amp;enterId=100038&amp;oapTargetUri=oaps%3A%2F%2Ftheme%2Fdesigner%2Fcustomized%3FenterId%3D100038%26id%3D$designId" />
+
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.hihonor.android.thememanager" class="com.hihonor.android.thememanager.PageActivity" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.huawei.android.thememanager" class="com.huawei.android.thememanager.mvp.view.activity.onlinebase.PageActivity" />
+
+</Template>

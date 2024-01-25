@@ -1,0 +1,26 @@
+<ROOT>
+	
+	<Props>
+		<item name="x" type="string" description="X坐标" default="0" />
+		<item name="y" type="string" description="Y坐标" default="0" />
+		<item name="w" type="string" description="宽度" default="#screen_width" />
+		<item name="h" type="string" description="高度" default="#screen_height" />
+		<item name="visibility" type="string" description="可见性" default="1" />
+		<item name="long_press_time" type="string" description="长按触发时间" default="800" />
+	</Props>
+	
+	<ValueHolder name="TextSizeVal_0" />
+	<ValueHolder name="TextSizeVal_1" />
+	<ValueHolder name="TextSizeVal_2" />
+	<ValueHolder name="TextSizeVal_3" />
+	<ValueHolder name="TextSizeVal_4" />
+	<ValueHolder name="TextSizeVal_5" />
+
+	<Var name="mTextSize_TextSizeVal_0" expression="int(sqrt(TextSizeVal_0)/#mTextSize_Var)" type="number" />
+	<Var name="mTextSize_TextSizeVal_1" expression="int(sqrt(TextSizeVal_1)/#mTextSize_Var)" type="number" />
+	<Var name="mTextSize_TextSizeVal_2" expression="int(sqrt(TextSizeVal_2)/#mTextSize_Var)" type="number" />
+	<Var name="mTextSize_TextSizeVal_3" expression="int(sqrt(TextSizeVal_3)/#mTextSize_Var)" type="number" />
+	<Var name="mTextSize_TextSizeVal_4" expression="int(sqrt(TextSizeVal_4)/#mTextSize_Var)" type="number" />
+	<Var name="mTextSize_TextSizeVal_5" expression="int(sqrt(TextSizeVal_5)/#mTextSize_Var)" type="number" />
+
+</ROOT>

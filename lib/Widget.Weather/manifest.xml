@@ -1,0 +1,103 @@
+<Template>
+
+	<ExternalCommands>
+		<Trigger action="init,resume">
+			<!-- ContentProvider接口在切屏时必须主动更新一次  -->
+			<BinderCommand name="WeatherProvider" command="refresh" />
+			<BinderCommand name="HourWeatherProvider" command="refresh" />
+		</Trigger>
+	</ExternalCommands>
+
+	<VariableBinders>
+		<!-- 收到广播更新数据 -->
+		<BroadcastBinder action="com.miui.weather.widget_weather_detail">
+			<Trigger>
+				<BinderCommand name="WeatherProvider" command="refresh" />
+				<BinderCommand name="HourWeatherProvider" command="refresh" />
+			</Trigger>
+		</BroadcastBinder>
+		<ContentProviderBinder name="WeatherProvider" uriFormat="content://weather/weatherData/1/%s" uriParas="@localId" countName="hasweather">
+			<!-- 城市北纬东经 -->
+			<Variable name="city_id" type="string" column="city_id" />
+			<!-- 城市/街道名称 -->
+			<Variable name="weather_location" type="string" column="city_name" />
+			<!-- 天气类型（实时） -->
+			<Variable name="weather_type" type="int" column="weather_type" />
+			<Variable name="weather_type_arr" type="string[]" column="weather_type" />
+			<!-- 今日温度 -->
+			<Variable name="weather_temperature" type="int" column="temperature" />
+			<!-- 今日温度区间（20℃~30℃） -->
+			<Variable name="weather_temperature_range" type="string" column="temperature_range" />
+			<!-- 天气现象（实时）：晴 -->
+			<Variable name="weather_description" type="string" column="description" />
+			<Variable name="weather_description_arr" type="string[]" column="description" />
+			<!-- 日出时间 -->
+			<Variable name="weather_sunrise" type="int" column="sunrise" />
+			<!-- 日落时间 -->
+			<Variable name="weather_sunset" type="int" column="sunset" />
+			<!-- 风力 -->
+			<Variable name="weather_wind" type="string" column="wind" />
+			<!-- 气压 -->
+			<Variable name="weather_pressure" type="string" column="pressure" />
+			<!-- 湿度 -->
+			<Variable name="weather_humidity" type="int" column="humidity" />
+			<!-- 天气类型（预报） -->
+			<Variable name="weather_forecast_type" type="string" column="forecast_type" />
+			<!-- 天气现象（预报） -->
+			<Variable name="weather_weathernamesfrom" type="string" column="weathernamesfrom" />
+			<!-- 最高温度 -->
+			<Variable name="weather_temphigh" type="string" column="tmphighs" />
+			<Variable name="weather_temphigh_arr" type="string[]" column="tmphighs" />
+			<!-- 最低温度 -->
+			<Variable name="weather_templow" type="string" column="tmplows" />
+			<Variable name="weather_templow_arr" type="string[]" column="tmplows" />
+			<!-- 实时天气信息发布时间 -->
+			<Variable name="weather_publish_time" type="string" column="publish_time" />
+			<!-- 气温单位，1代表摄氏度，0代表华氏度 -->
+			<Variable name="weather_temperature_unit" type="int" column="temperature_unit" />
+			<!-- AQI等级 -->
+			<Variable name="weather_aqi" type="int" column="aqilevel" />
+			<Trigger>
+				<LoopCommand count="5" indexName="_i" >
+					<VariableCommand name="weatherId_arr" expression="ifelse(int(@weather_type_arr[#_i])}25||int(@weather_type_arr[#_i]){0,0, (int(@weather_type_arr[#_i])}=4**int(@weather_type_arr[#_i]){=6||int(@weather_type_arr[#_i])}=8**int(@weather_type_arr[#_i]){=11||int(@weather_type_arr[#_i])==25),4,int(@weather_type_arr[#_i])}=13**int(@weather_type_arr[#_i]){=17,13 ,int(@weather_type_arr[#_i])}=18**int(@weather_type_arr[#_i]){=21||int(@weather_type_arr[#_i])==23,18,int(@weather_type_arr[#_i]))" type="number[]" index="#_i" />
+				</LoopCommand>
+				<!-- 简化版天气ID -->
+				<VariableCommand name="weatherId" expression="ifelse(#weather_type}25||#weather_type{0,0, (#weather_type}=4**#weather_type{=6||#weather_type}=8**#weather_type{=11||#weather_type==25),4,#weather_type}=13**#weather_type{=17,13 ,#weather_type}=18**#weather_type{=21||#weather_type==23,18,#weather_type)" />
+				<!-- 日出 -->
+				<VariableCommand name="_sunrise" expression="#weather_sunrise+int((#time_sys-#hour24*3600000-#minute*60000-#second*1000)/1000)*1000" type="number" />
+				<!-- 日落 -->
+				<VariableCommand name="_sunset" expression="#weather_sunset+int((#time_sys-#hour24*3600000-#minute*60000-#second*1000)/1000)*1000" type="number" />
+				<!-- 空气质量 -->
+				<VariableCommand name="_quality" expression="ifelse(#weather_aqi{=50,'优',#weather_aqi{=100,'良好',#weather_aqi{=150,'轻度污染',#weather_aqi{=200,'中度污染',#weather_aqi{=300,'重度污染',#weather_aqi}300,'严重污染','优')" type="string" />
+			</Trigger>
+		</ContentProviderBinder>
+		<!-- 24H天气 -->
+		<ContentProviderBinder name="HourWeatherProvider" uriFormat="content://weather/hourlyData/1/%s" uriParas="@localId" countName="HourHasweather">
+			<!-- 实际天气数据发布时间 -->
+			<Variable name="hour_publish_time" type="string" column="publish_time" />
+			<!-- 未来23小时的时间戳 -->
+			<Variable name="hour_date_time" type="string[]" column="date_time" />
+			<!-- 未来23小时的温度 -->
+			<Variable name="hour_temperature" type="string[]" column="temperature" />
+			<!-- 未来23小时的天气类型 -->
+			<Variable name="hour_weather_type" type="string[]" column="weather_type" />
+			<Trigger>
+				<LoopCommand count="5" indexName="_i">
+					<VariableCommand name="hourWeatherId" expression="ifelse(int(@hour_weather_type[#_i])}25||int(@hour_weather_type[#_i]){0,0, (int(@hour_weather_type[#_i])}=4**int(@hour_weather_type[#_i]){=6||int(@hour_weather_type[#_i])}=8**int(@hour_weather_type[#_i]){=11||int(@hour_weather_type[#_i])==25),4,int(@hour_weather_type[#_i])}=13**int(@hour_weather_type[#_i]){=17,13 ,int(@hour_weather_type[#_i])}=18**int(@hour_weather_type[#_i]){=21||int(@hour_weather_type[#_i])==23,18,int(@hour_weather_type[#_i]))" type="number[]" index="#_i" />
+				</LoopCommand>
+			</Trigger>
+		</ContentProviderBinder>
+	</VariableBinders>
+
+	<!-- 展示城市变化时更新数据 -->
+	<Var name="localId" expression="@customEditLocalId" type="string">
+		<Trigger>
+			<AnimationCommand target="fra" command="play" />
+			<BinderCommand name="WeatherProvider" command="refresh" />
+			<BinderCommand name="HourWeatherProvider" command="refresh" />
+		</Trigger>
+	</Var>
+	<Var name="weatherId_arr" type="number[]" size="5" />
+	<Var name="hourWeatherId" type="number[]" size="5" />
+
+</Template>

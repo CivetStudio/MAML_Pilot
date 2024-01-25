@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Template>
+	<Props>
+		<item name="x" default="0" type="string" description="x坐标" />
+		<item name="y" default="230" type="string" description="y坐标" />
+		<item name="w" default="1080" type="string" description="宽度" />
+		<item name="h" default="2400" type="string" description="高度" />
+		<item name="mipay_src" default="ToolsScreen_src/mipay.png" type="bitmap" description="MIPay图标" />
+		<item name="flash_src" default="ToolsScreen_src/flash.png" type="bitmaps" description="手电筒图标" />
+
+		<item name="icon_src" default="ToolsScreen_src/icons/icon.png" type="bitmaps" description="负一屏图标" />
+		<item name="weather_src" default="ToolsScreen_src/weather/weather.png" type="bitmaps" description="负一屏图标" />
+		<item name="color" default="#ffffff" type="color" description="文字颜色" />
+		<item name="rain_src" type="bitmaps" default="left_weather/rain_fall.png" description="下雨图标" />
+		<item name="realtime_src" type="bitmaps" default="left_weather/realtime_aqi.png" description="空气指数图标" />
+	</Props>
+
+	<VariableBinders>
+		<ContentProviderBinder name="WeatherProvider" uri="content://weather/actualWeatherData/1" columns="description,temperature" countName="hasweather">
+			<Variable name="weather_temperature" type="string" column="temperature" />
+			<Variable name="weather_description" type="string" column="description" />
+			<Trigger>
+				<VariableCommand name="weatherId" expression="ifelse(#weather_id}25 || #weather_id{0,0, (#weather_id }= 4 ** #weather_id {= 6 || #weather_id }= 8 ** #weather_id {= 11 || #weather_id == 25),4,#weather_id }= 13 ** #weather_id {= 17,13 ,#weather_id }= 18 ** #weather_id {= 21 || #weather_id == 23,18,#weather_id)" />
+			</Trigger>
+		</ContentProviderBinder>
+	</VariableBinders>
+
+	<Var name="icon_x" type="number[]" values="99,555,99,701,99,555,99,327,555,783" const="true" />
+	<Var name="icon_y" type="number[]" values="0,0,444,444,754,754,1064,1064,1064,1064" const="true" />
+	<Var name="icon_centerX" type="number[]" values="213,213,286,140,213,213,99,99,99,99" const="true" />
+	<Var name="icon_centerY" type="number[]" values="207,207,140,140,140,140,99,99,99,99" const="true" />
+	<Var name="icons_package" type="string[]" const="true" expression="''" values="
+	'com.android.deskclock',
+	'com.miui.weather2',
+	'com.android.soundrecorder',
+	'com.miui.calculator',
+	'com.tencent.mm',
+	'com.eg.android.AlipayGphone',
+	'com.tencent.mm',
+	'com.miui.compass',
+	'com.xiaomi.smarthome',
+	'com.eg.android.AlipayGphone'" />
+	<Var name="icons_class" type="string[]" const="true" expression="''" values="
+	'com.android.deskclock.DeskClockTabActivity',
+	'com.miui.weather2.ActivityWeatherMain',
+	'com.android.soundrecorder.SoundRecorder',
+	'com.miui.calculator.cal.CalculatorActivity',
+	'com.tencent.mm.plugin.offline.ui.WalletOfflineEntranceUI',
+	'com.eg.android.AlipayGphone.FastStartActivity',
+	'com.tencent.mm.plugin.scanner.ui.BaseScanUI',
+	'com.miui.compass.CompassActivity',
+	'com.xiaomi.smarthome.SmartHomeMainActivity',
+	'com.alipay.mobile.scan.as.main.MainCaptureActivity'" />
+
+	<!-- 微信、支付宝、米家、公交卡 -->
+	<Image name="leftApp_WeChat" srcType="ApplicationIcon" srcExp="'com.tencent.mm,com.tencent.mm.ui.LauncherUI'" alpha="0" />
+	<Image name="leftApp_AliPay" srcType="ApplicationIcon" srcExp="'com.eg.android.AlipayGphone,com.eg.android.AlipayGphone.AlipayLogin'" alpha="0" />
+	<Image name="leftApp_smarthome" srcType="ApplicationIcon" srcExp="'com.xiaomi.smarthome,com.xiaomi.smarthome.SmartHomeMainActivity'" alpha="0" />
+	<Image name="leftApp_tsmclient" srcType="ApplicationIcon" srcExp="'com.miui.tsmclient,com.miui.tsmclient.ui.quick.DoubleClickActivity'" alpha="0" />
+	<Image name="ifRestart" src="com.android.contacts,com.android.contacts.activities.TwelveKeyDialer" srcType="ApplicationIcon" alpha="0" />
+
+	
+
+	<Var name="init_tools_ani">
+		<VariableAnimation loop="false" initPause="true">
+			<Item value="0" time="0" easeType="QuadEaseOut" />
+			<Item value="1" time="300" easeType="QuadEaseOut" />
+			<Item value="0" time="600" />
+			<Triggers>
+				<Trigger action="end">
+					<MultiCommand condition="#set_tools_num==2">
+						<PluginCommand target="leftScreenWeather" command="init" condition="#init_tools_ani==1"/>
+						<PluginCommand target="leftScreenWeather" command="exit" condition="#init_tools_ani==0"/>
+					</MultiCommand>
+					<VariableCommand name="set_tools_num" expression="-1" condition="#init_tools_ani==0"/>
+				</Trigger>
+			</Triggers>
+		</VariableAnimation>
+	</Var>
+	<!-- 负一屏图标 -->
+	<Group x="$x" y="$y+(#screen_height-1920)/3.5" pivotX="540" pivotY="630" scale="1+0.15*#init_tools_ani" alpha="255*(1-#init_tools_ani)" visibility="#init_tools_ani!=1">
+		<Array y="0" count="10" indexName="i">
+			<Var name="icon_scale_ani" type="number[]" index="#i" size="10">
+				<VariableAnimation loop="false" initPause="true">
+					<Item value="1" time="0" />
+					<Item value="0.96" time="100" />
+					<Item value="1" time="200" />
+				</VariableAnimation>
+			</Var>
+			<Image x="#icon_x[#i]" y="#icon_y[#i]" src="$icon_src" srcid="#i" touchable="true" scale="#icon_scale_ani[#i]" pivotX="#icon_centerX[#i]" pivotY="#icon_centerY[#i]" />
+			<Button x="#icon_x[#i]" y="#icon_y[#i]" w="#icon_centerX[#i]*2" h="#icon_centerY[#i]*2" visibility="#init_tools_ani==0">
+				<Triggers>
+					<Trigger action="down">
+						<AnimationCommand target="icon_scale_ani" targetIndex="#i" command="play" />
+					</Trigger>
+					<Trigger action="up" condition="abs(#touch_x-#touch_begin_x){50 ** abs(#touch_y-#touch_begin_y){50">
+						<VariableCommand name="set_tools_num" expression="#i+1" />
+						<VariableCommand name="countAction" expression="ifelse(#i == 0,'倒计时',#i == 1,'天气',#i == 2,'录音机',#i == 3,'计算器',#i == 4,'微信付款码',#i == 5,'支付宝付款码',#i == 6,'微信扫码',#i == 7,'指南针',#i == 8,'米家','支付宝扫码')" type="string" />
+						<BinderCommand name="CountService" command="refresh" delay="10" />
+						<AnimationCommand target="init_tools_ani" command="play(0,300)" condition="#i==1" />
+						<!-- 打开应用 -->
+						<IntentCommand action="android.intent.action.MAIN" packageExp="@icons_package[#i]" classExp="@icons_class[#i]" condition="#i}3**(#leftApp_WeChat.bmp_width!=0||#leftApp_AliPay.bmp_width!=0||#leftApp_smarthome.bmp_width!=0)||int(#i==2**int(@__miui_version_code{8))" />
+						<!-- 安装微信 -->
+						<IntentCommand action="android.intent.action.VIEW" uri="market://details?id=com.tencent.mm&amp;ref=mithemelocksreen" flags="268435456" condition="#leftApp_WeChat.bmp_width == 0 ** (#i == 4 || #i == 6)" />
+						<!-- 安装支付宝 -->
+						<IntentCommand action="android.intent.action.VIEW" uri="market://details?id=com.eg.android.AlipayGphone&amp;ref=mithemelocksreen" flags="268435456" condition="#leftApp_AliPay.bmp_width == 0 ** (#i == 5 || #i == 9)" />
+						<!-- 安装米家 -->
+						<IntentCommand action="android.intent.action.VIEW" uri="market://details?id=com.xiaomi.smarthome&amp;ref=mithemelocksreen" flags="268435456" condition="#leftApp_smarthome.bmp_width == 0 ** #i == 8" />
+						<!-- 解锁 -->
+						<ExternCommand command="unlock" condition="#i}3 ** #i != 1 || int(#i == 2 ** int(@__miui_version_code{8))" delay="20" />
+						<!-- 不解锁进入系统 录音机、计算器 -->
+						<IntentCommand action="android.intent.action.MAIN" packageExp="@icons_package[#i]" classExp="@icons_class[#i]" condition="#i==0||#i==2**int(@__miui_version_code }= 8)||#i==3">
+							<Extra name="StartActivityWhenLocked" type="boolean" expression="1" />
+							<Extra name="navigation_tab" expression="2" type="int" />
+						</IntentCommand>
+					</Trigger>
+				</Triggers>
+			</Button>
+		</Array>
+		
+		<!-- 天气首页按钮 -->
+		<Group x="555" y="0" w="426" h="414" pivotX="213" pivotY="207" scale="#icon_scale_ani[1]">
+			<Image x="340" y="79" align="center" alignV="center" src="$weather_src" srcid="#weatherId" w="100" h="100" />
+			<Text x="47" y="162" size="120" color="$color" textExp="@weather_temperature" fontFamily="miui-light" visibility="int(@__miui_version_code) {= 8" />
+			<Text x="47" y="162" size="120" color="$color" textExp="@weather_temperature" fontFamily="mitype-normal" visibility="int(@__miui_version_code) }= 9" />
+			<Text x="53" y="315" size="30" color="$color" textExp="@weather_description" />
+		</Group>
+		
+	</Group>
+
+	<Plugin x="$x" name="leftScreenWeather" src="leftScreenWeather"  pivotX="540" pivotY="#screen_height/2" scale="0.85+0.15*#init_tools_ani" alpha="255*#init_tools_ani"  w="$w" h="$h" weatherSrc="$weather_src" rainSrc="$rain_src" realtimeSrc="$realtime_src"/>
+
+	<Group x="$x" alpha="510*(1-#init_tools_ani)">
+		<!-- Mipay -->
+		<Image x="#screen_width-300" y="#screen_height-100" align="right" alignV="bottom" src="$mipay_src" touchable="true" pivotX="58" pivotY="58" scale="1-0.3*#init_tools_ani" visibility="#leftApp_tsmclient.bmp_width != 0">
+			<Triggers>
+				<Trigger action="up" condition="#init_tools_ani==0">
+					<IntentCommand action="com.miui.intent.action.DOUBLE_CLICK" package="com.miui.tsmclient" class="com.miui.tsmclient.ui.quick.DoubleClickActivity" />
+				</Trigger>
+			</Triggers>
+		</Image>
+		<!-- 手电筒 -->
+		<Image x="#screen_width-100" y="#screen_height-100" align="right" alignV="bottom" src="$flash_src" srcid="#light_switch" touchable="true" pivotX="58" pivotY="58" scale="1-0.3*#init_tools_ani">
+			<Triggers>
+				<Trigger action="up" condition="#init_tools_ani==0">
+					<VariableCommand name="light_switch" expression="!(#light_switch)" condition="int(@__miui_version_code)}=8"/>
+					<IntentCommand action="miui.intent.action.TOGGLE_TORCH" broadcast="true">
+						<Extra name="miui.intent.extra.IS_ENABLE" type="boolean" expression="ifelse(int(@__miui_version_code) }= 8,#light_switch,1)" />
+					</IntentCommand>
+				</Trigger>
+			</Triggers>
+		</Image>
+	</Group>
+	<!-- 返回按钮 -->
+	<Button x="$x" y="0" w="1080" h="#screen_height" visibility="#init_tools_ani==1">
+		<Triggers>
+			<Trigger action="up" condition="#touch_x{180||#touch_x}900||#touch_y{#screen_height/2-640||#touch_y}#screen_height/2+520">
+				<AnimationCommand target="init_tools_ani" command="play(300,600)" />
+			</Trigger>
+		</Triggers>
+	</Button>
+	
+</Template>

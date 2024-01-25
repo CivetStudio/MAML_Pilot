@@ -1,0 +1,10 @@
+<Template>
+
+	<Props>
+		<item name="condition" type="string" description="条件判断" default="$#tc$" />
+	</Props>
+
+	<!-- 全国健康码小程序 -->
+	<IntentCommand condition="($condition)" action="android.intent.action.VIEW" uri="https://mp.weixin.qq.com/intp/out_jump_cs?params=7chtGSsgDEQUwAs1oKKte633Oq527etKoMUPzZfidF2Hud1Bmm%2FnZpzQTnqzwIInxltOOk8RTffsA623%2F0CGK1sNrnjIPzrB86oE2ojzoefMtbnODnSQcucxdlEz%2F1fgVFPTDJcXwDAuDjYGBr2y%2F5d5keUncLQJStbABuqnkgxFkpnI84zyGrPvKuPAOOGqLHGePBl%2Bjq%2BIlJb4BfM6sJy2InW32%2FwcBZt5jBCpJkeCRpZoJBX9S%2FnJLHQlkkw%2F" package="com.tencent.mm" />
+
+</Template>

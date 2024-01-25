@@ -1,0 +1,21 @@
+<ROOT>
+
+	<ValueHolder name="ScreenId_S" alias="0单向滑动(OPPO) 1双向滑动" />
+	<ValueHolder name="ScreenId_N" alias="2屏滑动" />
+	<ValueHolder name="ScreenId_D" alias="滑动触发距离" />
+	<ValueHolder name="ScreenId_R" alias="滑动触发开屏动画" />
+	<ValueHolder name="ScreenId_Visibility" alias="按钮可见性" />
+
+	<Var name="mScreenId.Num" expression="int(ScreenId_N)" type="number" />
+	<!-- 左右滑动切换 -->
+	<Button x="0" y="0" w="#screen_width" h="#screen_height" visibility="ScreenId_Visibility" >
+		<Triggers>
+			<Trigger action="up" >
+				<VariableCommand name="mScreenId" expression="int(#mScreenId+1)%(#mScreenId.Num)" persist="true" condition="ge(abs(#touch_x-#touch_begin_x),ScreenId_D)*ifelse(eq(ScreenId_S,0),ge(#touch_x,#touch_begin_x),1)" />
+				<VariableCommand name="mScreenId_Var" expression="#mScreenId_Var+1" persist="true" condition="ge(abs(#touch_x-#touch_begin_x),ScreenId_D)*ifelse(eq(ScreenId_S,0),ge(#touch_x,#touch_begin_x),1)*(ScreenId_R)" />
+				<VariableCommand name="mScreenId_Var_Move" expression="#mScreenId_Var_Move+1" persist="true" condition="ge(abs(#touch_x-#touch_begin_x),ScreenId_D)*ifelse(eq(ScreenId_S,0),ge(#touch_x,#touch_begin_x),1)" />
+			</Trigger>
+		</Triggers>
+	</Button>
+	
+</ROOT>

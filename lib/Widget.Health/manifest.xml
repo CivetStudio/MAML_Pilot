@@ -1,0 +1,33 @@
+<Template>
+
+	<ExternalCommands>
+		<Trigger action="init,resume">
+			<BinderCommand name="MiSteps" command="refresh" />
+		</Trigger>
+	</ExternalCommands>
+
+	<VariableBinders>
+		<!-- 注意：不可卸载 小米健康App -->
+		<ContentProviderBinder name="MiSteps" uri="content://com.mi.health.provider.main/activity/steps/brief" column="steps,goal,distance,energy,strength_duration,summary" countName="hasSteps">
+			<!-- 当前步数 -->
+			<Variable name="MiSteps_steps" type="string" column="steps" />
+			<!-- 目标步数 -->
+			<Variable name="MiSteps_goal" type="string" column="goal" />
+			<!-- 距离 -->
+			<Variable name="MiSteps_distance" type="string" column="distance" />
+			<!-- 消耗卡路里（千卡） -->
+			<Variable name="MiSteps_energy" type="string" column="energy" />
+			<!-- 运动中高强度时长 -->
+			<Variable name="MiSteps_strength_duration" type="string" column="strength_duration" />
+			<!-- 运动是否达标 -->
+			<Variable name="MiSteps_summary" type="string" column="summary" />
+			<Trigger >
+				<FunctionCommand target="fra" />
+			</Trigger>
+		</ContentProviderBinder>
+	</VariableBinders>
+
+	<Var name="title" type="string[]" const="true" expression="''" values="'当前步数：','目标步数：','距离：','消耗卡路里（千卡）：','运动中高强度时长：','运动是否达标：'" />
+	<Var name="content" type="string[]" expression="''" values="@MiSteps_steps , @MiSteps_goal , preciseeval('@MiSteps_distance',2) , @MiSteps_energy , @MiSteps_strength_duration , @MiSteps_summary" />
+
+</Template>

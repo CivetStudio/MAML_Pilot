@@ -1,0 +1,18 @@
+<Template>
+
+	<Props>
+		<item name="condition" type="string" description="条件判断" default="$#tc$" />
+	</Props>
+
+	<!-- 相册 -->
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.miui.gallery" class="com.miui.gallery.activity.HomePageActivity" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.vivo.gallery" class="com.android.gallery3d.vivo.GalleryTabActivity" />
+	<!-- alias="mCivetCode_5" -->
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.oppo.gallery3d" class="com.oppo.gallery3d.app.Gallery" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.coloros.gallery3d" class="com.oppo.gallery3d.app.Gallery" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.coloros.gallery3d" class="com.coloros.gallery3d.app.MainActivity" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.android.gallery3d" class="com.hihonor.gallery.App.GalleryMain" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.android.gallery3d" class="com.huawei.gallery.App.GalleryMain" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.huawei.photos" class="com.huawei.gallery.App.GalleryMain" />
+
+</Template>

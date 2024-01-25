@@ -1,0 +1,69 @@
+<Template>
+
+	<Props>
+		<item name="tg" type="string" description="天干-年" default="#year" />
+		<item name="dz" type="string" description="地支-年" default="#year" />
+		<item name="sx" type="string" description="生肖-年" default="#year" />
+	</Props>
+
+	<Var name="mTianGan" expression="int($tg-4)%10" type="number" alias="@TG 天干: 4年一循环" />
+	<Var name="mDizhi" expression="int($dz-4)%12" type="number" alias="@DZ 地支: 12年一循环" />
+	<Var name="mZodiacs" expression="int($sx-1900)%12" type="number" alias="@SX 生肖: ['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪']" />
+
+	<VarArray type="string">
+		<Vars>
+			<Var name="TG" index="#mTianGan" />
+		</Vars>
+		<Items>
+			<Item value="甲" />
+			<Item value="乙" />
+			<Item value="丙" />
+			<Item value="丁" />
+			<Item value="戊" />
+			<Item value="己" />
+			<Item value="庚" />
+			<Item value="辛" />
+			<Item value="壬" />
+			<Item value="癸" />
+		</Items>
+	</VarArray>
+	<VarArray type="string">
+		<Vars>
+			<Var name="DZ" index="#mDizhi" />
+		</Vars>
+		<Items>
+			<Item value="子" />
+			<Item value="丑" />
+			<Item value="寅" />
+			<Item value="卯" />
+			<Item value="辰" />
+			<Item value="巳" />
+			<Item value="午" />
+			<Item value="未" />
+			<Item value="申" />
+			<Item value="酉" />
+			<Item value="戌" />
+			<Item value="亥" />
+		</Items>
+	</VarArray>
+	<VarArray type="string">
+		<Vars>
+			<Var name="SX" index="#mZodiacs" />
+		</Vars>
+		<Items>
+			<Item value="鼠" />
+			<Item value="牛" />
+			<Item value="虎" />
+			<Item value="兔" />
+			<Item value="龙" />
+			<Item value="蛇" />
+			<Item value="马" />
+			<Item value="羊" />
+			<Item value="猴" />
+			<Item value="鸡" />
+			<Item value="狗" />
+			<Item value="猪" />
+		</Items>
+	</VarArray>
+
+</Template>

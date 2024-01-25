@@ -1,0 +1,86 @@
+<Template>
+
+    <!-- 倒计时相关 -->
+
+    <Var name="CountTemp_0" expression="ifelse(eq(#ampm,1)*eq(#time_format,0),#hour+12,eq(#ampm,0)*eq(#time_format,0)*eq(#hour,12),0,#hour)" />
+    <Var name="CountTemp_1" expression="ifelse(eq(#ampm,1)*eq(#time_format,0)*lt(#hour12,12),#hour12+12,eq(#ampm,0)*eq(#time_format,0)*eq(#hour,12),0,#hour24)" />
+    <Var name="CountTemp_2" expression="ifelse(gt(#CountTemp_0,24),23-#CountTemp_0+12,23-#CountTemp_0)" />
+    <Var name="CountTemp_3" expression="int(23-#CountTemp_1)" />
+    <Var name="CountTemp_4" expression="ifelse(gt(#CountTemp_1,24),#CountTemp_3+12,#CountTemp_3)" />
+    <Var name="CountTemp_v_o" expression="ifelse(eq(#time_format,2),#CountTemp_2,#CountTemp_4)" />
+    <Var name="CountTemp_v" expression="ifelse(#lunarDay,int(23-#hour),#CountTemp_v_o)" />
+
+    <!-- 今日剩余：时 -->
+    <Var name="CountHour" expression="ifelse(#__maml_version,int(23-#hour24),#CountTemp_v)" />
+
+    <!-- 当前小时：强制24小时制 -->
+    <Var name="CurrentHour" expression="ifelse(#__maml_version,#hour24,int(23-#CountHour))" />
+
+    <!-- 今日剩余：秒 -->
+    <Var name="CountSec" expression="int(59-#second)" />
+    <!-- 今日剩余：分 -->
+    <Var name="CountMin" expression="int(59-#minute)" />
+
+    <!-- 本周还剩多少天 -->
+    <Var name="CountWeek_0" expression="ifelse(lt((#day_of_week-1),0),#day_of_week-1,7-abs(#day_of_week-1))" />
+    <Var name="CountWeek" expression="ifelse(eq(#CountWeek_0,7),0,#CountWeek_0)" />
+
+    <!-- 距离本周五还有多少天 -->
+    <Var name="mWeekCur" expression="int(#day_of_week-1)" type="number" />
+    <Var name="mDisFriday" expression="ifelse(eq(#mWeekCur,0),5,eq(#mWeekCur,6),6,5-#mWeekCur)" type="number" />
+
+    <!-- 当月最大天数 -->
+    <Var name="mMonthMaxDate" expression="#month_max_date" type="number" />
+    <!-- 本月还剩多少天 -->
+    <Var name="CountMonth" expression="int(#month_max_date-#date)" type="number" />
+
+    <!-- 今日剩余：小时：百分比 -->
+    <Var name="mHourLevel" expression="100-round((#CurrentHour*60+#minute)/1440*100)" />
+    <!-- 本周剩余：百分比 -->
+    <Var name="mWeekLevel" expression="100-round(ifelse(eq(#day_of_week,1),1,(#day_of_week-1)/7)*100)" />
+    <!-- 本月剩余：百分比 -->
+    <Var name="mMonthLevel" expression="100-round((#date/#mMonthMaxDate)*100)" />
+    <!-- 今年剩余：百分比 -->
+    <Var name="mYearLevel" expression="round((#CountYear/#CountYearAll)*100)" type="number" />
+
+    <!-- 时针旋转角度 -->
+    <Var name="HourR" expression="#hour12*30+#minute/2" />
+    <!-- 分针旋转角度 -->
+    <Var name="MinuteR" expression="#minute*6" />
+    <!-- 秒针旋转角度 -->
+    <Var name="SecondR" expression="#second*6" />
+
+    <!-- 今年还剩多少天 -->
+    <Var name="count_year_y1" expression="#year+1" />
+    <Var name="count_year_lya" expression="eq((#year%4),0)*ne((#year%100),0)+eq((#year%400),0)" />
+    <Var name="count_year_da" expression="(ge(#month,1)*31+(28+#count_year_lya)*ge(#month,2)+ge(#month,3)*31+ge(#month,4)*30+ge(#month,5)*31+ge(#month,6)*30+ge(#month,7)*31+ge(#month,8)*31+ge(#month,9)*30+ge(#month,10)*31+ge(#month,11)*30+ge(#month,12)*31)+(365*#year+int(#year/4)+int(#year/400)-int(#year/100))+#date-1+2" />
+    <Var name="count_year_dz1" expression="(365*#count_year_y1+int(#count_year_y1/4)+int(#count_year_y1/400)-int(#count_year_y1/100))+2" />
+
+    <!-- 今年还剩多少天: 365 -->
+    <Var name="CountYear_0" expression="abs(#count_year_dz1-#count_year_da)+ifelse(#lunarDay,0,-1)" />
+    <Var name="CountYear" expression="ifelse(#__maml_version,#CountYear_0,#CountYear_1)" />
+
+    <!-- 今年还剩多少天: 3 -->
+    <Var name="CountYearNum_0" expression="int(#CountYear/100%10)" />
+    <!-- 今年还剩多少天: 6 -->
+    <Var name="CountYearNum_1" expression="int(#CountYear/10%10)" />
+    <!-- 今年还剩多少天: 5 -->
+    <Var name="CountYearNum_2" expression="int(#CountYear%10)" />
+
+    <!-- OPPO -->
+	<Var expression="int(#year+1)" name="y1_4e0f721c" type="number"/>
+	<Var expression="eq((#year%4),0)*ne((#year%100),0)+eq((#year%400),0)" name="lya_4e0f721c" type="number"/>
+	<Var expression="int(#year/4)+int(#year/400)-int(#year/100)" name="lyb_4e0f721c" type="number"/>
+	<Var expression="int(365*#year+#lyb_4e0f721c)" name="lyc_4e0f721c" type="number"/>
+	<Var expression="ifelse(eq(#month,0),#date+0,eq(#month,1),#date+31,eq(#month,2),#date+59,eq(#month,3),#date+90,eq(#month,4),#date+120,eq(#month,5),#date+151,eq(#month,6),#date+181,eq(#month,7),#date+212,eq(#month,8),#date+243,eq(#month,9),#date+273,eq(#month,10),#date+304,eq(#month,11),#date+334,0)-1+#lya_4e0f721c*ge(#month,2)" name="da_4e0f721c" type="number"/>
+	<Var expression="1" name="m1_4e0f721c" type="number"/>
+	<Var expression="int(#m1_4e0f721c-1)" name="m2_4e0f721c" type="number"/>
+	<Var expression="1" name="d1_4e0f721c" type="number"/>
+	<Var expression="eq((#y1_4e0f721c%4),0)*ne((#y1_4e0f721c%100),0)+eq((#y1_4e0f721c%400),0)" name="lyz1_4e0f721c" type="number"/>
+	<Var expression="ifelse(eq(#m2_4e0f721c,0),#d1_4e0f721c+0,eq(#m2_4e0f721c,1),#d1_4e0f721c+31,eq(#m2_4e0f721c,2),#d1_4e0f721c+59,eq(#m2_4e0f721c,3),#d1_4e0f721c+90,eq(#m2_4e0f721c,4),#d1_4e0f721c+120,eq(#m2_4e0f721c,5),#d1_4e0f721c+151,eq(#m2_4e0f721c,6),#d1_4e0f721c+181,eq(#m2_4e0f721c,7),#d1_4e0f721c+212,eq(#m2_4e0f721c,8),#d1_4e0f721c+243,eq(#m2_4e0f721c,9),#d1_4e0f721c+273,eq(#m2_4e0f721c,10),#d1_4e0f721c+304,eq(#m2_4e0f721c,11),#d1_4e0f721c+334,0)-1+#lyz1_4e0f721c*ge(#m2_4e0f721c,2)" name="dz1_4e0f721c" type="number"/>
+	<Var expression="int(#month+1)" name="months_4e0f721c" type="number"/>
+	<Var expression="ifelse(eq(#months_4e0f721c,2),int(28+#lya_4e0f721c),eq(#months_4e0f721c,4),30,eq(#months_4e0f721c,6),30,eq(#months_4e0f721c,9),30,eq(#months_4e0f721c,11),30,31)" name="month_max_date" type="number"/>
+	<Var expression="#CountYearAll-abs(#dz1_4e0f721c-#da_4e0f721c)-1" name="CountYear_1" type="number"/>
+	<Var expression="int(365+#lya_4e0f721c)" name="CountYearAll" type="number"/>
+
+</Template>

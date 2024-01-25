@@ -1,0 +1,31 @@
+<ROOT>
+
+	<!-- <Props>
+		<item name="slotName" type="string" default="次日清空" />
+	</Props> -->
+
+	<ExternalCommands>
+		<Trigger action="resume" >
+			<VariableCommand name="__count" expression="ifelse(eq(#__count_time,#date),min(#__count+1,9999),1)" persist="true" />
+			<VariableCommand name="__count_time" expression="#date" persist="true" />
+			<VariableCommand name="__count_ext" expression="#__count_ext+1" />
+		</Trigger>
+	</ExternalCommands>
+
+	<Var name="mDailyClear" expression="#__count_ext" threshold="1" >
+		<Trigger>
+			<VariableCommand name="__count" expression="0" condition="ne(#date,#__count_time)" persist="true" />
+			<VariableCommand name="__count_var" expression="#__count_var+1" condition="ne(#date,#__count_time)" />
+		</Trigger>
+	</Var>
+
+	<Var name="mDailyClearMain" expression="#__count_var" threshold="1" >
+		<Trigger>
+			<!-- <PlaceHolder name="Clear" /> -->
+			<!-- <Slots slotName="$slotName" /> -->
+			<PlaceHolder name="Slot" />
+
+		</Trigger>
+	</Var>
+
+</ROOT>

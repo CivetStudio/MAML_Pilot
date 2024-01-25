@@ -1,0 +1,14 @@
+<Template>
+
+	<Props>
+		<item name="condition" type="string" description="条件判断" default="$#tc$" />
+	</Props>
+
+	<!-- 商城 -->
+	<IntentCommand condition="($condition)*eq(#LangsId,5)" action="android.intent.action.MAIN" package="com.vivo.space" class="com.vivo.space.ui.LogoActivity" />
+	<IntentCommand condition="($condition)*eq(#LangsId,4)" action="android.intent.action.MAIN" package="com.xiaomi.shop" class="com.xiaomi.shop.activity.MainTabActivity" />
+	<IntentCommand condition="($condition)*eq(#LangsId,0)" action="android.intent.action.MAIN" package="com.oppo.store" class="com.oppo.store.InitActivity" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.hihonor.appmarket" class="com.hihonor.appmarket.MainActivity" />
+	<IntentCommand condition="($condition)*eq(#LangsId,2)" action="android.intent.action.MAIN" package="com.vmall.client" class="com.vmall.client.activity.VmallWapActivity" />
+
+</Template>

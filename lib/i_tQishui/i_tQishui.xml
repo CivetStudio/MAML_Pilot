@@ -1,0 +1,11 @@
+<Template>
+
+	<Props>
+		<item name="condition" type="string" description="条件判断" default="$#tc$" />
+	</Props>
+
+    <!-- 汽水音乐 -->
+    <IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.luna.music" class="com.luna.biz.main.main_activity.MainActivity" />
+    <IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.luna.music" class="com.luna.biz.main.main.MainActivity" />
+
+</Template>

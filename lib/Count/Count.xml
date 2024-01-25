@@ -1,0 +1,89 @@
+<ROOT>
+
+	<CountDownTime name="CountTemp_h.c" date="tomorrow" countDownType="loop" unit="hour" />
+
+	<!-- 倒计时相关 -->
+	<!-- <Var name="Count" expression="#time" threshold="1" > -->
+	<Var name="Count" expression="ifelse(eq(#LangsId,2),round(#S_TimeLoop),#time)" threshold="1" >
+		<Trigger>
+			<VariableCommand name="CountTemp_0" expression="ifelse(eq(#ampm,1)*eq(#time_format,0),#hour+12,eq(#ampm,0)*eq(#time_format,0)*eq(#hour,12),0,#hour)" />
+			<VariableCommand name="CountTemp_1" expression="ifelse(eq(#ampm,1)*eq(#time_format,0)*lt(#hour12,12),#hour12+12,eq(#ampm,0)*eq(#time_format,0)*eq(#hour,12),0,#hour24)" />
+			<VariableCommand name="CountTemp_2" expression="ifelse(gt(#CountTemp_0,24),23-#CountTemp_0+12,23-#CountTemp_0)" />
+			<VariableCommand name="CountTemp_3" expression="23-#CountTemp_1" />
+			<VariableCommand name="CountTemp_4" expression="ifelse(gt(#CountTemp_1,24),#CountTemp_3+12,#CountTemp_3)" />
+			<VariableCommand name="CountTemp_v" expression="ifelse(eq(#time_format,2),#CountTemp_2,#CountTemp_4)" />
+			<VariableCommand name="CountTemp_h" expression="ifelse(#_old,23-#hour,#CountTemp_h.c)" />
+
+			<!-- 倒计时相关 -->
+			<VariableCommand name="CountTemp_v_new" expression="23-#hour_fixed" />
+			<VariableCommand name="hour_new" expression="#hour24" />
+			<VariableCommand name="hour_eld" expression="#hour" />
+			<VariableCommand name="is_new_version" expression="ifelse(eq(#hour24,#hour12),0,1)" />
+			<VariableCommand name="hour_fixed" expression="ifelse(#is_new_version,#hour_new,#hour_eld)" />
+
+			<!-- 今日剩余：秒 -->
+			<VariableCommand name="CountSec" expression="59-#seconds" />
+			<!-- 今日剩余：分 -->
+			<VariableCommand name="CountMin" expression="59-#minute" />
+
+			<!-- 本周还剩多少天 -->
+			<VariableCommand name="CountWeek_0" expression="ifelse(lt((#day_of_week-1),0),#day_of_week-1,7-abs(#day_of_week-1))" />
+			<VariableCommand name="CountWeek" expression="ifelse(eq(#CountWeek_0,7),0,#CountWeek_0)" />
+
+			<!-- 距离本周五还有多少天 -->
+			<!-- <VariableCommand name="mWeekCur" expression="int(#day_of_week-1)" type="number" /> -->
+			<!-- <VariableCommand name="mDisFriday" expression="ifelse(eq(#mWeekCur,0),5,eq(#mWeekCur,6),6,5-#mWeekCur)" type="number" /> -->
+			<VariableCommand name="mDisFriday" expression="ifelse(eq(int((#day_of_week-1)),0),5,eq(int((#day_of_week-1)),6),6,5-int((#day_of_week-1)))" type="number" />
+
+			<!-- 当月最大天数 -->
+			<VariableCommand name="mMonthMaxDate" expression="ifelse(eq(int(#month+1),1),31,eq(int(#month+1),2),28+#lyz1,eq(int(#month+1),3),31,eq(int(#month+1),4),30,eq(int(#month+1),5),31,eq(int(#month+1),6),30,eq(int(#month+1),7),31,eq(int(#month+1),8),31,eq(int(#month+1),9),30,eq(int(#month+1),10),31,eq(int(#month+1),11),30,eq(int(#month+1),12),31,31)" />
+			<!-- 本月还剩多少天 -->
+			<VariableCommand name="CountMonth" expression="#mMonthMaxDate-#date" />
+			<!-- <VariableCommand name="CountTemp_p" expression="23-#hour_fixed" /> -->
+			<VariableCommand name="CountTemp_p" expression="ifelse(#is_new_version,23-#hour_fixed,23-#hour24)" />
+
+			<!-- 今日剩余：时 -->
+			<VariableCommand name="CountHour" expression="ifelse(eq(#LangsId,0),#CountTemp_p,eq(#LangsId,2)+eq(#LangsId,2),#CountTemp_h,eq(#Civet,5)+eq(#LangsId,5),#CountTemp_v_new,#CountTemp_v)" />
+
+			<!-- 当前小时：强制24小时制 -->
+			<VariableCommand name="CurrentHour" expression="23-#CountHour" />
+
+			<!-- 今日剩余：小时：百分比 -->
+			<VariableCommand name="mHourLevel" expression="ifelse(eq(#CurrentHour,0)*eq(#minute,0),100,100-round((#CurrentHour*60+#minute)/1440*100))" />
+			<!-- 本周剩余：百分比 -->
+			<VariableCommand name="mWeekLevel" expression="100-round(ifelse(eq(#day_of_week,1),1,(#day_of_week-1)/7)*100)" />
+			<!-- 本月剩余：百分比 -->
+			<VariableCommand name="mMonthLevel" expression="100-round(#date/#mMonthMaxDate*100)" />
+			<!-- 今年剩余：百分比 -->
+			<VariableCommand name="mYearLevel" expression="round(#CountYear/(365+#lya)*100)" />
+			<!-- 全平台通用秒数（已适配vivo低端机） -->
+			<VariableCommand name="seconds" expression="ifelse(eq(#LangsId,5)*eq(#mXplay5A,1),int((#time%60000)/1000),#second)" />
+
+			<!-- 时针旋转角度 -->
+			<VariableCommand name="HourR" expression="#hour12*30+#minute/2" />
+			<!-- 分针旋转角度 -->
+			<VariableCommand name="MinuteR" expression="#minute*6" />
+			<!-- 秒针旋转角度 -->
+			<VariableCommand name="SecondR" expression="#seconds*6" />
+
+			<!-- 今年还剩多少天 -->
+			<VariableCommand name="count_year_y1" expression="#year+1" />
+			<VariableCommand name="count_year_lya" expression="eq((#year%4),0)*ne((#year%100),0)+eq((#year%400),0)" />
+			<VariableCommand name="count_year_da" expression="(ge(#month,1)*31+(28+#count_year_lya)*ge(#month,2)+ge(#month,3)*31+ge(#month,4)*30+ge(#month,5)*31+ge(#month,6)*30+ge(#month,7)*31+ge(#month,8)*31+ge(#month,9)*30+ge(#month,10)*31+ge(#month,11)*30+ge(#month,12)*31)+(365*#year+int(#year/4)+int(#year/400)-int(#year/100))+#date-1*0+2*0" />
+			<VariableCommand name="count_year_dz1" expression="(365*#count_year_y1+int(#count_year_y1/4)+int(#count_year_y1/400)-int(#count_year_y1/100))+2" />
+
+			<!-- 今年还剩多少天: 365 -->
+			<VariableCommand name="CountYear" expression="abs(#count_year_dz1-#count_year_da)" />
+			<!-- +ifelse(eq(#LangsId,2),0,-1) -->
+
+			<!-- 今年还剩多少天: 3 -->
+			<VariableCommand name="CountYearNum_0" expression="int(#CountYear/100%10)" />
+			<!-- 今年还剩多少天: 6 -->
+			<VariableCommand name="CountYearNum_1" expression="int(#CountYear/10%10)" />
+			<!-- 今年还剩多少天: 5 -->
+			<VariableCommand name="CountYearNum_2" expression="int(#CountYear%10)" />
+
+		</Trigger>
+	</Var>
+
+</ROOT>

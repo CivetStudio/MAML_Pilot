@@ -1,0 +1,38 @@
+<ROOT>
+    <Var name="__mScreenId_Var" expression="#mScreenId_Var" threshold="1">
+        <Trigger>
+            <VariableCommand name="resume_flag" expression="0" />
+            <VariableCommand name="resume_flag" expression="1" delay="400" />
+            <VariableCommand name="mResumeTime" expression="0" />
+            <VariableCommand name="mResumeTime_1" expression="0" />
+            <VariableCommand name="mResumeTime_2" expression="0" />
+            <VariableCommand name="mResumeTime_3" expression="0" />
+            <VariableCommand name="mResumeTime_4" expression="0" />
+            <VariableCommand name="mResumeTime_5" expression="0" />
+            <VariableCommand name="mBezierTrans" expression="0" />
+            <VariableCommand name="mBezierTrans_1" expression="0" />
+            <VariableCommand name="mBezierTrans_2" expression="0" />
+            <VariableCommand name="mBezierTrans_3" expression="0" />
+            <VariableCommand name="mBezierTrans_4" expression="0" />
+            <VariableCommand name="mBezierTrans_5" expression="0" />
+            <Command target="mBezierSys.animation" value="stop" condition="ne(#LangsId,4)" />
+            <Command target="mBezierSys.animation" value="play(0,0)" condition="eq(#LangsId,4)" />
+            <Command target="mBezierSys.animation" value="play" />
+            <Command target="mBezierSys_1.animation" value="stop" condition="ne(#LangsId,4)" />
+            <Command target="mBezierSys_1.animation" value="play(0,0)" condition="eq(#LangsId,4)" />
+            <Command target="mBezierSys_1.animation" value="play" />
+            <Command target="mBezierSys_2.animation" value="stop" condition="ne(#LangsId,4)" />
+            <Command target="mBezierSys_2.animation" value="play(0,0)" condition="eq(#LangsId,4)" />
+            <Command target="mBezierSys_2.animation" value="play" />
+            <Command target="mBezierSys_3.animation" value="stop" condition="ne(#LangsId,4)" />
+            <Command target="mBezierSys_3.animation" value="play(0,0)" condition="eq(#LangsId,4)" />
+            <Command target="mBezierSys_3.animation" value="play" />
+            <Command target="mBezierSys_4.animation" value="stop" condition="ne(#LangsId,4)" />
+            <Command target="mBezierSys_4.animation" value="play(0,0)" condition="eq(#LangsId,4)" />
+            <Command target="mBezierSys_4.animation" value="play" />
+            <Command target="mBezierSys_5.animation" value="stop" condition="ne(#LangsId,4)" />
+            <Command target="mBezierSys_5.animation" value="play(0,0)" condition="eq(#LangsId,4)" />
+            <Command target="mBezierSys_5.animation" value="play" />
+        </Trigger>
+    </Var>
+</ROOT>

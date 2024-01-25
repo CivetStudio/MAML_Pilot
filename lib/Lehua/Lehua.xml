@@ -1,0 +1,14 @@
+<ROOT>
+
+	<ValueHolder name="LehuaVisibility" />
+	<ValueHolder name="LehuaCondition" />
+
+	<SupportPictorialButton w="1080" h="#screen_height" visibility="LehuaVisibility" >
+		<Triggers>
+			<Trigger action="up">
+				<IntentCommand action="com.heytap.pictorial.action.START_PICTURE_MODE" category="android.intent.category.DEFAULT" package="com.heytap.pictorial" class="com.heytap.pictorial.ui.slide.PictorialSlideActivity" condition="gt(#touch_begin_x-#touch_x,250)*LehuaCondition" />
+			</Trigger>
+		</Triggers>
+	</SupportPictorialButton>
+
+</ROOT>

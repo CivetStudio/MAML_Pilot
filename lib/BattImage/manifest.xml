@@ -1,0 +1,30 @@
+<Template>
+
+	<Props>
+		<item name="id" type="string" description="唯一标识码" default="_x" />
+		<item name="x" type="string" description="X坐标" default="540" />
+		<item name="y" type="string" description="Y坐标" default="#screen_height/2" />
+		<item name="align" type="string" description="横向对齐方式" default="1" />
+		<item name="alignV" type="string" description="纵向对齐方式" default="center" />
+		<item name="visibility" type="string" description="可见性" default="1" />
+		<item name="src" type="string" description="图片源" default="assets/general_num.png" />
+		<item name="src_unit" type="string" description="图片源-百分比" default="assets/general_num_pct.png" />
+		<item name="number" type="string" description="绑定变量" default="#battery_level" />
+		<item name="unit_space" type="string" description="百分比间距" default="0" />
+		<item name="space" type="string" description="图片源-间距" default="0" />
+		<!-- <item name="hide_zero" type="string" description="隐藏数字0" default="1" /> -->
+	</Props>
+
+	<!-- <Var name="mBattImage_align" expression="ifelse(eqs('$align','left'),0,eqs('$align','right'),2,1)" type="number" /> -->
+	<Var name="$id_mBattLevelImg.bmp_width" expression="#$id_mBattLevelImg.a.bmp_width+#$id_mBattLevelImg.b.bmp_width+#$id_mBattLevelImg.c.bmp_width+2*($space)" type="number" />
+	<Group x="$x-(#$id_mBattLevelImg.bmp_width+2+($unit_space)+#$id_mBattLevelPct.bmp_width)/2*$align" visibility="$visibility" >
+		<!-- <ImageNumber x="0" y="$y" align="left" alignV="$alignV" src="$src" number="$number" name="$id_mBattLevelImg" space="$space" /> -->
+		<Image x="0" y="$y" align="left" alignV="$alignV" src="$src" srcid="int($number/100%10)" name="$id_mBattLevelImg.a" visibility="ifelse(eq($number,#battery_level)+1,ge($number,100),1)" />
+		<Image x="0+#$id_mBattLevelImg.a.bmp_width+($space)" y="$y" align="left" alignV="$alignV" src="$src" srcid="int($number/10%10)" name="$id_mBattLevelImg.b" visibility="ifelse(eq($number,#battery_level)+1,ge($number,10),1)" />
+		<Image x="0+#$id_mBattLevelImg.a.bmp_width+($space)+#$id_mBattLevelImg.b.bmp_width+($space)" y="$y" align="left" alignV="$alignV" src="$src" srcid="int($number/1%10)" name="$id_mBattLevelImg.c" visibility="ifelse(eq($number,#battery_level)+1,ge($number,1),1)" />
+		<Image x="0+#$id_mBattLevelImg.bmp_width+2+($unit_space)" y="$y" align="left" alignV="$alignV" src="$src_unit" name="$id_mBattLevelPct" />
+	</Group>
+
+	<!-- <BattImage x="740" y="416" align="center" alignV="center" src="assets/general_num.png" src_unit="assets/general_num_pct.png" number="#battery_level" /> -->
+
+</Template>

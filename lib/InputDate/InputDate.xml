@@ -1,0 +1,446 @@
+<ROOT>
+
+	<ValueHolder name="CountStartVal" value="0" alias="倒计时输入格式：0年月日(yyyy/MM/dd) 1月日(MM/dd) 2日(dd)" />
+	<ValueHolder name="CountDigitVal" value="8" alias="0年月日最大输入位数" />
+
+	<!-- 打开倒计时设置面板按钮 -->
+	<ValueHolder name="CountActBtnX" alias="X坐标" />
+	<ValueHolder name="CountActBtnY" alias="Y坐标" />
+	<ValueHolder name="CountActBtnW" alias="宽度" />
+	<ValueHolder name="CountActBtnH" alias="高度" />
+	<ValueHolder name="CountActBtnA" alias="0点击 1双击" />
+
+	<!-- 倒计时设置面板 -->
+	<ValueHolder name="CountSetBgX" alias="X坐标" />
+	<ValueHolder name="CountSetBgY" alias="Y坐标" />
+	<ValueHolder name="CountSetBgSrc" alias="背景图片路径" />
+	<ValueHolder name="CountSetBgV" alias="可见性" />
+
+	<!-- 倒计时设置面板-下划线数字素材 -->
+	<ValueHolder name="CountSetNumX_0" alias="年份X坐标" />
+	<ValueHolder name="CountSetNumX_1" alias="月份X坐标" />
+	<ValueHolder name="CountSetNumX_2" alias="日期X坐标" />
+	<ValueHolder name="CountSetNumY" alias="Y坐标" />
+	<!-- <ValueHolder name="CountSetNumImg_W" alias="单个数字图片宽度" /> -->
+	<ValueHolder name="CountSetNumImg_W" alias="数字图片宽度" />
+	<ValueHolder name="CountSetNumImg_H" alias="数字图片高度" />
+	<ValueHolder name="CountSetNumSrc" alias="图片路径" />
+
+	<!-- 数字输入按钮 -->
+	<ValueHolder name="CountSetBtnX_1" alias="数字1-按钮X坐标" />
+	<ValueHolder name="CountSetBtnX_2" alias="数字2-按钮X坐标" />
+	<ValueHolder name="CountSetBtnX_3" alias="数字3-按钮X坐标" />
+	<ValueHolder name="CountSetBtnX_4" alias="数字4-按钮X坐标" />
+	<ValueHolder name="CountSetBtnX_5" alias="数字5-按钮X坐标" />
+
+	<ValueHolder name="CountSetBtnY_1" alias="数字1-按钮Y坐标" />
+	<ValueHolder name="CountSetBtnY_2" alias="数字2-按钮Y坐标" />
+	<ValueHolder name="CountSetBtnY_3" alias="数字3-按钮Y坐标" />
+	<ValueHolder name="CountSetBtnY_4" alias="数字4-按钮Y坐标" />
+	<ValueHolder name="CountSetBtnY_5" alias="数字5-按钮Y坐标" />
+
+	<ValueHolder name="CountSetBtnX_6" alias="数字6-按钮X坐标" />
+	<ValueHolder name="CountSetBtnX_7" alias="数字7-按钮X坐标" />
+	<ValueHolder name="CountSetBtnX_8" alias="数字8-按钮X坐标" />
+	<ValueHolder name="CountSetBtnX_9" alias="数字9-按钮X坐标" />
+	<ValueHolder name="CountSetBtnX_0" alias="数字0-按钮X坐标" />
+
+	<ValueHolder name="CountSetBtnY_6" alias="数字6-按钮Y坐标" />
+	<ValueHolder name="CountSetBtnY_7" alias="数字7-按钮Y坐标" />
+	<ValueHolder name="CountSetBtnY_8" alias="数字8-按钮Y坐标" />
+	<ValueHolder name="CountSetBtnY_9" alias="数字9-按钮Y坐标" />
+	<ValueHolder name="CountSetBtnY_0" alias="数字0-按钮Y坐标" />
+
+	<ValueHolder name="CountSetBtnW_a" alias="数字-按钮宽度" />
+	<ValueHolder name="CountSetBtnH_a" alias="数字-按钮高度" />
+
+	<ValueHolder name="CountSetBtnX_C" alias="清除-按钮X坐标" />
+	<ValueHolder name="CountSetBtnX_D" alias="确定并退出-按钮X坐标" />
+
+	<ValueHolder name="CountSetBtnY_C" alias="清除-按钮Y坐标" />
+	<ValueHolder name="CountSetBtnY_D" alias="确定并退出-按钮Y坐标" />
+
+	<ValueHolder name="CountSetBtnW_b" alias="清除/确定-按钮宽度" />
+	<ValueHolder name="CountSetBtnH_b" alias="清除/确定-按钮高度" />
+
+	<PlaceHolder name="InputDateVar" />
+
+	<ExternalCommands>
+
+		<Trigger action="resume" >
+
+			<VariableCommand name="CountDateSet" expression="0" persist="true" />
+			<VariableCommand name="InputYearNum" expression="ifelse(eq(CountStartVal,0),-1,eq(CountStartVal,1),3,5)" persist="true" />
+
+		</Trigger>
+
+		<Trigger action="pause" >
+
+			<VariableCommand name="CountDateSet" expression="0" persist="true" />
+			<VariableCommand name="InputYearNum" expression="ifelse(eq(CountStartVal,0),-1,eq(CountStartVal,1),3,5)" persist="true" />
+
+		</Trigger>
+
+	</ExternalCommands>
+
+	<!-- 自动循环法 -->
+	<Var name="_y1f4" expression="#time" threshold="1" >
+		<Trigger>
+
+			<VariableCommand name="Exam_Year" expression="#year" persist="true" />
+
+			<VariableCommand name="Exam_Leap" expression="eq((#Exam_Year%4),0)*ne((#Exam_Year%100),0)+eq((#Exam_Year%400),0)" persist="true" />
+			<VariableCommand name="Exam_AllDays" expression="(ge(#month,1)*31+(28+#Exam_Leap)*ge(#month,2)+ge(#month,3)*31+ge(#month,4)*30+ge(#month,5)*31+ge(#month,6)*30+ge(#month,7)*31+ge(#month,8)*31+ge(#month,9)*30+ge(#month,10)*31+ge(#month,11)*30+ge(#month,12)*31)+(365*#Exam_Year+int(#Exam_Year/4)+int(#Exam_Year/400)-int(#Exam_Year/100))+#date-1+2" persist="true" />
+
+			<VariableCommand name="Exam_Month" expression="max(min(#EventMonth,12),1)" persist="true" />
+			<VariableCommand name="Exam_Date" expression="max(min(#EventDate,#EventMaxDate),1)" persist="true" />
+			<VariableCommand name="EventYear" expression="#EventYear_0*1000+#EventYear_1*100+#EventYear_2*10+#EventYear_3" persist="true" />
+
+			<VariableCommand name="EventMonth" expression="max(min(#EventMonth_0*10+#EventMonth_1,12),1)" persist="true" />
+			<VariableCommand name="EventDate" expression="max(min(#EventDate_0*10+#EventDate_1,#EventMaxDate),1)" persist="true" />
+
+			<VariableCommand name="EventMaxDate" expression="ifelse(eq(#Exam_Month,1),31,eq(#Exam_Month,2),28+#Exam_lyz1,eq(#Exam_Month,3),31,eq(#Exam_Month,4),30,eq(#Exam_Month,5),31,eq(#Exam_Month,6),30,eq(#Exam_Month,7),31,eq(#Exam_Month,8),31,eq(#Exam_Month,9),30,eq(#Exam_Month,10),31,eq(#Exam_Month,11),30,eq(#Exam_Month,12),31,31)" persist="true" />
+
+			<VariableCommand name="Exam_NowDays" expression="(gt(#Exam_Month,1)*31+(28+#Exam_Leap)*gt(#Exam_Month,2)+gt(#Exam_Month,3)*31+gt(#Exam_Month,4)*30+gt(#Exam_Month,5)*31+gt(#Exam_Month,6)*30+gt(#Exam_Month,7)*31+gt(#Exam_Month,8)*31+gt(#Exam_Month,9)*30+gt(#Exam_Month,10)*31+gt(#Exam_Month,11)*30+gt(#Exam_Month,12)*31)+(365*#Exam_Year+int(#Exam_Year/4)+int(#Exam_Year/400)-int(#Exam_Year/100))+#Exam_Date-1*0+2*0" persist="true" />
+
+			<VariableCommand name="Exam_CountDays_In" expression="#Exam_NowDays-#Exam_AllDays+1" persist="true" />
+			<VariableCommand name="Exam_CountDays_A" expression="ifelse(lt(#Exam_CountDays_In,0),#Exam_CountDays_In+(365+#Exam_Leap)*max(1,abs(round(#Exam_CountDays_In/(365+#Exam_Leap)))),eq(#Exam_CountDays_In,0),0,#Exam_CountDays_In)" persist="true" />
+			<VariableCommand name="Exam_CountDays" expression="ifelse(ge(#LangsId,5),max(#Exam_CountDays_A-1,0),#Exam_CountDays_A)" persist="true" />
+
+			<VariableCommand name="CountBgNum_0" expression="int(#Exam_CountDays/100%10)" persist="true" />
+			<VariableCommand name="CountBgNum_1" expression="int(#Exam_CountDays/10%10)" persist="true" />
+			<VariableCommand name="CountBgNum_2" expression="int(#Exam_CountDays%10)" persist="true" />
+
+			<VariableCommand name="CountBgNumF_0" expression="int(#Exam_CountDays/10000%10)" persist="true" />
+			<VariableCommand name="CountBgNumF_1" expression="int(#Exam_CountDays/1000%10)" persist="true" />
+			<VariableCommand name="CountBgNumF_2" expression="int(#Exam_CountDays/100%10)" persist="true" />
+			<VariableCommand name="CountBgNumF_3" expression="int(#Exam_CountDays/10%10)" persist="true" />
+			<VariableCommand name="CountBgNumF_4" expression="int(#Exam_CountDays/1%10)" persist="true" />
+			<VariableCommand name="Exam_Age" expression="#year-#EventYear" persist="true" />
+
+		</Trigger>
+	</Var>
+
+	<!-- 打开倒计时设置面板 -->
+
+	<Button x="CountActBtnX" y="CountActBtnY" w="CountActBtnW" h="CountActBtnH" visibility="eq(CountActBtnA,0)" >
+		<Triggers>
+			<Trigger action="up" >
+				<VariableCommand name="CountDateSet" expression="1" persist="true" type="number" condition="$#tc$" />
+			</Trigger>
+		</Triggers>
+	</Button>
+	<Button x="CountActBtnX" y="CountActBtnY" w="CountActBtnW" h="CountActBtnH" visibility="eq(CountActBtnA,1)" >
+		<Triggers>
+			<Trigger action="double" >
+				<VariableCommand name="CountDateSet" expression="1" persist="true" type="number" />
+			</Trigger>
+		</Triggers>
+	</Button>
+
+	<!-- 设置面板-1 -->
+
+	<Button x="CountSetBtnX_1" y="CountSetBtnY_1" w="CountSetBtnW_a" h="CountSetBtnH_a" visibility="eq(#noticeDown,0)*eq(#CountDateSet,1)" >
+		<Triggers>
+			<Trigger action="up" >
+
+				<VariableCommand name="InputYearNum" expression="min(#InputYearNum+1,int(CountDigitVal-1))" persist="true" condition="#CountDateSet" />
+				<VariableCommand name="EventYear_0" expression="1" persist="true" condition="#CountDateSet*eq(#InputYearNum,0)" />
+				<VariableCommand name="EventYear_1" expression="1" persist="true" condition="#CountDateSet*eq(#InputYearNum,1)" />
+				<VariableCommand name="EventYear_2" expression="1" persist="true" condition="#CountDateSet*eq(#InputYearNum,2)" />
+				<VariableCommand name="EventYear_3" expression="1" persist="true" condition="#CountDateSet*eq(#InputYearNum,3)" />
+
+				<VariableCommand name="EventMonth_0" expression="1" persist="true" condition="#CountDateSet*eq(#InputYearNum,4)" />
+				<VariableCommand name="EventMonth_1" expression="1" persist="true" condition="#CountDateSet*eq(#InputYearNum,5)" />
+
+				<VariableCommand name="EventDate_0" expression="1" persist="true" condition="#CountDateSet*eq(#InputYearNum,6)" />
+				<VariableCommand name="EventDate_1" expression="1" persist="true" condition="#CountDateSet*eq(#InputYearNum,7)" />
+
+			</Trigger>
+		</Triggers>
+	</Button>
+
+	<!-- 设置面板-2 -->
+
+	<Button x="CountSetBtnX_2" y="CountSetBtnY_2" w="CountSetBtnW_a" h="CountSetBtnH_a" visibility="eq(#noticeDown,0)*eq(#CountDateSet,1)" >
+		<Triggers>
+			<Trigger action="up" >
+
+				<VariableCommand name="InputYearNum" expression="min(#InputYearNum+1,int(CountDigitVal-1))" persist="true" condition="#CountDateSet" />
+				<VariableCommand name="EventYear_0" expression="2" persist="true" condition="#CountDateSet*eq(#InputYearNum,0)" />
+				<VariableCommand name="EventYear_1" expression="2" persist="true" condition="#CountDateSet*eq(#InputYearNum,1)" />
+				<VariableCommand name="EventYear_2" expression="2" persist="true" condition="#CountDateSet*eq(#InputYearNum,2)" />
+				<VariableCommand name="EventYear_3" expression="2" persist="true" condition="#CountDateSet*eq(#InputYearNum,3)" />
+
+				<VariableCommand name="EventMonth_0" expression="2" persist="true" condition="#CountDateSet*eq(#InputYearNum,4)" />
+				<VariableCommand name="EventMonth_1" expression="2" persist="true" condition="#CountDateSet*eq(#InputYearNum,5)" />
+
+				<VariableCommand name="EventDate_0" expression="2" persist="true" condition="#CountDateSet*eq(#InputYearNum,6)" />
+				<VariableCommand name="EventDate_1" expression="2" persist="true" condition="#CountDateSet*eq(#InputYearNum,7)" />
+
+			</Trigger>
+		</Triggers>
+	</Button>
+
+	<!-- 设置面板-3 -->
+
+	<Button x="CountSetBtnX_3" y="CountSetBtnY_3" w="CountSetBtnW_a" h="CountSetBtnH_a" visibility="eq(#noticeDown,0)*eq(#CountDateSet,1)" >
+		<Triggers>
+			<Trigger action="up" >
+
+				<VariableCommand name="InputYearNum" expression="min(#InputYearNum+1,int(CountDigitVal-1))" persist="true" condition="#CountDateSet" />
+				<VariableCommand name="EventYear_0" expression="3" persist="true" condition="#CountDateSet*eq(#InputYearNum,0)" />
+				<VariableCommand name="EventYear_1" expression="3" persist="true" condition="#CountDateSet*eq(#InputYearNum,1)" />
+				<VariableCommand name="EventYear_2" expression="3" persist="true" condition="#CountDateSet*eq(#InputYearNum,2)" />
+				<VariableCommand name="EventYear_3" expression="3" persist="true" condition="#CountDateSet*eq(#InputYearNum,3)" />
+
+				<VariableCommand name="EventMonth_0" expression="3" persist="true" condition="#CountDateSet*eq(#InputYearNum,4)" />
+				<VariableCommand name="EventMonth_1" expression="3" persist="true" condition="#CountDateSet*eq(#InputYearNum,5)" />
+
+				<VariableCommand name="EventDate_0" expression="3" persist="true" condition="#CountDateSet*eq(#InputYearNum,6)" />
+				<VariableCommand name="EventDate_1" expression="3" persist="true" condition="#CountDateSet*eq(#InputYearNum,7)" />
+
+			</Trigger>
+		</Triggers>
+	</Button>
+
+	<!-- 设置面板-4 -->
+
+	<Button x="CountSetBtnX_4" y="CountSetBtnY_4" w="CountSetBtnW_a" h="CountSetBtnH_a" visibility="eq(#noticeDown,0)*eq(#CountDateSet,1)" >
+		<Triggers>
+			<Trigger action="up" >
+
+				<VariableCommand name="InputYearNum" expression="min(#InputYearNum+1,int(CountDigitVal-1))" persist="true" condition="#CountDateSet" />
+				<VariableCommand name="EventYear_0" expression="4" persist="true" condition="#CountDateSet*eq(#InputYearNum,0)" />
+				<VariableCommand name="EventYear_1" expression="4" persist="true" condition="#CountDateSet*eq(#InputYearNum,1)" />
+				<VariableCommand name="EventYear_2" expression="4" persist="true" condition="#CountDateSet*eq(#InputYearNum,2)" />
+				<VariableCommand name="EventYear_3" expression="4" persist="true" condition="#CountDateSet*eq(#InputYearNum,3)" />
+
+				<VariableCommand name="EventMonth_0" expression="4" persist="true" condition="#CountDateSet*eq(#InputYearNum,4)" />
+				<VariableCommand name="EventMonth_1" expression="4" persist="true" condition="#CountDateSet*eq(#InputYearNum,5)" />
+
+				<VariableCommand name="EventDate_0" expression="4" persist="true" condition="#CountDateSet*eq(#InputYearNum,6)" />
+				<VariableCommand name="EventDate_1" expression="4" persist="true" condition="#CountDateSet*eq(#InputYearNum,7)" />
+
+			</Trigger>
+		</Triggers>
+	</Button>
+
+	<!-- 设置面板-5 -->
+
+	<Button x="CountSetBtnX_5" y="CountSetBtnY_5" w="CountSetBtnW_a" h="CountSetBtnH_a" visibility="eq(#noticeDown,0)*eq(#CountDateSet,1)" >
+		<Triggers>
+			<Trigger action="up" >
+
+				<VariableCommand name="InputYearNum" expression="min(#InputYearNum+1,int(CountDigitVal-1))" persist="true" condition="#CountDateSet" />
+				<VariableCommand name="EventYear_0" expression="5" persist="true" condition="#CountDateSet*eq(#InputYearNum,0)" />
+				<VariableCommand name="EventYear_1" expression="5" persist="true" condition="#CountDateSet*eq(#InputYearNum,1)" />
+				<VariableCommand name="EventYear_2" expression="5" persist="true" condition="#CountDateSet*eq(#InputYearNum,2)" />
+				<VariableCommand name="EventYear_3" expression="5" persist="true" condition="#CountDateSet*eq(#InputYearNum,3)" />
+
+				<VariableCommand name="EventMonth_0" expression="5" persist="true" condition="#CountDateSet*eq(#InputYearNum,4)" />
+				<VariableCommand name="EventMonth_1" expression="5" persist="true" condition="#CountDateSet*eq(#InputYearNum,5)" />
+
+				<VariableCommand name="EventDate_0" expression="5" persist="true" condition="#CountDateSet*eq(#InputYearNum,6)" />
+				<VariableCommand name="EventDate_1" expression="5" persist="true" condition="#CountDateSet*eq(#InputYearNum,7)" />
+
+			</Trigger>
+		</Triggers>
+	</Button>
+
+	<!-- 设置面板-6 -->
+
+	<Button x="CountSetBtnX_6" y="CountSetBtnY_6" w="CountSetBtnW_a" h="CountSetBtnH_a" visibility="eq(#noticeDown,0)*eq(#CountDateSet,1)" >
+		<Triggers>
+			<Trigger action="up" >
+
+				<VariableCommand name="InputYearNum" expression="min(#InputYearNum+1,int(CountDigitVal-1))" persist="true" condition="#CountDateSet" />
+				<VariableCommand name="EventYear_0" expression="6" persist="true" condition="#CountDateSet*eq(#InputYearNum,0)" />
+				<VariableCommand name="EventYear_1" expression="6" persist="true" condition="#CountDateSet*eq(#InputYearNum,1)" />
+				<VariableCommand name="EventYear_2" expression="6" persist="true" condition="#CountDateSet*eq(#InputYearNum,2)" />
+				<VariableCommand name="EventYear_3" expression="6" persist="true" condition="#CountDateSet*eq(#InputYearNum,3)" />
+
+				<VariableCommand name="EventMonth_0" expression="6" persist="true" condition="#CountDateSet*eq(#InputYearNum,4)" />
+				<VariableCommand name="EventMonth_1" expression="6" persist="true" condition="#CountDateSet*eq(#InputYearNum,5)" />
+
+				<VariableCommand name="EventDate_0" expression="6" persist="true" condition="#CountDateSet*eq(#InputYearNum,6)" />
+				<VariableCommand name="EventDate_1" expression="6" persist="true" condition="#CountDateSet*eq(#InputYearNum,7)" />
+
+			</Trigger>
+		</Triggers>
+	</Button>
+
+	<!-- 设置面板-7 -->
+
+	<Button x="CountSetBtnX_7" y="CountSetBtnY_7" w="CountSetBtnW_a" h="CountSetBtnH_a" visibility="eq(#noticeDown,0)*eq(#CountDateSet,1)" >
+		<Triggers>
+			<Trigger action="up" >
+
+				<VariableCommand name="InputYearNum" expression="min(#InputYearNum+1,int(CountDigitVal-1))" persist="true" condition="#CountDateSet" />
+				<VariableCommand name="EventYear_0" expression="7" persist="true" condition="#CountDateSet*eq(#InputYearNum,0)" />
+				<VariableCommand name="EventYear_1" expression="7" persist="true" condition="#CountDateSet*eq(#InputYearNum,1)" />
+				<VariableCommand name="EventYear_2" expression="7" persist="true" condition="#CountDateSet*eq(#InputYearNum,2)" />
+				<VariableCommand name="EventYear_3" expression="7" persist="true" condition="#CountDateSet*eq(#InputYearNum,3)" />
+
+				<VariableCommand name="EventMonth_0" expression="7" persist="true" condition="#CountDateSet*eq(#InputYearNum,4)" />
+				<VariableCommand name="EventMonth_1" expression="7" persist="true" condition="#CountDateSet*eq(#InputYearNum,5)" />
+
+				<VariableCommand name="EventDate_0" expression="7" persist="true" condition="#CountDateSet*eq(#InputYearNum,6)" />
+				<VariableCommand name="EventDate_1" expression="7" persist="true" condition="#CountDateSet*eq(#InputYearNum,7)" />
+
+			</Trigger>
+		</Triggers>
+	</Button>
+
+	<!-- 设置面板-8 -->
+
+	<Button x="CountSetBtnX_8" y="CountSetBtnY_8" w="CountSetBtnW_a" h="CountSetBtnH_a" visibility="eq(#noticeDown,0)*eq(#CountDateSet,1)" >
+		<Triggers>
+			<Trigger action="up" >
+
+				<VariableCommand name="InputYearNum" expression="min(#InputYearNum+1,int(CountDigitVal-1))" persist="true" condition="#CountDateSet" />
+				<VariableCommand name="EventYear_0" expression="8" persist="true" condition="#CountDateSet*eq(#InputYearNum,0)" />
+				<VariableCommand name="EventYear_1" expression="8" persist="true" condition="#CountDateSet*eq(#InputYearNum,1)" />
+				<VariableCommand name="EventYear_2" expression="8" persist="true" condition="#CountDateSet*eq(#InputYearNum,2)" />
+				<VariableCommand name="EventYear_3" expression="8" persist="true" condition="#CountDateSet*eq(#InputYearNum,3)" />
+
+				<VariableCommand name="EventMonth_0" expression="8" persist="true" condition="#CountDateSet*eq(#InputYearNum,4)" />
+				<VariableCommand name="EventMonth_1" expression="8" persist="true" condition="#CountDateSet*eq(#InputYearNum,5)" />
+
+				<VariableCommand name="EventDate_0" expression="8" persist="true" condition="#CountDateSet*eq(#InputYearNum,6)" />
+				<VariableCommand name="EventDate_1" expression="8" persist="true" condition="#CountDateSet*eq(#InputYearNum,7)" />
+
+			</Trigger>
+		</Triggers>
+	</Button>
+
+	<!-- 设置面板-9 -->
+
+	<Button x="CountSetBtnX_9" y="CountSetBtnY_9" w="CountSetBtnW_a" h="CountSetBtnH_a" visibility="eq(#noticeDown,0)*eq(#CountDateSet,1)" >
+		<Triggers>
+			<Trigger action="up" >
+
+				<VariableCommand name="InputYearNum" expression="min(#InputYearNum+1,int(CountDigitVal-1))" persist="true" condition="#CountDateSet" />
+				<VariableCommand name="EventYear_0" expression="9" persist="true" condition="#CountDateSet*eq(#InputYearNum,0)" />
+				<VariableCommand name="EventYear_1" expression="9" persist="true" condition="#CountDateSet*eq(#InputYearNum,1)" />
+				<VariableCommand name="EventYear_2" expression="9" persist="true" condition="#CountDateSet*eq(#InputYearNum,2)" />
+				<VariableCommand name="EventYear_3" expression="9" persist="true" condition="#CountDateSet*eq(#InputYearNum,3)" />
+
+				<VariableCommand name="EventMonth_0" expression="9" persist="true" condition="#CountDateSet*eq(#InputYearNum,4)" />
+				<VariableCommand name="EventMonth_1" expression="9" persist="true" condition="#CountDateSet*eq(#InputYearNum,5)" />
+
+				<VariableCommand name="EventDate_0" expression="9" persist="true" condition="#CountDateSet*eq(#InputYearNum,6)" />
+				<VariableCommand name="EventDate_1" expression="9" persist="true" condition="#CountDateSet*eq(#InputYearNum,7)" />
+
+			</Trigger>
+		</Triggers>
+	</Button>
+
+	<!-- 设置面板-0 -->
+
+	<Button x="CountSetBtnX_0" y="CountSetBtnY_0" w="CountSetBtnW_a" h="CountSetBtnH_a" visibility="eq(#noticeDown,0)*eq(#CountDateSet,1)" >
+		<Triggers>
+			<Trigger action="up" >
+
+				<VariableCommand name="InputYearNum" expression="min(#InputYearNum+1,int(CountDigitVal-1))" persist="true" condition="#CountDateSet" />
+				<VariableCommand name="EventYear_0" expression="0" persist="true" condition="#CountDateSet*eq(#InputYearNum,0)" />
+				<VariableCommand name="EventYear_1" expression="0" persist="true" condition="#CountDateSet*eq(#InputYearNum,1)" />
+				<VariableCommand name="EventYear_2" expression="0" persist="true" condition="#CountDateSet*eq(#InputYearNum,2)" />
+				<VariableCommand name="EventYear_3" expression="0" persist="true" condition="#CountDateSet*eq(#InputYearNum,3)" />
+
+				<VariableCommand name="EventMonth_0" expression="0" persist="true" condition="#CountDateSet*eq(#InputYearNum,4)" />
+				<VariableCommand name="EventMonth_1" expression="0" persist="true" condition="#CountDateSet*eq(#InputYearNum,5)" />
+
+				<VariableCommand name="EventDate_0" expression="0" persist="true" condition="#CountDateSet*eq(#InputYearNum,6)" />
+				<VariableCommand name="EventDate_1" expression="0" persist="true" condition="#CountDateSet*eq(#InputYearNum,7)" />
+
+			</Trigger>
+		</Triggers>
+	</Button>
+
+	<!-- 设置面板-清除 -->
+
+	<Button x="CountSetBtnX_C" y="CountSetBtnY_C" w="CountSetBtnW_b" h="CountSetBtnH_b" visibility="eq(#noticeDown,0)*eq(#CountDateSet,1)" >
+		<Triggers>
+			<Trigger action="up" >
+
+				<VariableCommand name="CountUpdateValueY" expression="0" persist="true" condition="#CountDateSet*le(#InputYearNum,0)" />
+				<VariableCommand name="CountUpdateValueM" expression="0" persist="true" condition="#CountDateSet*le(#InputYearNum,0)" />
+				<VariableCommand name="CountUpdateValueD" expression="0" persist="true" condition="#CountDateSet*le(#InputYearNum,0)" />
+
+				<VariableCommand name="InputYearNum" expression="max(#InputYearNum-1,ifelse(eq(CountStartVal,0),-1,eq(CountStartVal,1),3,5))" persist="true" condition="#CountDateSet" />
+				<VariableCommand name="EventYear_0" expression="0" persist="true" condition="#CountDateSet*lt(#InputYearNum,0)" />
+				<VariableCommand name="EventYear_1" expression="0" persist="true" condition="#CountDateSet*lt(#InputYearNum,0)" />
+				<VariableCommand name="EventYear_2" expression="0" persist="true" condition="#CountDateSet*lt(#InputYearNum,0)" />
+				<VariableCommand name="EventYear_3" expression="0" persist="true" condition="#CountDateSet*lt(#InputYearNum,0)" />
+
+				<VariableCommand name="EventMonth_0" expression="0" persist="true" condition="#CountDateSet*lt(#InputYearNum,0)" />
+				<VariableCommand name="EventMonth_1" expression="0" persist="true" condition="#CountDateSet*lt(#InputYearNum,0)" />
+
+				<VariableCommand name="EventDate_0" expression="0" persist="true" condition="#CountDateSet*lt(#InputYearNum,0)" />
+				<VariableCommand name="EventDate_1" expression="0" persist="true" condition="#CountDateSet*lt(#InputYearNum,0)" />
+
+			</Trigger>
+		</Triggers>
+	</Button>
+
+	<!-- 设置面板-确定并退出 #CountExit #CountExitVar -->
+
+	<Button x="CountSetBtnX_D" y="CountSetBtnY_D" w="CountSetBtnW_b" h="CountSetBtnH_b" visibility="eq(#noticeDown,0)*eq(#CountDateSet,1)" >
+		<Triggers>
+			<Trigger action="up" >
+				<VariableCommand name="CountDateSet" expression="not(#CountDateSet)" persist="true" condition="eq(#CountDateSet,1)*eq(#CountExit,0)" />
+				<VariableCommand name="CountExitVar" expression="int(#CountExitVar+1)" persist="true" condition="eq(#CountDateSet,1)" />
+
+				<VariableCommand name="CountUpdateValueY" expression="1" persist="true" condition="eq(#CountDateSet,1)" />
+				<VariableCommand name="CountUpdateValueM" expression="1" persist="true" condition="eq(#CountDateSet,1)" />
+				<VariableCommand name="CountUpdateValueD" expression="1" persist="true" condition="eq(#CountDateSet,1)" />
+
+			</Trigger>
+		</Triggers>
+	</Button>
+
+	<!-- 倒计时设置面板 -->
+	<Group visibility="eq(#CountDateSet,1)*CountSetBgV" >
+
+		<Image x="CountSetBgX" y="CountSetBgY" align="center" alignV="center" src="CountSetBgSrc" />
+
+		<!-- 年份第一位 -->
+		<Image w="CountSetNumImg_W" h="CountSetNumImg_H" x="CountSetNumX_0-CountSetNumImg_W*1.5" y="CountSetNumY" align="center" alignV="center" src="CountSetNumSrc" srcid="#mCountNum_0" alpha="ifelse(ge(#InputYearNum,0),255,80)" visibility="ge(CountDigitVal,0+1)" />
+		<!-- 年份第二位 -->
+		<Image w="CountSetNumImg_W" h="CountSetNumImg_H" x="CountSetNumX_0-CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" src="CountSetNumSrc" srcid="#mCountNum_1" alpha="ifelse(ge(#InputYearNum,1),255,80)" visibility="ge(CountDigitVal,1+1)" />
+		<!-- 年份第三位 -->
+		<Image w="CountSetNumImg_W" h="CountSetNumImg_H" x="CountSetNumX_0+CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" src="CountSetNumSrc" srcid="#mCountNum_2" alpha="ifelse(ge(#InputYearNum,2),255,80)" visibility="ge(CountDigitVal,2+1)" />
+		<!-- 年份第四位 -->
+		<Image w="CountSetNumImg_W" h="CountSetNumImg_H" x="CountSetNumX_0+CountSetNumImg_W*1.5" y="CountSetNumY" align="center" alignV="center" src="CountSetNumSrc" srcid="#mCountNum_3" alpha="ifelse(ge(#InputYearNum,3),255,80)" visibility="ge(CountDigitVal,3+1)" />
+
+		<!-- 月份第一位 -->
+		<Image w="CountSetNumImg_W" h="CountSetNumImg_H" x="CountSetNumX_1-CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" src="CountSetNumSrc" srcid="#mCountNum_4" alpha="ifelse(ge(#InputYearNum,4),255,80)" visibility="ge(CountDigitVal,4+1)" />
+		<!-- 月份第二位 -->
+		<Image w="CountSetNumImg_W" h="CountSetNumImg_H" x="CountSetNumX_1+CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" src="CountSetNumSrc" srcid="#mCountNum_5" alpha="ifelse(ge(#InputYearNum,5),255,80)" visibility="ge(CountDigitVal,5+1)" />
+		<!-- 日期第一位 -->
+		<Image w="CountSetNumImg_W" h="CountSetNumImg_H" x="CountSetNumX_2-CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" src="CountSetNumSrc" srcid="#mCountNum_6" alpha="ifelse(ge(#InputYearNum,6),255,80)" visibility="ge(CountDigitVal,6+1)" />
+		<!-- 日期第二位 -->
+		<Image w="CountSetNumImg_W" h="CountSetNumImg_H" x="CountSetNumX_2+CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" src="CountSetNumSrc" srcid="#mCountNum_7" alpha="ifelse(ge(#InputYearNum,7),255,80)" visibility="ge(CountDigitVal,7+1)" />
+
+	</Group>
+
+	<!-- 年份第一位 -->
+	<Var name="mCountNum_0" expression="int(#EventYear/1000)" />
+	<!-- 年份第二位 -->
+	<Var name="mCountNum_1" expression="int(#EventYear/100%10)" />
+	<!-- 年份第三位 -->
+	<Var name="mCountNum_2" expression="int(#EventYear/10%10)" />
+	<!-- 年份第四位 -->
+	<Var name="mCountNum_3" expression="int(#EventYear%10)" />
+
+	<!-- 月份第一位 -->
+	<Var name="mCountNum_4" expression="int(max(min(#EventMonth_0*10+#EventMonth_1,12),1)/10)" />
+	<!-- 月份第二位 -->
+	<Var name="mCountNum_5" expression="int(max(min(#EventMonth_0*10+#EventMonth_1,12),1)%10)" />
+	<!-- 日期第一位 -->
+	<Var name="mCountNum_6" expression="int(max(min(#EventDate_0*10+#EventDate_1,#EventMaxDate),1)/10)" />
+	<!-- 日期第二位 -->
+	<Var name="mCountNum_7" expression="int(max(min(#EventDate_0*10+#EventDate_1,#EventMaxDate),1)%10)" />
+
+</ROOT>

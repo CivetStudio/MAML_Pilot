@@ -1,0 +1,10 @@
+<Template>
+
+	<Props>
+		<item name="condition" type="string" description="条件判断" default="$#tc$" />
+	</Props>
+
+    <!-- 网易新闻 -->
+    <IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.netease.newsreader.activity" class="com.netease.nr.biz.ad.newAd.AdActivity" />
+
+</Template>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Lockscreen frameRate="240" screenWidth="1080" version="1" vibrate="false" _dev="civet" _devTime="$_devTime" _splitExt="1" _splitGroup="1" _preload="1" _getSource="0" compiler="true">
+
+	<!-- vivo：删除常驻、精简2退场 -->
+
+	<VariableBinders>
+
+		<ContentProviderBinder name="health1" columns="step" uri="content://deepthinker_data_expositor/health?query_func=step">
+			<Variable name="step" column="step" type="int" />
+		</ContentProviderBinder>
+
+		<ContentProviderBinder name="MiSteps" uri="content://com.mi.health.provider.main/activity/steps/brief" column="steps,goal,distance,energy,strength_duration,summary" countName="hasSteps">
+			<Variable name="MiSteps_steps" type="int" column="steps" />
+		</ContentProviderBinder>
+
+	</VariableBinders>
+
+	<Var name="mSteps" expression="ifelse(eq(#LangsId,4),#MiSteps_steps,max(#steps_value,#step))" type="number" />
+
+	<VariableBinders>
+		<ContentProviderBinder name="WeatherProvider" uri="content://weather/actualWeatherData/1" columns="city_name,weather_type,aqilevel,description,temperature,tmphighs,tmplows" countName="hasweather">
+			<Variable name="weather_location" type="string" column="city_name" />
+			<Variable name="weather_id" type="int" column="weather_type" />
+			<Variable name="weather_temperature" type="int" column="temperature" />
+			<Variable name="weather_description" type="string" column="description" />
+			<Variable name="weather_temphigh" type="int" column="tmphighs" />
+			<Variable name="weather_templow" type="int" column="tmplows" />
+		</ContentProviderBinder>
+	</VariableBinders>
+
+	<C_Array count="10" indexName="_i">
+
+		<Button x="10+#_i*10" y="10" w="100" h="100" visibility="1">
+			<Triggers>
+				<Trigger action="up">
+					<VariableCommand name="name_#_i" expression="5*#_i" type="number" />
+				</Trigger>
+			</Triggers>
+		</Button>
+
+		<Button x="500+#_i*500" y="600" w="900" h="900" visibility="300">
+			<Triggers>
+				<Trigger action="up">
+					<VariableCommand name="nnnnnn_#_i" expression="300*#_i" type="number" />
+				</Trigger>
+			</Triggers>
+		</Button>
+
+		<Text x="100+#Ani_#_i*300" y="100+#_i*100" color="#ff0000" size="50" text="Ani_#_i" />
+		<Image x="50+#_i*60" y="60+#_i*90" src="img.png" srcid="#_i" />
+
+	</C_Array>
+
+</Lockscreen>

@@ -1,0 +1,20 @@
+<Template>
+
+	<Props>
+		<item name="condition" type="string" description="条件判断" default="$#tc$" />
+	</Props>
+
+	<!-- 音乐 -->
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.miui.player" class="com.miui.player.ui.MusicBrowserActivity" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.android.bbkmusic" class="com.android.bbkmusic.MusicMainActivity" />
+	<!-- alias="mCivetCode_5" -->
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.oppo.music" class="com.oppo.music.MainListActivity" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.oppo.music" class="com.nearme.music.splash.SplashActivity" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.heytap.music" class="com.nearme.music.splash.SplashActivity" />
+	<!-- 新版 -->
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.oppo.music" class="com.allsaints.music.MainActivity" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.heytap.music" class="com.allsaints.music.MainActivity" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.heytap.music" class="com.allsaints.music.ui.splash.SplashActivity" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.android.mediacenter" class="com.android.mediacenter.PageActivity" />
+
+</Template>

@@ -1,0 +1,25 @@
+<Template>
+	<Props>
+		<item name="x" type="string" description="X坐标" default="0" />
+		<item name="y" type="string" description="Y坐标" default="10" />
+		<item name="w" type="string" description="宽度" default="60" />
+		<item name="h" type="string" description="高度" default="80" />
+		<item name="text" type="string" description="文本" default="测试" />
+	</Props>
+	<Text x="$x" y="$y" w="$w" h="$h" text="$text" />
+	<Var name="var" expression="'Hello,World!'" type="string" />
+	<Var name="$global_var$" expression="100" type="number" />
+
+	<Group>
+		<Slots slotName="文本" />
+	</Group>
+
+	<Group>
+		<Slots slotName="文本2" />
+	</Group>
+
+	<Group>
+		<Slots slotName="文本3" />
+	</Group>
+	
+</Template>

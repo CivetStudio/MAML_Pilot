@@ -1,0 +1,39 @@
+<ROOT>
+
+	<!-- 实时刷新变量 -->
+	<!-- <Var name="__mSysTime" expression="#time+#time_sys" threshold="1" > -->
+	<Var name="__mSysTime" expression="ifelse(ne(#LangsId,2),#time+#time_sys,round(#S_TimeLoop))" threshold="1" >
+		<Trigger>
+
+			<PlaceHolder name="SysCommand" />
+			<VariableCommand name="isTestMode" expression="ifelse(ne(#screen_height,#raw_screen_height)*ne(#raw_screen_width,1080),1,0)" type="number" condition="ne(#raw_screen_height,0)*eq(#LangsId,0)" />
+
+			<VariableCommand name="hours_oppo" expression="ifelse(eq(#time_format,1),#hour24,ne(#hour12,0),#hour12,12)" type="number" />
+			<VariableCommand name="hours_vivo" expression="ifelse(eq(#time_format,1),#CurrentHour,#hour12)" type="number" />
+			<VariableCommand name="hours" expression="ifelse(#time_format,#hour24,#hour12)" type="number" />
+
+			<VariableCommand name="months" expression="int(#month+1)" type="number" />
+			<VariableCommand name="dates" expression="#date" type="number" />
+			<VariableCommand name="weeks" expression="int(#day_of_week-1)" type="number" />
+			<VariableCommand name="hrs.0" expression="int(#hours/10)" type="number" />
+			<VariableCommand name="hrs.1" expression="int(#hours-int(#hours/10)*10)" type="number" />
+			<VariableCommand name="min.0" expression="int(#minute/10)" type="number" />
+			<VariableCommand name="min.1" expression="int(#minute-int(#minute/10)*10)" type="number" />
+
+			<!-- 判断是否为夜晚 0:白天 6-18时 1:夜晚 -->
+			<VariableCommand name="WeatherIsNight" expression="not(ge(#CurrentHour,6)*lt(#CurrentHour,18))" />
+
+			<!-- vivo用传统动画，现改为oppo用贝塞尔曲线，其他平台用传统动画 -->
+			<VariableCommand name="mResumeAni" expression="ifelse(ne(#LangsId,0),#mBezierSys,#mBezierTrans)" type="number" />
+			<VariableCommand name="mResumeAni_1" expression="ifelse(ne(#LangsId,0),#mBezierSys_1,#mBezierTrans_1)" type="number" />
+			<VariableCommand name="mResumeAni_2" expression="ifelse(ne(#LangsId,0),#mBezierSys_2,#mBezierTrans_2)" type="number" />
+			<VariableCommand name="mResumeAni_3" expression="ifelse(ne(#LangsId,0),#mBezierSys_3,#mBezierTrans_3)" type="number" />
+			<VariableCommand name="mResumeAni_4" expression="ifelse(ne(#LangsId,0),#mBezierSys_4,#mBezierTrans_4)" type="number" />
+			<VariableCommand name="mResumeAni_5" expression="ifelse(ne(#LangsId,0),#mBezierSys_5,#mBezierTrans_5)" type="number" />
+			<VariableCommand name="mResumeAni_6" expression="ifelse(ne(#LangsId,0),#mBezierSys_6,#mBezierTrans_6)" type="number" />
+
+		</Trigger>
+	</Var>
+
+
+</ROOT>

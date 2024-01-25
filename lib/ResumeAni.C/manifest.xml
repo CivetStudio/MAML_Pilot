@@ -1,0 +1,103 @@
+<ROOT>
+    <Var name="mBezierSys">
+        <VariableAnimation>
+            <AniFrame value="0" time="0" />
+            <AniFrame value="0.32782798" time="100" />
+            <AniFrame value="0.57780224" time="200" />
+            <AniFrame value="0.76013226" time="300" />
+            <AniFrame value="0.88502752" time="400" />
+            <AniFrame value="0.96269750" time="500" />
+            <AniFrame value="1.00335168" time="600" />
+            <AniFrame value="1.01719954" time="700" />
+            <AniFrame value="1.01445056" time="800" />
+            <AniFrame value="1.00531422" time="900" />
+            <AniFrame value="1" time="1000" />
+            <AniFrame value="1" time="1876461209000" />
+        </VariableAnimation>
+    </Var>
+    <Var name="mBezierSys_1">
+        <VariableAnimation>
+            <AniFrame value="0" time="0" />
+            <AniFrame value="0" time="200" />
+            <AniFrame value="0.32782798" time="300" />
+            <AniFrame value="0.57780224" time="400" />
+            <AniFrame value="0.76013226" time="500" />
+            <AniFrame value="0.88502752" time="600" />
+            <AniFrame value="0.96269750" time="700" />
+            <AniFrame value="1.00335168" time="800" />
+            <AniFrame value="1.01719954" time="900" />
+            <AniFrame value="1.01445056" time="1000" />
+            <AniFrame value="1.00531422" time="1100" />
+            <AniFrame value="1" time="1200" />
+            <AniFrame value="1" time="1876461209000" />
+        </VariableAnimation>
+    </Var>
+    <Var name="mBezierSys_2">
+        <VariableAnimation>
+            <AniFrame value="0" time="0" />
+            <AniFrame value="0" time="400" />
+            <AniFrame value="0.32782798" time="500" />
+            <AniFrame value="0.57780224" time="600" />
+            <AniFrame value="0.76013226" time="700" />
+            <AniFrame value="0.88502752" time="800" />
+            <AniFrame value="0.96269750" time="900" />
+            <AniFrame value="1.00335168" time="1000" />
+            <AniFrame value="1.01719954" time="1100" />
+            <AniFrame value="1.01445056" time="1200" />
+            <AniFrame value="1.00531422" time="1300" />
+            <AniFrame value="1" time="1400" />
+            <AniFrame value="1" time="1876461209000" />
+        </VariableAnimation>
+    </Var>
+    <Var name="mBezierSys_3">
+        <VariableAnimation>
+            <AniFrame value="0" time="0" />
+            <AniFrame value="0" time="600" />
+            <AniFrame value="0.32782798" time="700" />
+            <AniFrame value="0.57780224" time="800" />
+            <AniFrame value="0.76013226" time="900" />
+            <AniFrame value="0.88502752" time="1000" />
+            <AniFrame value="0.96269750" time="1100" />
+            <AniFrame value="1.00335168" time="1200" />
+            <AniFrame value="1.01719954" time="1300" />
+            <AniFrame value="1.01445056" time="1400" />
+            <AniFrame value="1.00531422" time="1500" />
+            <AniFrame value="1" time="1600" />
+            <AniFrame value="1" time="1876461209000" />
+        </VariableAnimation>
+    </Var>
+    <Var name="mBezierSys_4">
+        <VariableAnimation>
+            <AniFrame value="0" time="0" />
+            <AniFrame value="0" time="800" />
+            <AniFrame value="0.32782798" time="900" />
+            <AniFrame value="0.57780224" time="1000" />
+            <AniFrame value="0.76013226" time="1100" />
+            <AniFrame value="0.88502752" time="1200" />
+            <AniFrame value="0.96269750" time="1300" />
+            <AniFrame value="1.00335168" time="1400" />
+            <AniFrame value="1.01719954" time="1500" />
+            <AniFrame value="1.01445056" time="1600" />
+            <AniFrame value="1.00531422" time="1700" />
+            <AniFrame value="1" time="1800" />
+            <AniFrame value="1" time="1876461209000" />
+        </VariableAnimation>
+    </Var>
+    <Var name="mBezierSys_5">
+        <VariableAnimation>
+            <AniFrame value="0" time="0" />
+            <AniFrame value="0" time="1000" />
+            <AniFrame value="0.32782798" time="1100" />
+            <AniFrame value="0.57780224" time="1200" />
+            <AniFrame value="0.76013226" time="1300" />
+            <AniFrame value="0.88502752" time="1400" />
+            <AniFrame value="0.96269750" time="1500" />
+            <AniFrame value="1.00335168" time="1600" />
+            <AniFrame value="1.01719954" time="1700" />
+            <AniFrame value="1.01445056" time="1800" />
+            <AniFrame value="1.00531422" time="1900" />
+            <AniFrame value="1" time="2000" />
+            <AniFrame value="1" time="1876461209000" />
+        </VariableAnimation>
+    </Var>
+</ROOT>

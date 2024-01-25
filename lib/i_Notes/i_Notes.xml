@@ -1,0 +1,18 @@
+<Template>
+
+	<Props>
+		<item name="condition" type="string" description="条件判断" default="$#tc$" />
+	</Props>
+
+	<!-- 便签 -->
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.miui.notes" class="com.miui.notes.ui.NotesListActivity" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.android.notes" class="com.android.notes.Notes" />
+	<IntentCommand condition="($condition)" action="android.intent.action.VIEW" uri="bbknotes://com.android.notes/notes/" />
+	<!-- alias="mCivetCode_5" -->
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.nearme.note" class="com.nearme.note.view.AllNoteActivity" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.coloros.note" class="com.nearme.note.view.AllNoteActivity" />
+	<!-- C13可选  -->
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.coloros.note" class="com.nearme.note.main.MainActivity" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.example.android.notepad" class="com.example.android.notepad.NotePadActivity" />
+
+</Template>

@@ -1,0 +1,10 @@
+<Template>
+
+	<Props>
+		<item name="condition" type="string" description="条件判断" default="$#tc$" />
+	</Props>
+
+    <!-- 英雄联盟手游 -->
+    <IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.tencent.lolm" class="com.tencent.lolm.lgame" />
+
+</Template>

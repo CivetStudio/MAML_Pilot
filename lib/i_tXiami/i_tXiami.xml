@@ -1,0 +1,10 @@
+<Template>
+
+	<Props>
+		<item name="condition" type="string" description="条件判断" default="$#tc$" />
+	</Props>
+
+    <!-- 虾米音乐 -->
+    <IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="fm.xiami.main" class="fm.xiami.main.SplashActivity" />
+
+</Template>

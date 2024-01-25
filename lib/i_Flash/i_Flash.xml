@@ -1,0 +1,23 @@
+<Template>
+
+	<Props>
+		<item name="condition" type="string" description="条件判断" default="$#tc$" />
+	</Props>
+
+	<!-- 手电筒 -->
+	<VariableCommand condition="($condition)" name="flashlightValue" expression="#flashlightValue+1" persist="false" />
+
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.oppo.flashlight" class="com.oppo.flashlight.FlashLightActivity" />
+	<IntentCommand condition="($condition)" action="oppo.intent.action.START_LOCK_FLASHLIGHT" package="com.oppo.flashlight" class="com.oppo.flashlight.FlashLightActivity" />
+	<IntentCommand condition="($condition)" action="oppo.intent.action.START_LOCK_FLASHLIGHT" />
+
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.coloros.flashlight" class="com.oppo.flashlight.FlashLightActivity" />
+	<IntentCommand condition="($condition)" action="oppo.intent.action.START_LOCK_FLASHLIGHT" package="com.coloros.flashlight" class="com.oppo.flashlight.FlashLightActivity" />
+
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.coloros.flashlight" class="com.coloros.flashlight.FlashLightActivity" />
+	<IntentCommand condition="($condition)" action="oppo.intent.action.START_LOCK_FLASHLIGHT" package="com.coloros.flashlight" class="com.coloros.flashlight.FlashLightActivity" />
+
+	<!-- <IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.android.systemui" class="com.android.systemui.flashlight.FlashlightActivity" /> -->
+	<!-- <ExternCommand condition="($condition)*ne($#LangsId$,2)*ne($#LangsId$,4)" command="unlock" /> -->
+
+</Template>

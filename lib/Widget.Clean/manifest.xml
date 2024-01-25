@@ -1,0 +1,38 @@
+<Template>
+
+	<ExternalCommands>
+		<Trigger action="init,resume">
+			<!-- ContentProvider接口在切屏时必须主动更新一次  -->
+			<BinderCommand name="getCleanMasterData" command="refresh" />
+		</Trigger>
+	</ExternalCommands>
+	<VariableBinders>
+		<ContentProviderBinder name="getCleanMasterData" uri="content://com.miui.securitycenter.widgetProvider/getCleanMasterData" columns="garbageSize,totalSpace,availableSpace,cleanerInstalledState" countName="hasGetCleanMasterData">
+			<!-- 扫描出的垃圾大小 -->
+			<Variable name="_garbageSize" type="long" column="garbageSize" />
+			<!-- 手机总存储 -->
+			<Variable name="_totalSpace" type="long" column="totalSpace" />
+			<!-- 手机剩余存储 -->
+			<Variable name="_availableSpace" type="long" column="availableSpace" />
+			<!-- 垃圾清理安装状态 -->
+			<Variable name="_cleanerInstalledState" type="int" column="cleanerInstalledState" />
+			<Trigger >
+				<VariableCommand name="_occupiedSpace" expression="#_totalSpace-#_availableSpace" type="long" />
+			</Trigger>
+		</ContentProviderBinder>
+	</VariableBinders>
+
+	<!-- 扫描出的垃圾大小 -->
+	<Var name="__garbageSize" expression="ifelse(#_garbageSize { 1000000000, int(#_garbageSize/1000000), preciseeval('#_garbageSize/1000000000',1))" type="string" />
+	<Var name="__garbageSize_unit" expression="ifelse(#_garbageSize { 1000000000, 'MB', 'GB')" type="string" />
+	<!-- 手机总存储 -->
+	<Var name="__totalSpace" expression="ifelse(#_totalSpace { 1000000000, int(#_totalSpace/1000000), preciseeval('#_totalSpace/1000000000',1))" type="string" />
+	<Var name="__totalSpace_unit" expression="ifelse(#_totalSpace { 1000000000, 'MB', 'GB')" type="string" />
+	<!-- 手机剩余存储 -->
+	<Var name="__availableSpace" expression="ifelse(#_availableSpace { 1000000000, int(#_availableSpace/1000000), preciseeval('#_availableSpace/1000000000',1))" type="string" />
+	<Var name="__availableSpace_unit" expression="ifelse(#_availableSpace { 1000000000, 'MB', 'GB')" type="string" />
+	<!-- 手机占用存储 -->
+	<Var name="__occupiedSpace" expression="ifelse(#_occupiedSpace { 1000000000, int(#_occupiedSpace/1000000), preciseeval('#_occupiedSpace/1000000000',1))" type="string" />
+	<Var name="__occupiedSpace_unit" expression="ifelse(#_occupiedSpace { 1000000000, 'MB', 'GB')" type="string" />
+
+</Template>

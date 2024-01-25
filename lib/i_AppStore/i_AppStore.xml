@@ -1,0 +1,15 @@
+<Template>
+
+	<Props>
+		<item name="condition" type="string" description="条件判断" default="$#tc$" />
+	</Props>
+
+	<!-- 应用商店 -->
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.xiaomi.market" class="com.xiaomi.market.ui.MarketTabActivity" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.bbk.appstore" class="com.bbk.appstore.ui.AppStore" />
+	<!-- alias="mCivetCode_5" -->
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.heytap.market" class="com.heytap.market.activity.MainActivity" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.oppo.market" class="com.oppo.market.activity.MainActivity" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.huawei.appmarket" class="com.huawei.appmarket.MainActivity" />
+	
+</Template>

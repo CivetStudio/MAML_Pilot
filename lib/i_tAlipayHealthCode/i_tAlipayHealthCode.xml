@@ -1,0 +1,10 @@
+<Template>
+
+	<Props>
+		<item name="condition" type="string" description="条件判断" default="$#tc$" />
+	</Props>
+
+	<!-- 全国健康码小程序 -->
+	<IntentCommand condition="($condition)" action="android.intent.action.VIEW" uri="alipays://platformapi/startApp?saId=2021001139676873" package="com.eg.android.AlipayGphone" />
+
+</Template>

@@ -1,0 +1,214 @@
+<Template>
+
+	<Props>
+		<item name="size" type="string" description="小部件尺寸" default="2x2" />
+		<item name="fps" type="string" description="动态帧率" default="144" />
+		<item name="fps_time" type="string" description="动态帧率时长" default="2000" />
+		<item name="fps_time_end" type="string" description="动态帧率结束时长" default="2001" />
+	</Props>
+
+	<FramerateController name="Fra" initPause="true" loop="false" >
+		<ControlPoint frameRate="$fps" time="0" />
+		<ControlPoint frameRate="$fps" time="$fps_time" />
+		<ControlPoint frameRate="0" time="$fps_time_end" />
+	</FramerateController>
+
+	<ExternalCommands>
+		<Trigger action="init,resume" >
+			<VariableCommand name="w" expression="substr(@folder,7,1)" type="int" />
+			<VariableCommand name="h" expression="substr(@folder,9,1)" type="int" />
+			<IfCommand ifCondition="eqs(@isPreviewMode,'true')" >
+				<Consequent>
+					<FrameRateCommand rate="$fps" />
+					<VariableCommand name="_onPreviewVar" expression="#_onPreviewVar+1" type="number" />
+					<!-- <PlaceHolder name="onPreview" /> -->
+				</Consequent>
+				<Alternate>
+					<AnimationCommand target="Fra" command="play" />
+					<VariableCommand name="_onResumeVar" expression="#_onResumeVar+1" type="number" />
+					<!-- <PlaceHolder name="onResume" /> -->
+				</Alternate>
+			</IfCommand>
+			<AnimationCommand target="Fra" command="play" condition="eqs(@isPreviewMode,'true') != 1" />
+			<!-- <BinderCommand name="getDeviceInfo" command="refresh" /> -->
+			<!-- <BinderCommand name="getMemoryData" command="refresh" /> -->
+		</Trigger>
+		<Trigger action="resume" >
+			<VariableCommand name="p" expression="0" type="number" />
+		</Trigger>
+		<Trigger action="pause" >
+			<VariableCommand name="p" expression="1" type="number" />
+		</Trigger>
+	</ExternalCommands>
+
+	<!-- <Var name="updateMemoryInfo" expression="#second" threshold="5" >
+		<Trigger>
+			<BinderCommand name="getMemoryData" command="refresh" />
+			<ExternCommand command="__clearResource" />
+			<FunctionCommand target="getMemoryLevel" />
+		</Trigger>
+	</Var>
+
+	<Function name="getMemoryLevel" >
+		<VariableCommand name="__memoryOccupied" expression="#_memoryOccupied" type="number" />
+		<VariableCommand name="__memoryLevel" expression="int(100-#__memoryOccupied/#__memoryTotal*100)" type="number" condition="#__memoryTotal" />
+	</Function> -->
+
+	<VariableBinders>
+
+		<!-- 当前电量 -->
+		<BroadcastBinder action="android.intent.action.BATTERY_CHANGED">
+			<Variable name="batteryLevel" type="int" extra="level" />
+			<Trigger>
+				<BinderCommand name="getPowerData" command="refresh" />
+				<AnimationCommand target="Fra" command="play" />
+			</Trigger>
+		</BroadcastBinder>
+
+		<!-- <ContentProviderBinder name="getDeviceInfo" uri="content://com.miui.personalassistant.deviceinfo" countName="hasdeviceinfo" >
+			<Variable name="_memoryTotal" type="string" column="ram" />
+			<Trigger>
+				<VariableCommand const="true" name="__memoryTotal_Str" expression="strReplaceAll(@_memoryTotal,'GB','')" type="string" />
+				<VariableCommand const="true" name="__memoryTotal" expression="preciseeval(@__memoryTotal_Str,2)*1000000000*0.98979833333" type="number" />
+			</Trigger>
+		</ContentProviderBinder>
+		<ContentProviderBinder name="getMemoryData" uri="content://com.miui.securitycenter.widgetProvider/getMemoryData" countName="hasGetMemoryData">
+			当前占用
+			<Variable name="_memoryOccupied" type="long" column="memoryOccupied" />
+			可清理
+			<Variable name="_memoryCleanable" type="long" column="memoryCleanable" />
+			<Trigger>
+				<FunctionCommand target="getMemoryLevel" />
+			</Trigger>
+		</ContentProviderBinder> -->
+
+	</VariableBinders>
+
+	<Var name="folder" expression="'widget_$size'" type="string" />
+	<Var name="isPreviewMode" expression="eqs(@isPreviewMode,'true')" type="number" />
+	<Var name="hours" expression="ifelse(eq(#time_format,1),#hour24,ne(#hour12,0),#hour12,12)" />
+	<Var name="monthStr" values="'日','一','二','三','四','五','六','七','八','九','十','十一','十二'" expression="''" type="string[]" />
+	<Var name="monthStrEn" values="'January','February','March','April','May','June','July','August','September','October','November','December'" expression="''" type="string[]" />
+	<Var name="weekStrEn" values="'Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'" expression="''" type="string[]" />
+
+	<Var name="__view_width_template"  type="number[]" values="254,186,440,694,948" />
+	<Var name="__view_height_template" type="number[]" values="280,160,440,720,1000" />
+
+	<Var name="__view_width" expression="#__view_width_template[#w]" const="true" />
+	<Var name="__view_height" expression="#__view_height_template[#h]" const="true" />
+
+	<Var name="w" expression="substr(@folder,7,1)" type="int" />
+	<Var name="h" expression="substr(@folder,9,1)" type="int" />
+	<Var name="s" type="number[]" values="max(#view_width/#__view_width,#view_height/#__view_height),min(#view_width/#__view_width,#view_height/#__view_height),#view_width/(#__view_width+6*0),#view_height/(#__view_height+6*0)" />
+
+	<Function name="Health" >
+		<IntentCommand action="android.intent.action.VIEW" uri="com.mi.health://localhost/d?action=steps&amp;origin=mithemelocksreen" package="com.mi.health" />
+	</Function>
+	<Function name="Weather" >
+		<IntentCommand action="com.miui.weather.widget_weather_detail" package="com.miui.weather2" class="com.miui.weather2.ActivityWeatherMain" flags="270532608" >
+			<Extra name="localId" type="string" expression="@weather_location" />
+			<Extra name="cityId" type="string" expression="ifelse(len(@city_id),@city_id,@weather_id)" />
+		</IntentCommand>
+	</Function>
+	<Function name="Clock" >
+		<IntentCommand action="android.intent.action.MAIN" package="com.android.deskclock" class="com.android.deskclock.DeskClockTabActivity" />
+	</Function>
+	<Function name="Calendar" >
+		<IntentCommand action="android.intent.action.MAIN" package="com.android.calendar" class="com.android.calendar.AllInOneActivity" />
+	</Function>
+	<Function name="PowerMain" >
+		<IntentCommand action="android.intent.action.MAIN" package="com.miui.securitycenter" class="com.miui.powercenter.PowerMainActivity" />
+		<IntentCommand action="miui.intent.action.POWER_MANAGER" package="com.miui.securitycenter" class="com.miui.powercenter.PowerMainActivity" />
+
+		<!-- <IntentCommand action="android.intent.action.MAIN" package="com.miui.securitymanager" class="com.miui.powercenter.PowerMainActivity" /> -->
+		<!-- <IntentCommand action="miui.intent.action.POWER_MANAGER" package="com.miui.securitymanager" class="com.miui.powercenter.PowerMainActivity" /> -->
+	</Function>
+	<Function name="Battery" >
+		<IntentCommand action="miui.intent.action.POWER_BATTERY" package="com.miui.securitycenter" />
+		<!-- <IntentCommand action="miui.intent.action.POWER_BATTERY" package="com.miui.securitymanager" /> -->
+	</Function>
+	<Function name="Clean" >
+		<IntentCommand action="com.miui.cleanmaster.InstallAndLunchCleanMaster" package="com.miui.securitycenter" class="com.miui.cleanmaster.CleanerInstallActivity"/>
+		<!-- <IntentCommand action="com.miui.cleanmaster.InstallAndLunchCleanMaster" package="com.miui.securitymanager" class="com.miui.cleanmaster.CleanerInstallActivity"/> -->
+	</Function>
+	<Function name="Memory" >
+		<IntentCommand action="com.miui.intent.action.CLEAN_MEMORY" broadcast="true" />
+	</Function>
+	<Function name="SecurityScan" >
+		<IntentCommand action="miui.intent.action.SECURITY_CENTER" package="com.miui.securitycenter" class="com.miui.securityscan.MainActivity">
+			<Extra name="extra_auto_optimize_widget" type="int" expression="1"/>
+			<Extra name="enter_homepage_way" type="string" expression="'widget'"/>
+		</IntentCommand>
+		<!-- <IntentCommand action="miui.intent.action.SECURITY_CENTER" package="com.miui.securitymanager" class="com.miui.securityscan.MainActivity">
+			<Extra name="extra_auto_optimize_widget" type="int" expression="1"/>
+			<Extra name="enter_homepage_way" type="string" expression="'widget'"/>
+		</IntentCommand> -->
+	</Function>
+	<Function name="Optimize" >
+		<IntentCommand action="miui.intent.action.OPTIMIZE_MANAGE" package="com.miui.securitycenter" class="com.miui.optimizemanage.OptimizemanageMainActivity" />
+		<!-- <IntentCommand action="miui.intent.action.OPTIMIZE_MANAGE" package="com.miui.securitymanager" class="com.miui.optimizemanage.OptimizemanageMainActivity" /> -->
+	</Function>
+	<Function name="Storage" >
+		<IntentCommand action="android.intent.action.MAIN" package="com.miui.securitycenter" class="com.miui.optimizecenter.storage.StorageActivity" />
+		<IntentCommand action="com.miui.securitycenter.action.STORAGE_MANAGE" package="com.miui.securitycenter" class="com.miui.optimizecenter.storage.StorageActivity" />
+
+		<!-- <IntentCommand action="android.intent.action.MAIN" package="com.miui.securitymanager" class="com.miui.optimizecenter.storage.StorageActivity" /> -->
+		<!-- <IntentCommand action="com.miui.securitycenter.action.STORAGE_MANAGE" package="com.miui.securitymanager" class="com.miui.optimizecenter.storage.StorageActivity" /> -->
+	</Function>
+	<Function name="Gallery" >
+		<IntentCommand action="android.intent.action.MAIN" package="com.miui.gallery" class="com.miui.gallery.activity.HomePageActivity" />
+	</Function>
+	<Function name="Settings" >
+		<IntentCommand action="android.intent.action.MAIN" package="com.android.settings" class="com.android.settings.MainSettings" />
+	</Function>
+	<Function name="SettingsInfo" >
+		<IntentCommand action="android.intent.action.MAIN" package="com.android.settings" class="com.android.settings.Settings$MyDeviceInfoActivity" />
+		<IntentCommand action="android.settings.DEVICE_INFO_SETTINGS" package="com.android.settings" class="com.android.settings.Settings$MyDeviceInfoActivity" />
+	</Function>
+	<Function name="Network" >
+		<IntentCommand action="miui.intent.action.NETWORKASSISTANT_ENTRANCE" package="com.miui.securitycenter" />
+		<!-- <IntentCommand action="miui.intent.action.NETWORKASSISTANT_ENTRANCE" package="com.miui.securitymanager" /> -->
+	</Function>
+	<Function name="Bluetooth" >
+		<IntentCommand package="com.android.settings" class="com.android.settings.Settings$BluetoothSettingsActivity" />
+	</Function>
+	<Function name="Theme" >
+		<IntentCommand action="android.intent.action.MAIN" package="com.android.thememanager" class="com.android.thememanager.ThemeResourceTabActivity" />
+		<!-- <IntentCommand action="android.intent.action.MAIN" package="com.miui.themestore" class="com.miui.themestore.ThemeResourceTabActivity" /> -->
+	</Function>
+	<Function name="Calculator" >
+		<IntentCommand action="android.intent.action.MAIN" package="com.miui.calculator" class="com.miui.calculator.cal.CalculatorActivity" />
+	</Function>
+	<Function name="Camera" >
+		<IntentCommand action="android.intent.action.MAIN" package="com.android.camera" class="com.android.camera.Camera" />
+	</Function>
+	<Function name="Dial" >
+		<IntentCommand package="com.android.contacts" class="com.android.contacts.activities.TwelveKeyDialer" />
+	</Function>
+	<Function name="Contacts" >
+		<IntentCommand package="com.android.contacts" class="com.android.contacts.activities.PeopleActivity" />
+	</Function>
+	<Function name="Mms" >
+		<IntentCommand package="com.android.mms" class="com.android.mms.ui.MmsTabActivity" />
+	</Function>
+	<Function name="Notes" >
+		<IntentCommand package="com.miui.notes" class="com.miui.notes.ui.NotesListActivity" />
+	</Function>
+	<Function name="Browser" >
+		<IntentCommand package="com.android.browser" class="com.android.browser.BrowserActivity" />
+	</Function>
+
+	<Function name="Files" >
+		<IntentCommand package="com.android.fileexplorer" class="com.android.fileexplorer.FileExplorerTabActivity" />
+	</Function>
+	<Function name="Market" >
+		<IntentCommand package="com.xiaomi.market" class="com.xiaomi.market.ui.MarketTabActivity" />
+	</Function>
+	<Function name="Email" >
+		<IntentCommand package="com.android.email" class="com.android.email.activity.Welcome" />
+	</Function>
+	<Function name="Recorder" >
+		<IntentCommand package="com.android.soundrecorder" class="com.android.soundrecorder.SoundRecorder" />
+	</Function>
+
+</Template>

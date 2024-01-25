@@ -1,0 +1,550 @@
+<Template>
+
+	<Props>
+		<item name="btn.0" type="number[]" description="0" default="0,0,1,1" />
+		<item name="btn.1" type="number[]" description="1" default="0,0,1,1" />
+		<item name="btn.2" type="number[]" description="2" default="0,0,1,1" />
+		<item name="btn.3" type="number[]" description="3" default="0,0,1,1" />
+		<item name="btn.4" type="number[]" description="4" default="0,0,1,1" />
+		<item name="btn.5" type="number[]" description="5" default="0,0,1,1" />
+		<item name="btn.6" type="number[]" description="6" default="0,0,1,1" />
+		<item name="btn.7" type="number[]" description="7" default="0,0,1,1" />
+		<item name="btn.8" type="number[]" description="8" default="0,0,1,1" />
+		<item name="btn.9" type="number[]" description="9" default="0,0,1,1" />
+		<item name="btn.dot" type="number[]" description="." default="0,0,1,1" />
+		<item name="btn.equal" type="number[]" description="=" default="0,0,1,1" />
+		<item name="btn.add" type="number[]" description="+" default="0,0,1,1" />
+		<item name="btn.sub" type="number[]" description="-" default="0,0,1,1" />
+		<item name="btn.multi" type="number[]" description="x" default="0,0,1,1" />
+		<item name="btn.div" type="number[]" description="÷" default="0,0,1,1" />
+		<item name="btn.del" type="number[]" description="del" default="0,0,1,1" />
+		<item name="btn.ac" type="number[]" description="clean" default="0,0,1,1" />
+		<item name="btn.color.pressed" type="string" description="按钮按下态颜色" default="#30000000" />
+		<item name="content.x" type="string" description="组-X坐标" default="0" />
+		<item name="content.y" type="string" description="组-Y坐标" default="0" />
+		<item name="content.w" type="string" description="组-宽度" default="1" />
+		<item name="content.h" type="string" description="组-高度" default="1" />
+		<item name="history.y" type="string" description="历史记录-Y坐标" default="50" />
+		<item name="history.size" type="string" description="历史记录-大小" default="36" />
+		<item name="history.color" type="string" description="历史记录-颜色" default="36" />
+		<item name="history.alpha" type="string" description="历史记录-不透明度" default="255" />
+		<item name="history.fontPath" type="string" description="历史记录-字体" default="etc/mipro-medium.ttf" />
+		<item name="current.y.bottom" type="string" description="历史记录-Y坐标" default="150" />
+		<item name="current.size" type="string" description="返回结果-大小" default="64" />
+		<item name="current.color" type="string" description="返回结果-颜色" default="36" />
+		<item name="current.alpha" type="string" description="返回结果-不透明度" default="255" />
+		<item name="current.fontPath" type="string" description="返回结果-字体" default="etc/mipro-medium.ttf" />
+	</Props>
+
+    <!-- make sure equation always not empty, at least a '0' -->
+    <Var name="equation" expression="'0'" type="string" const="true"/>
+    <Var name="history_equation" expression="'0'" type="string" const="true"/>
+    <!-- for bug of expression parse. can't write directly in expression -->
+    <Var name="pow_for_E" expression="'*pow(10,'" type="string" const="true"/>
+    <!-- for better experience: after an evaluation, press number will start a new equation -->
+    <Var name="finish_eval" expression="1" const="true"/>
+
+	<Group x="$content.x" y="$content.y" w="$content.w" h="$content.h" clip="true">
+		<Text x="$content.w" y="$history.y" align="right" alignV="center" name="his_disp" size="$history.size" color="$history.color" alpha="$history.alpha" textExp="ifelse(eqs(@history_equation,'0'),'',strReplace(strReplace(@history_equation,'*','×'),'/','÷')+'=')" visibility="#show_equation" fontPath="$history.fontPath" />
+		<Text x="$content.w" y="$current.y.bottom" align="right" alignV="bottom" name="cur_disp" size="$current.size" scale="1-0.175*gt(#cur_disp.text_width,$content.w)" pivotX="#cur_disp.text_width" pivotY="$current.size" color="$current.color" alpha="$current.alpha" textExp="strReplace(strReplace(@equation,'*','×'),'/','÷')" fontPath="$current.fontPath" />
+	</Group>
+	<Button x="$content.x" y="$content.y" w="$content.w" h="$content.h">
+		<Triggers>
+			<Trigger action="up" condition="!#isPreviewMode">
+				<IntentCommand action="android.intent.action.MAIN" package="com.miui.calculator" class="com.miui.calculator.cal.CalculatorActivity" />
+			</Trigger>
+		</Triggers>
+	</Button>
+	
+	<Var name="btn_0" type="number[]" values="$btn.0" />
+	<Var name="btn_1" type="number[]" values="$btn.1" />
+	<Var name="btn_2" type="number[]" values="$btn.2" />
+	<Var name="btn_3" type="number[]" values="$btn.3" />
+	<Var name="btn_4" type="number[]" values="$btn.4" />
+	<Var name="btn_5" type="number[]" values="$btn.5" />
+	<Var name="btn_6" type="number[]" values="$btn.6" />
+	<Var name="btn_7" type="number[]" values="$btn.7" />
+	<Var name="btn_8" type="number[]" values="$btn.8" />
+	<Var name="btn_9" type="number[]" values="$btn.9" />
+	<Var name="btn_dot" type="number[]" values="$btn.dot" />
+	<Var name="btn_equal" type="number[]" values="$btn.equal" />
+	<Var name="btn_add" type="number[]" values="$btn.add" />
+	<Var name="btn_sub" type="number[]" values="$btn.sub" />
+	<Var name="btn_multi" type="number[]" values="$btn.multi" />
+	<Var name="btn_div" type="number[]" values="$btn.div" />
+	<Var name="btn_del" type="number[]" values="$btn.del" />
+	<Var name="btn_ac" type="number[]" values="$btn.ac" />
+
+	<!-- %运算 未开启 -->
+	<Button x="0" y="0" w="1" h="1" visibility="0"> 
+		<Triggers>
+			<Trigger action="up">
+				<VariableCommand name="equation" expression="substr(@equation,0,len(@equation)-1)" type="string" condition="strMatches(@equation,'.*[\\+*/-]$')" />
+				<VariableCommand name="equation" expression="'0'+@equation" type="string" condition="substr(@equation,0,1)=='-'" />
+				<VariableCommand name="numWord" expression="''" type="string" />
+				<VariableCommand name="lastKey" expression="0" />
+
+				<MultiCommand condition="strMatches(@equation,'.*[\+|\-]+[\d]*$')==0">
+					<LoopCommand count="len(@equation)" indexName="__e" loopCondition="strMatches(@numWord,'.*[\\+*/-]$')==0">
+						<VariableCommand name="numWord" expression="substr(@equation,len(@equation)-1-#__e,1)" type="string" />
+						<VariableCommand name="lastKey" expression="#lastKey+1" condition="strMatches(@numWord,'.*[\\+*/-]$')==0" />
+					</LoopCommand>
+					<VariableCommand name="equation" expression="substr(@equation,0,len(@equation)-#lastKey)+'('+substr(@equation,len(@equation)-#lastKey,#lastKey)+'/100)'" type="string" />
+				</MultiCommand>
+
+				<MultiCommand condition="strMatches(@equation,'.*[\+|\-]+[\d]*$')==1">
+					<VariableCommand name="lastNum" expression="substr(@equation,strLastIndexOf(@equation,'+')+1,len(@equation)-strLastIndexOf(@equation,'+')-1)" type="string" condition="strContains(@equation,'+')**strLastIndexOf(@equation,'+')}strLastIndexOf(@equation,'-')" />
+					<VariableCommand name="lastNum" expression="substr(@equation,strLastIndexOf(@equation,'-')+1,len(@equation)-strLastIndexOf(@equation,'-')-1)" type="string" condition="strContains(@equation,'-')**strLastIndexOf(@equation,'-')}strLastIndexOf(@equation,'+')" />
+					<VariableCommand name="firstNum" expression="substr(@equation,0,strLastIndexOf(@equation,@lastNum))" condition="strContains(@equation,'+')||strContains(@equation,'-')" type="string" />
+					<VariableCommand name="middlNum" expression="preciseeval(substr(@equation,0,strLastIndexOf(@equation,@lastNum)-1),8)" condition="strContains(@equation,'+')||strContains(@equation,'-')" type="string" />
+					<VariableCommand name="equation" expression="@firstNum+@middlNum+'*'+@lastNum+ '/100'" condition="strContains(@equation,'+')||strContains(@equation,'-')" type="string" />
+				</MultiCommand>
+
+				<VariableCommand name="finish_eval" expression="0" />
+				<VariableCommand name="historyEquation" expression="''" type="string" />
+				<VariableCommand name="equation" expression="preciseeval(@equation,8)" type="string" />
+				<VariableCommand name="Eafter" expression="substr(@equation,strIndexOf(@equation,'E')+1,len(@equation)-strIndexOf(@equation,'E')-1)" condition="strContains(@equation,'E')" />
+				<VariableCommand name="e_equation" expression="strReplaceAll(substr(@equation,0,len(@equation)-len(#Eafter)-1),'\.','') + '000000000000000'" type="string" condition="strContains(@equation,'E')" />
+				<VariableCommand name="equation" expression="substr(@e_equation,0,#Eafter+1) + ifelse(strIndexOf(@equation,'E')-2 } #Eafter,'.'+substr(@e_equation,#Eafter+1,len(@equation)-#Eafter-4),'')" type="string" condition="strContains(@equation,'E')" />
+				<VariableCommand name="equation" expression="'0'" type="string" condition="eqs(@equation,'.')" />
+			</Trigger>
+		</Triggers>
+	</Button>
+
+	<Button name="0" x="#btn_0[0]" y="#btn_0[1]" w="#btn_0[2]" h="#btn_0[3]">
+		<Normal>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_0[0]" y="#btn_0[1]" w="#btn_0[2]" h="#btn_0[3]">
+				<AlphaAnimation loop="false">
+					<Alpha a="255" time="0" acc="-2000" />
+					<Alpha a="0" time="500" />
+				</AlphaAnimation>
+			</Rectangle>
+		</Normal>
+		<Pressed>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_0[0]" y="#btn_0[1]" w="#btn_0[2]" h="#btn_0[3]" />
+		</Pressed>
+		<Triggers>
+			<Trigger action="up">
+				<AnimationCommand target="Fra" command="play" />
+				<VariableCommand name="equation" expression="ifelse(#finish_eval,'0', eqs(@equation,'0'),'0', strMatches(@equation,'.*[\\+*/-]0$'), substr(@equation,0,len(@equation)-1)+'0', @equation+'0')" type="string" />
+				<VariableCommand name="finish_eval" expression="0" />
+			</Trigger>
+			<Trigger action="cancel">
+				<AnimationCommand target="Fra" command="play" />
+			</Trigger>
+		</Triggers>
+	</Button>
+	<Button name="1" x="#btn_1[0]" y="#btn_1[1]" w="#btn_1[2]" h="#btn_1[3]">
+		<Normal>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_1[0]" y="#btn_1[1]" w="#btn_1[2]" h="#btn_1[3]">
+				<AlphaAnimation loop="false">
+					<Alpha a="255" time="0" acc="-2000" />
+					<Alpha a="0" time="500" />
+				</AlphaAnimation>
+			</Rectangle>
+		</Normal>
+		<Pressed>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_1[0]" y="#btn_1[1]" w="#btn_1[2]" h="#btn_1[3]" />
+		</Pressed>
+		<Triggers>
+			<Trigger action="up">
+				<AnimationCommand target="Fra" command="play" />
+				<VariableCommand name="equation" expression="ifelse(#finish_eval,'1', eqs(@equation,'0'),'1', strMatches(@equation,'.*[\\+*/-]0$'), substr(@equation,0,len(@equation)-1)+'1', @equation+'1')" type="string" />
+				<VariableCommand name="finish_eval" expression="0" />
+			</Trigger>
+			<Trigger action="cancel">
+				<AnimationCommand target="Fra" command="play" />
+			</Trigger>
+		</Triggers>
+	</Button>
+	<Button name="2" x="#btn_2[0]" y="#btn_2[1]" w="#btn_2[2]" h="#btn_2[3]">
+		<Normal>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_2[0]" y="#btn_2[1]" w="#btn_2[2]" h="#btn_2[3]">
+				<AlphaAnimation loop="false">
+					<Alpha a="255" time="0" acc="-2000" />
+					<Alpha a="0" time="500" />
+				</AlphaAnimation>
+			</Rectangle>
+		</Normal>
+		<Pressed>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_2[0]" y="#btn_2[1]" w="#btn_2[2]" h="#btn_2[3]" />
+		</Pressed>
+		<Triggers>
+			<Trigger action="up">
+				<AnimationCommand target="Fra" command="play" />
+				<VariableCommand name="equation" expression="ifelse(#finish_eval,'2', eqs(@equation,'0'),'2', strMatches(@equation,'.*[\\+*/-]0$'), substr(@equation,0,len(@equation)-1)+'2', @equation+'2')" type="string" />
+				<VariableCommand name="finish_eval" expression="0" />
+			</Trigger>
+			<Trigger action="cancel">
+				<AnimationCommand target="Fra" command="play" />
+			</Trigger>
+		</Triggers>
+	</Button>
+	<Button name="3" x="#btn_3[0]" y="#btn_3[1]" w="#btn_3[2]" h="#btn_3[3]">
+		<Normal>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_3[0]" y="#btn_3[1]" w="#btn_3[2]" h="#btn_3[3]">
+				<AlphaAnimation loop="false">
+					<Alpha a="255" time="0" acc="-2000" />
+					<Alpha a="0" time="500" />
+				</AlphaAnimation>
+			</Rectangle>
+		</Normal>
+		<Pressed>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_3[0]" y="#btn_3[1]" w="#btn_3[2]" h="#btn_3[3]" />
+		</Pressed>
+		<Triggers>
+			<Trigger action="up">
+				<AnimationCommand target="Fra" command="play" />
+				<VariableCommand name="equation" expression="ifelse(#finish_eval,'3', eqs(@equation,'0'),'3', strMatches(@equation,'.*[\\+*/-]0$'), substr(@equation,0,len(@equation)-1)+'3', @equation+'3')" type="string" />
+				<VariableCommand name="finish_eval" expression="0" />
+			</Trigger>
+			<Trigger action="cancel">
+				<AnimationCommand target="Fra" command="play" />
+			</Trigger>
+		</Triggers>
+	</Button>
+	<Button name="4" x="#btn_4[0]" y="#btn_4[1]" w="#btn_4[2]" h="#btn_4[3]">
+		<Normal>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_4[0]" y="#btn_4[1]" w="#btn_4[2]" h="#btn_4[3]">
+				<AlphaAnimation loop="false">
+					<Alpha a="255" time="0" acc="-2000" />
+					<Alpha a="0" time="500" />
+				</AlphaAnimation>
+			</Rectangle>
+		</Normal>
+		<Pressed>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_4[0]" y="#btn_4[1]" w="#btn_4[2]" h="#btn_4[3]" />
+		</Pressed>
+		<Triggers>
+			<Trigger action="up">
+				<AnimationCommand target="Fra" command="play" />
+				<VariableCommand name="equation" expression="ifelse(#finish_eval,'4', eqs(@equation,'0'),'4', strMatches(@equation,'.*[\\+*/-]0$'), substr(@equation,0,len(@equation)-1)+'4', @equation+'4')" type="string" />
+				<VariableCommand name="finish_eval" expression="0" />
+			</Trigger>
+			<Trigger action="cancel">
+				<AnimationCommand target="Fra" command="play" />
+			</Trigger>
+		</Triggers>
+	</Button>
+	<Button name="5" x="#btn_5[0]" y="#btn_5[1]" w="#btn_5[2]" h="#btn_5[3]">
+		<Normal>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_5[0]" y="#btn_5[1]" w="#btn_5[2]" h="#btn_5[3]">
+				<AlphaAnimation loop="false">
+					<Alpha a="255" time="0" acc="-2000" />
+					<Alpha a="0" time="500" />
+				</AlphaAnimation>
+			</Rectangle>
+		</Normal>
+		<Pressed>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_5[0]" y="#btn_5[1]" w="#btn_5[2]" h="#btn_5[3]" />
+		</Pressed>
+		<Triggers>
+			<Trigger action="up">
+				<AnimationCommand target="Fra" command="play" />
+				<VariableCommand name="equation" expression="ifelse(#finish_eval,'5', eqs(@equation,'0'),'5', strMatches(@equation,'.*[\\+*/-]0$'), substr(@equation,0,len(@equation)-1)+'5', @equation+'5')" type="string" />
+				<VariableCommand name="finish_eval" expression="0" />
+			</Trigger>
+			<Trigger action="cancel">
+				<AnimationCommand target="Fra" command="play" />
+			</Trigger>
+		</Triggers>
+	</Button>
+	<Button name="6" x="#btn_6[0]" y="#btn_6[1]" w="#btn_6[2]" h="#btn_6[3]">
+		<Normal>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_6[0]" y="#btn_6[1]" w="#btn_6[2]" h="#btn_6[3]">
+				<AlphaAnimation loop="false">
+					<Alpha a="255" time="0" acc="-2000" />
+					<Alpha a="0" time="500" />
+				</AlphaAnimation>
+			</Rectangle>
+		</Normal>
+		<Pressed>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_6[0]" y="#btn_6[1]" w="#btn_6[2]" h="#btn_6[3]" />
+		</Pressed>
+		<Triggers>
+			<Trigger action="up">
+				<AnimationCommand target="Fra" command="play" />
+				<VariableCommand name="equation" expression="ifelse(#finish_eval,'6', eqs(@equation,'0'),'6', strMatches(@equation,'.*[\\+*/-]0$'), substr(@equation,0,len(@equation)-1)+'6', @equation+'6')" type="string" />
+				<VariableCommand name="finish_eval" expression="0" />
+			</Trigger>
+			<Trigger action="cancel">
+				<AnimationCommand target="Fra" command="play" />
+			</Trigger>
+		</Triggers>
+	</Button>
+	<Button name="7" x="#btn_7[0]" y="#btn_7[1]" w="#btn_7[2]" h="#btn_7[3]">
+		<Normal>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_7[0]" y="#btn_7[1]" w="#btn_7[2]" h="#btn_7[3]">
+				<AlphaAnimation loop="false">
+					<Alpha a="255" time="0" acc="-2000" />
+					<Alpha a="0" time="500" />
+				</AlphaAnimation>
+			</Rectangle>
+		</Normal>
+		<Pressed>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_7[0]" y="#btn_7[1]" w="#btn_7[2]" h="#btn_7[3]" />
+		</Pressed>
+		<Triggers>
+			<Trigger action="up">
+				<AnimationCommand target="Fra" command="play" />
+				<VariableCommand name="equation" expression="ifelse(#finish_eval,'7', eqs(@equation,'0'),'7', strMatches(@equation,'.*[\\+*/-]0$'), substr(@equation,0,len(@equation)-1)+'7', @equation+'7')" type="string" />
+				<VariableCommand name="finish_eval" expression="0" />
+			</Trigger>
+			<Trigger action="cancel">
+				<AnimationCommand target="Fra" command="play" />
+			</Trigger>
+		</Triggers>
+	</Button>
+	<Button name="8" x="#btn_8[0]" y="#btn_8[1]" w="#btn_8[2]" h="#btn_8[3]">
+		<Normal>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_8[0]" y="#btn_8[1]" w="#btn_8[2]" h="#btn_8[3]">
+				<AlphaAnimation loop="false">
+					<Alpha a="255" time="0" acc="-2000" />
+					<Alpha a="0" time="500" />
+				</AlphaAnimation>
+			</Rectangle>
+		</Normal>
+		<Pressed>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_8[0]" y="#btn_8[1]" w="#btn_8[2]" h="#btn_8[3]" />
+		</Pressed>
+		<Triggers>
+			<Trigger action="up">
+				<AnimationCommand target="Fra" command="play" />
+				<VariableCommand name="equation" expression="ifelse(#finish_eval,'8', eqs(@equation,'0'),'8', strMatches(@equation,'.*[\\+*/-]0$'), substr(@equation,0,len(@equation)-1)+'8', @equation+'8')" type="string" />
+				<VariableCommand name="finish_eval" expression="0" />
+			</Trigger>
+			<Trigger action="cancel">
+				<AnimationCommand target="Fra" command="play" />
+			</Trigger>
+		</Triggers>
+	</Button>
+	<Button name="9" x="#btn_9[0]" y="#btn_9[1]" w="#btn_9[2]" h="#btn_9[3]">
+		<Normal>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_9[0]" y="#btn_9[1]" w="#btn_9[2]" h="#btn_9[3]">
+				<AlphaAnimation loop="false">
+					<Alpha a="255" time="0" acc="-2000" />
+					<Alpha a="0" time="500" />
+				</AlphaAnimation>
+			</Rectangle>
+		</Normal>
+		<Pressed>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_9[0]" y="#btn_9[1]" w="#btn_9[2]" h="#btn_9[3]" />
+		</Pressed>
+		<Triggers>
+			<Trigger action="up">
+				<AnimationCommand target="Fra" command="play" />
+				<VariableCommand name="equation" expression="ifelse(#finish_eval,'9', eqs(@equation,'0'),'9', strMatches(@equation,'.*[\\+*/-]0$'), substr(@equation,0,len(@equation)-1)+'9', @equation+'9')" type="string" />
+				<VariableCommand name="finish_eval" expression="0" />
+			</Trigger>
+			<Trigger action="cancel">
+				<AnimationCommand target="Fra" command="play" />
+			</Trigger>
+		</Triggers>
+	</Button>
+	<Button name="." x="#btn_dot[0]" y="#btn_dot[1]" w="#btn_dot[2]" h="#btn_dot[3]">
+		<Normal>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_dot[0]" y="#btn_dot[1]" w="#btn_dot[2]" h="#btn_dot[3]">
+				<AlphaAnimation loop="false">
+					<Alpha a="255" time="0" acc="-2000" />
+					<Alpha a="0" time="500" />
+				</AlphaAnimation>
+			</Rectangle>
+		</Normal>
+		<Pressed>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_dot[0]" y="#btn_dot[1]" w="#btn_dot[2]" h="#btn_dot[3]" />
+		</Pressed>
+		<Triggers>
+			<Trigger action="up">
+				<AnimationCommand target="Fra" command="play" />
+				<VariableCommand name="equation" expression="@equation+'.'" type="string" condition="ifelse(eq(strLastIndexOf(@equation,'.'),-1),1,not(strMatches(substr(@equation,strLastIndexOf(@equation,'.')+1),'^\d*$')))" />
+				<VariableCommand name="finish_eval" expression="0" />
+			</Trigger>
+			<Trigger action="cancel">
+				<AnimationCommand target="Fra" command="play" />
+			</Trigger>
+		</Triggers>
+	</Button>
+	<Button name="=" x="#btn_equal[0]" y="#btn_equal[1]" w="#btn_equal[2]" h="#btn_equal[3]">
+		<Normal>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_equal[0]" y="#btn_equal[1]" w="#btn_equal[2]" h="#btn_equal[3]">
+				<AlphaAnimation loop="false">
+					<Alpha a="255" time="0" acc="-2000" />
+					<Alpha a="0" time="500" />
+				</AlphaAnimation>
+			</Rectangle>
+		</Normal>
+		<Pressed>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_equal[0]" y="#btn_equal[1]" w="#btn_equal[2]" h="#btn_equal[3]" />
+		</Pressed>
+		<Triggers>
+			<Trigger action="up">
+				<AnimationCommand target="Fra" command="play" />
+				<VariableCommand name="history_equation" expression="@equation" type="string" />
+				<!-- for xxEyy case: convert to xx*pow(10,yy) -->
+				<VariableCommand name="end_of_base" expression="strIndexOf(@equation,'E')" condition="strContains(@equation,'E')" />
+				<!-- end_of_base+2: for xxE-yy case -->
+				<VariableCommand name="plus_pos" expression="strIndexOf(substr(@equation,#end_of_base+2),'+')" condition="strContains(@equation,'E')" />
+				<VariableCommand name="plus_pos" expression="ifelse(ne(#plus_pos,-1),#plus_pos+#end_of_base+2,len(@equation))" condition="strContains(@equation,'E')" />
+				<VariableCommand name="minus_pos" expression="strIndexOf(substr(@equation,#end_of_base+2),'-')" condition="strContains(@equation,'E')" />
+				<VariableCommand name="minus_pos" expression="ifelse(ne(#minus_pos,-1),#minus_pos+#end_of_base+2,len(@equation))" condition="strContains(@equation,'E')" />
+				<VariableCommand name="mult_pos" expression="strIndexOf(substr(@equation,#end_of_base+2),'*')" condition="strContains(@equation,'E')" />
+				<VariableCommand name="mult_pos" expression="ifelse(ne(#mult_pos,-1),#mult_pos+#end_of_base+2,len(@equation))" condition="strContains(@equation,'E')" />
+				<VariableCommand name="divide_pos" expression="strIndexOf(substr(@equation,#end_of_base+2),'/')" condition="strContains(@equation,'E')" />
+				<VariableCommand name="divide_pos" expression="ifelse(ne(#divide_pos,-1),#divide_pos+#end_of_base+2,len(@equation))" condition="strContains(@equation,'E')" />
+				<VariableCommand name="end_of_index" expression="ifelse(lt(#plus_pos,#minus_pos)*lt(#plus_pos,#mult_pos)*lt(#plus_pos,#divide_pos),#plus_pos, lt(#minus_pos,#mult_pos)*lt(#minus_pos,#divide_pos),#minus_pos, lt(#mult_pos,#divide_pos),#mult_pos, #divide_pos)" condition="strContains(@equation,'E')" />
+				<!-- for bug of expression parse -->
+				<VariableCommand name="equation_pow_temp" expression="substr(@equation,#end_of_base+1,#end_of_index-#end_of_base-1) + ')' + substr(@equation,#end_of_index)" type="string" condition="strContains(@equation,'E')" />
+				<VariableCommand name="equation_pow" expression="substr(@equation,0,#end_of_base)+ @pow_for_E + @equation_pow_temp" type="string" condition="strContains(@equation,'E')" />
+				<VariableCommand name="equation_normalized" expression="ifelse(strContains(@equation,'E'),@equation_pow,@equation)" type="string" />
+				<VariableCommand name="equation_normalized" expression="ifelse(strMatches(@equation_normalized,'.*[\\+*/-]$'),substr(@equation_normalized,0,len(@equation_normalized)-1),@equation_normalized)" type="string" />
+				<VariableCommand name="equation" expression="ifelse(strContains(@equation_normalized,'NaN'),'NaN',preciseeval(@equation_normalized,8))" type="string" />
+				<VariableCommand name="show_equation" expression="1" />
+				<!-- for better experience -->
+				<VariableCommand name="finish_eval" expression="1" />
+			</Trigger>
+			<Trigger action="cancel">
+				<AnimationCommand target="Fra" command="play" />
+			</Trigger>
+		</Triggers>
+	</Button>
+	<Button name="+" x="#btn_add[0]" y="#btn_add[1]" w="#btn_add[2]" h="#btn_add[3]">
+		<Normal>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_add[0]" y="#btn_add[1]" w="#btn_add[2]" h="#btn_add[3]">
+				<AlphaAnimation loop="false">
+					<Alpha a="255" time="0" acc="-2000" />
+					<Alpha a="0" time="500" />
+				</AlphaAnimation>
+			</Rectangle>
+		</Normal>
+		<Pressed>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_add[0]" y="#btn_add[1]" w="#btn_add[2]" h="#btn_add[3]" />
+		</Pressed>
+		<Triggers>
+			<Trigger action="up">
+				<AnimationCommand target="Fra" command="play" />
+				<!-- take care: '-' can't be in middle -->
+				<VariableCommand name="equation" expression="ifelse(strEndsWith(@equation,'.'),@equation, strMatches(@equation,'.*[\\+*/-]$'), substr(@equation,0,len(@equation)-1)+'+', @equation+'+')" type="string" />
+				<VariableCommand name="finish_eval" expression="0" />
+			</Trigger>
+			<Trigger action="cancel">
+				<AnimationCommand target="Fra" command="play" />
+			</Trigger>
+		</Triggers>
+	</Button>
+	<Button name="-" x="#btn_sub[0]" y="#btn_sub[1]" w="#btn_sub[2]" h="#btn_sub[3]">
+		<Normal>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_sub[0]" y="#btn_sub[1]" w="#btn_sub[2]" h="#btn_sub[3]">
+				<AlphaAnimation loop="false">
+					<Alpha a="255" time="0" acc="-2000" />
+					<Alpha a="0" time="500" />
+				</AlphaAnimation>
+			</Rectangle>
+		</Normal>
+		<Pressed>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_sub[0]" y="#btn_sub[1]" w="#btn_sub[2]" h="#btn_sub[3]" />
+		</Pressed>
+		<Triggers>
+			<Trigger action="up">
+				<AnimationCommand target="Fra" command="play" />
+				<VariableCommand name="equation" expression="ifelse(strEndsWith(@equation,'.'),@equation, strMatches(@equation,'.*[\\+*/-]$'), substr(@equation,0,len(@equation)-1)+'-', @equation+'-')" type="string" />
+				<VariableCommand name="finish_eval" expression="0" />
+			</Trigger>
+			<Trigger action="cancel">
+				<AnimationCommand target="Fra" command="play" />
+			</Trigger>
+		</Triggers>
+	</Button>
+	<Button name="x" x="#btn_multi[0]" y="#btn_multi[1]" w="#btn_multi[2]" h="#btn_multi[3]">
+		<Normal>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_multi[0]" y="#btn_multi[1]" w="#btn_multi[2]" h="#btn_multi[3]">
+				<AlphaAnimation loop="false">
+					<Alpha a="255" time="0" acc="-2000" />
+					<Alpha a="0" time="500" />
+				</AlphaAnimation>
+			</Rectangle>
+		</Normal>
+		<Pressed>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_multi[0]" y="#btn_multi[1]" w="#btn_multi[2]" h="#btn_multi[3]" />
+		</Pressed>
+		<Triggers>
+			<Trigger action="up">
+				<AnimationCommand target="Fra" command="play" />
+				<VariableCommand name="equation" expression="ifelse(strEndsWith(@equation,'.'),@equation, strMatches(@equation,'.*[\\+*/-]$'), substr(@equation,0,len(@equation)-1)+'*', @equation+'*')" type="string" />
+				<VariableCommand name="finish_eval" expression="0" />
+			</Trigger>
+			<Trigger action="cancel">
+				<AnimationCommand target="Fra" command="play" />
+			</Trigger>
+		</Triggers>
+	</Button>
+	<Button name="÷" x="#btn_div[0]" y="#btn_div[1]" w="#btn_div[2]" h="#btn_div[3]">
+		<Normal>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_div[0]" y="#btn_div[1]" w="#btn_div[2]" h="#btn_div[3]">
+				<AlphaAnimation loop="false">
+					<Alpha a="255" time="0" acc="-2000" />
+					<Alpha a="0" time="500" />
+				</AlphaAnimation>
+			</Rectangle>
+		</Normal>
+		<Pressed>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_div[0]" y="#btn_div[1]" w="#btn_div[2]" h="#btn_div[3]" />
+		</Pressed>
+		<Triggers>
+			<Trigger action="up">
+				<AnimationCommand target="Fra" command="play" />
+				<VariableCommand name="equation" expression="ifelse(strEndsWith(@equation,'.'),@equation, strMatches(@equation,'.*[\\+*/-]$'), substr(@equation,0,len(@equation)-1)+'/', @equation+'/')" type="string" />
+				<VariableCommand name="finish_eval" expression="0" />
+			</Trigger>
+			<Trigger action="cancel">
+				<AnimationCommand target="Fra" command="play" />
+			</Trigger>
+		</Triggers>
+	</Button>
+	<Button name="del" x="#btn_del[0]" y="#btn_del[1]" w="#btn_del[2]" h="#btn_del[3]">
+		<Normal>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_del[0]" y="#btn_del[1]" w="#btn_del[2]" h="#btn_del[3]">
+				<AlphaAnimation loop="false">
+					<Alpha a="255" time="0" acc="-2000" />
+					<Alpha a="0" time="500" />
+				</AlphaAnimation>
+			</Rectangle>
+		</Normal>
+		<Pressed>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_del[0]" y="#btn_del[1]" w="#btn_del[2]" h="#btn_del[3]" />
+		</Pressed>
+		<Triggers>
+			<Trigger action="up">
+				<AnimationCommand target="Fra" command="play" />
+				<VariableCommand name="equation" expression="ifelse(#finish_eval,'0', ifelse(gt(len(@equation),1),substr(@equation,0,len(@equation)-1),'0'))" type="string" />
+			</Trigger>
+			<Trigger action="cancel">
+				<AnimationCommand target="Fra" command="play" />
+			</Trigger>
+		</Triggers>
+	</Button>
+	<Button name="clean" x="#btn_ac[0]" y="#btn_ac[1]" w="#btn_ac[2]" h="#btn_ac[3]">
+		<Normal>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_ac[0]" y="#btn_ac[1]" w="#btn_ac[2]" h="#btn_ac[3]">
+				<AlphaAnimation loop="false">
+					<Alpha a="255" time="0" acc="-2000" />
+					<Alpha a="0" time="500" />
+				</AlphaAnimation>
+			</Rectangle>
+		</Normal>
+		<Pressed>
+			<Rectangle fillColor="$btn.color.pressed" x="#btn_ac[0]" y="#btn_ac[1]" w="#btn_ac[2]" h="#btn_ac[3]" />
+		</Pressed>
+		<Triggers>
+			<Trigger action="up">
+				<AnimationCommand target="Fra" command="play" />
+				<VariableCommand name="history_equation" expression="'0'" type="string" />
+				<VariableCommand name="equation" expression="'0'" type="string" />
+				<VariableCommand name="show_equation" expression="0" />
+			</Trigger>
+			<Trigger action="cancel">
+				<AnimationCommand target="Fra" command="play" />
+			</Trigger>
+		</Triggers>
+	</Button>
+
+</Template>

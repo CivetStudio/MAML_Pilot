@@ -1,0 +1,10 @@
+<Template>
+
+	<Props>
+		<item name="condition" type="string" description="条件判断" default="$#tc$" />
+	</Props>
+
+    <!-- UC浏览器 -->
+    <IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.UCMobile" class="com.UCMobile.main.UCMobile" />
+
+</Template>

@@ -1,0 +1,434 @@
+<ROOT>
+
+	<ExternalCommands>
+		<Trigger action="resume" >
+
+			<VariableCommand condition="1-#mResumeAni.off" name="mScreenId_Var" expression="#mScreenId_Var+1" />
+
+		</Trigger>
+		<Trigger action="pause" >
+
+			<VariableCommand condition="1-#mResumeAni.off" name="mScreenId_Var" expression="0" />
+			<VariableCommand name="mResumeAni" expression="0" type="number" />
+			<VariableCommand name="mResumeAni_1" expression="0" type="number" />
+			<VariableCommand name="mResumeAni_2" expression="0" type="number" />
+			<VariableCommand name="mResumeAni_3" expression="0" type="number" />
+			<VariableCommand name="mResumeAni_4" expression="0" type="number" />
+			<VariableCommand name="mResumeAni_5" expression="0" type="number" />
+			<VariableCommand name="mResumeAni_6" expression="0" type="number" />
+
+		</Trigger>
+	</ExternalCommands>
+
+	<!-- 开屏动画 -->
+	<Var name="S_TimeLoop" >
+		<VariableAnimation>
+			<AniFrame value="1" time="0" />
+			<AniFrame value="864000000" time="864000000" />
+	 	</VariableAnimation>
+	</Var>
+
+	<Var name="realtime_refresh" expression="ifelse(eq(#LangsId,2)+eq(#LangsId,4),#time,#S_TimeLoop+eq(#LangsId,0)*int(#time_sys/300))" threshold="1" >
+		<Trigger>
+			<!-- <VariableCommand name="mResumeTimeV" expression="ifelse(eq(#LangsId,0),0.3,eq(#LangsId,5),3,1)" condition="1" /> -->
+			<!-- <VariableCommand name="mResumeTimeV" expression="ifelse(ne(#LangsId,2)*ne(#LangsId,0),#mResumeTimeVF,eq(#LangsId,0),0.3,1)" condition="1" /> -->
+			<VariableCommand name="mResumeTimeV" expression="ifelse(ne(#LangsId,2)*ne(#LangsId,0),#mResumeTimeVF,eq(#LangsId,0),0.14448,1)" condition="1" />
+			<!-- 越大越慢 -->
+			<VariableCommand name="mXplay5A" expression="eq(#screen_width/#screen_height,1440/2560)*eq(#screen_density,0)" condition="1" />
+			<VariableCommand name="mXplay6A" expression="eq(#screen_width/#screen_height,1440/2560)*eq(#screen_density,480)" condition="1" />
+			<VariableCommand name="mX9S_PlusL" expression="eq(#screen_width/#screen_height,1440/2560)*ne(#screen_density,0)" condition="1" />
+			<VariableCommand name="mFindX3" expression="eq(#screen_width/#screen_height,1440/3216)" condition="1" />
+
+			<VariableCommand name="mResumeTimeVF_Vivo" expression="ifelse(eq(#screen_height,2160)+eq(#screen_height,2340)+eq(#screen_height,2256)+eq(#screen_height,2376),6,eq(#mXplay5A,1),0.188,eq(#mXplay6A,1),5,eq(#mX9S_PlusL,1),5,1)" condition="1" />
+			<VariableCommand name="mResumeTimeVF_Oppo" expression="ifelse(eq(#screen_height,2280),6,eq(#mFindX3,1),1,1)" condition="1" />
+
+			<VariableCommand name="mResumeTimeVF" expression="ifelse(eq(#LangsId,5),3,0.5)" condition="1" />
+			<!-- <VariableCommand name="mResumeTimeVF" expression="ifelse(eq(#LangsId,5),3,eq(#LangsId,0),#mResumeTimeVF_Oppo*2,1)" condition="1" /> -->
+			<!-- <VariableCommand name="mResumeTimeVF" expression="ifelse(eq(#LangsId,5),#mResumeTimeVF_Vivo,eq(#LangsId,0),#mResumeTimeVF_Oppo,1)" condition="1" /> -->
+			<VariableCommand name="mResumeDelay" expression="min(#mResumeDelay+0.0444*ifelse(eq(#LangsId,0)+eq(#LangsId,5),2,eq(#LangsId,2),2,1),1)" type="number" />
+			<VariableCommand name="mResumeTime" expression="ge(#mResumeDelay,1)*min(#mResumeTime+(max(#mResumeSpeed,1)*88/2/2.2/1000/#mResumeTimeV),1.0)" condition="1" />
+			<VariableCommand name="mResumeTime.t" expression="ge(#mResumeDelay,1)*min(#mResumeTime+(max(#mResumeSpeed,1)*88/2/2.2/1000/#mResumeTimeV),1.2)" condition="1" />
+			<!-- 线性动画 -->
+			<VariableCommand name="mResumeTime_1" expression="ge(#mResumeTime.t,0.2)*min(#mResumeTime_1+(max(#mResumeSpeed,1)*88/2/2.2/1000/#mResumeTimeV),1)" condition="1" />
+			<VariableCommand name="mResumeTime_2" expression="ge(#mResumeTime.t,0.4)*min(#mResumeTime_2+(max(#mResumeSpeed,1)*88/2/2.2/1000/#mResumeTimeV),1)" condition="1" />
+			<VariableCommand name="mResumeTime_3" expression="ge(#mResumeTime.t,0.6)*min(#mResumeTime_3+(max(#mResumeSpeed,1)*88/2/2.2/1000/#mResumeTimeV),1)" condition="1" />
+			<VariableCommand name="mResumeTime_4" expression="ge(#mResumeTime.t,0.8)*min(#mResumeTime_4+(max(#mResumeSpeed,1)*88/2/2.2/1000/#mResumeTimeV),1)" condition="1" />
+			<VariableCommand name="mResumeTime_5" expression="ge(#mResumeTime.t,1.0)*min(#mResumeTime_5+(max(#mResumeSpeed,1)*88/2/2.2/1000/#mResumeTimeV),1)" condition="1" />
+			<VariableCommand name="mResumeTime_6" expression="ge(#mResumeTime.t,1.2)*min(#mResumeTime_6+(max(#mResumeSpeed,1)*88/2/2.2/1000/#mResumeTimeV),1)" condition="1" />
+			<VariableCommand name="PI" expression="3.1415926535898" />
+			<VariableCommand name="EaseC1" expression="1.70158+#mResumeEaseAdd" />
+			<VariableCommand name="EaseC2" expression="1.525*#EaseC1" />
+			<VariableCommand name="EaseC3" expression="1+#EaseC1" />
+			<VariableCommand name="EaseC4" expression="(2*#PI)/3" />
+			<VariableCommand name="EaseC5" expression="(2*#PI)/4.5" />
+			<VariableCommand name="EaseN1" expression="7.5625" />
+			<VariableCommand name="EaseD1" expression="2.75" />
+
+			<!-- SineEaseOut 平滑 -->
+			<!-- <Var name="mBezierTrans" expression="sin(#mResumeTime*#PI/2)" condition="1" />
+			<Var name="mBezierTrans_1" expression="sin(#mResumeTime_1*#PI/2)" condition="ge(#mResumeTime.t,0.25)" />
+			<Var name="mBezierTrans_2" expression="sin(#mResumeTime_2*#PI/2)" condition="ge(#mResumeTime.t,0.5)" />
+			<Var name="mBezierTrans_3" expression="sin(#mResumeTime_3*#PI/2)" condition="ge(#mResumeTime.t,0.75)" />
+			<Var name="mBezierTrans_4" expression="sin(#mResumeTime_4*#PI/2)" condition="ge(#mResumeTime.t,1)" />
+			<Var name="mBezierTrans_5" expression="sin(#mResumeTime_5*#PI/2)" condition="ge(#mResumeTime.t,0.875)" /> -->
+
+			<!-- BackEaseOut -->
+			<!-- 开屏动画从#mBezierTrans,#mBezierTrans_1,#mBezierTrans_2,#mBezierTrans_3,#mBezierTrans_4,#mBezierTrans_5依次播放，效果同【放个小空】 -->
+			<VariableCommand name="mBezierTrans" expression="1+#EaseC3*(#mResumeTime-1)*(#mResumeTime-1)*(#mResumeTime-1)+#EaseC1*(#mResumeTime-1)*(#mResumeTime-1)" condition="1" />
+			<VariableCommand name="mBezierTrans_1" expression="ge(#mResumeTime.t,0.2)*(1+(#EaseC3-1)*(#mResumeTime_1-1)*(#mResumeTime_1-1)*(#mResumeTime_1-1)+(#EaseC1-1)*(#mResumeTime_1-1)*(#mResumeTime_1-1))" condition="1" />
+			<VariableCommand name="mBezierTrans_2" expression="ge(#mResumeTime.t,0.4)*(1+(#EaseC3-1)*(#mResumeTime_2-1)*(#mResumeTime_2-1)*(#mResumeTime_2-1)+(#EaseC1-1)*(#mResumeTime_2-1)*(#mResumeTime_2-1))" condition="1" />
+			<VariableCommand name="mBezierTrans_3" expression="ge(#mResumeTime.t,0.6)*(1+(#EaseC3-1)*(#mResumeTime_3-1)*(#mResumeTime_3-1)*(#mResumeTime_3-1)+(#EaseC1-1)*(#mResumeTime_3-1)*(#mResumeTime_3-1))" condition="1" />
+			<VariableCommand name="mBezierTrans_4" expression="ge(#mResumeTime.t,0.8)*(1+(#EaseC3-1)*(#mResumeTime_4-1)*(#mResumeTime_4-1)*(#mResumeTime_4-1)+(#EaseC1-1)*(#mResumeTime_4-1)*(#mResumeTime_4-1))" condition="1" />
+			<VariableCommand name="mBezierTrans_5" expression="ge(#mResumeTime.t,1.0)*(1+(#EaseC3-1)*(#mResumeTime_5-1)*(#mResumeTime_5-1)*(#mResumeTime_5-1)+(#EaseC1-1)*(#mResumeTime_5-1)*(#mResumeTime_5-1))" condition="1" />
+			<VariableCommand name="mBezierTrans_6" expression="ge(#mResumeTime.t,1.2)*(1+(#EaseC3-1)*(#mResumeTime_6-1)*(#mResumeTime_6-1)*(#mResumeTime_6-1)+(#EaseC1-1)*(#mResumeTime_6-1)*(#mResumeTime_6-1))" condition="1" />
+
+			<!-- <VariableCommand name="mBezierTrans" expression="0" type="number" condition="eq(#resume_flag,0)" />
+			<VariableCommand name="mBezierTrans_1" expression="0" type="number" condition="eq(#resume_flag,0)" />
+			<VariableCommand name="mBezierTrans_2" expression="0" type="number" condition="eq(#resume_flag,0)" />
+			<VariableCommand name="mBezierTrans_3" expression="0" type="number" condition="eq(#resume_flag,0)" />
+			<VariableCommand name="mBezierTrans_4" expression="0" type="number" condition="eq(#resume_flag,0)" />
+			<VariableCommand name="mBezierTrans_5" expression="0" type="number" condition="eq(#resume_flag,0)" />
+
+			<VariableCommand name="mResumeTime" expression="0" type="number" condition="eq(#resume_flag,0)" />
+			<VariableCommand name="mResumeTime_1" expression="0" type="number" condition="eq(#resume_flag,0)" />
+			<VariableCommand name="mResumeTime_2" expression="0" type="number" condition="eq(#resume_flag,0)" />
+			<VariableCommand name="mResumeTime_3" expression="0" type="number" condition="eq(#resume_flag,0)" />
+			<VariableCommand name="mResumeTime_4" expression="0" type="number" condition="eq(#resume_flag,0)" />
+			<VariableCommand name="mResumeTime_5" expression="0" type="number" condition="eq(#resume_flag,0)" /> -->
+
+			<PlaceHolder name="ResumeAniCommand" />
+
+		</Trigger>
+	</Var>
+
+	<Var name="__mScreenId_Var" expression="#mScreenId_Var" threshold="1" >
+		<Trigger>
+			<!-- <VariableCommand name="resume_flag" expression="0" /> -->
+			<!-- <VariableCommand name="resume_flag" expression="1" delay="400" /> -->
+
+			<VariableCommand name="mResumeDelay" expression="0" />
+			<!--
+			<VariableCommand name="mResumeTime_1" expression="0" />
+			<VariableCommand name="mResumeTime_2" expression="0" />
+			<VariableCommand name="mResumeTime_3" expression="0" />
+			<VariableCommand name="mResumeTime_4" expression="0" />
+			<VariableCommand name="mResumeTime_5" expression="0" /> -->
+
+			<!-- <VariableCommand name="mBezierTrans" expression="0" />
+			<VariableCommand name="mBezierTrans_1" expression="0" />
+			<VariableCommand name="mBezierTrans_2" expression="0" />
+			<VariableCommand name="mBezierTrans_3" expression="0" />
+			<VariableCommand name="mBezierTrans_4" expression="0" />
+			<VariableCommand name="mBezierTrans_5" expression="0" /> -->
+
+			<Command target="mBezierSys.animation" value="stop" _condition="ne(#LangsId,4)" />
+			<!-- <Command target="mBezierSys.animation" value="play(0,0)" condition="eq(#LangsId,4)" /> -->
+			<Command target="mBezierSys.animation" value="play" />
+			<Command target="mBezierSys_1.animation" value="stop" _condition="ne(#LangsId,4)" />
+			<!-- <Command target="mBezierSys_1.animation" value="play(0,0)" condition="eq(#LangsId,4)" /> -->
+			<Command target="mBezierSys_1.animation" value="play" />
+			<Command target="mBezierSys_2.animation" value="stop" _condition="ne(#LangsId,4)" />
+			<!-- <Command target="mBezierSys_2.animation" value="play(0,0)" condition="eq(#LangsId,4)" /> -->
+			<Command target="mBezierSys_2.animation" value="play" />
+			<Command target="mBezierSys_3.animation" value="stop" _condition="ne(#LangsId,4)" />
+			<!-- <Command target="mBezierSys_3.animation" value="play(0,0)" condition="eq(#LangsId,4)" /> -->
+			<Command target="mBezierSys_3.animation" value="play" />
+			<Command target="mBezierSys_4.animation" value="stop" _condition="ne(#LangsId,4)" />
+			<!-- <Command target="mBezierSys_4.animation" value="play(0,0)" condition="eq(#LangsId,4)" /> -->
+			<Command target="mBezierSys_4.animation" value="play" />
+			<Command target="mBezierSys_5.animation" value="stop" _condition="ne(#LangsId,4)" />
+			<!-- <Command target="mBezierSys_5.animation" value="play(0,0)" condition="eq(#LangsId,4)" /> -->
+			<Command target="mBezierSys_5.animation" value="play" />
+			<Command target="mBezierSys_6.animation" value="stop" _condition="ne(#LangsId,4)" />
+			<!-- <Command target="mBezierSys_6.animation" value="play(0,0)" condition="eq(#LangsId,4)" /> -->
+			<Command target="mBezierSys_6.animation" value="play" />
+
+		</Trigger>
+	</Var>
+
+	<!-- C3: 2.00158	C1: 1.00158 -->
+	<Var name="_ease.c3" expression="2.00158+#mResumeEaseAdd" type="number" />
+	<Var name="_ease.1" expression="1+(#_ease.c3)*(100/1000-1)*(100/1000-1)*(100/1000-1)+(#_ease.c3-1)*(100/1000-1)*(100/1000-1)" type="number" />
+	<Var name="_ease.2" expression="1+(#_ease.c3)*(200/1000-1)*(200/1000-1)*(200/1000-1)+(#_ease.c3-1)*(200/1000-1)*(200/1000-1)" type="number" />
+	<Var name="_ease.3" expression="1+(#_ease.c3)*(300/1000-1)*(300/1000-1)*(300/1000-1)+(#_ease.c3-1)*(300/1000-1)*(300/1000-1)" type="number" />
+	<Var name="_ease.4" expression="1+(#_ease.c3)*(400/1000-1)*(400/1000-1)*(400/1000-1)+(#_ease.c3-1)*(400/1000-1)*(400/1000-1)" type="number" />
+	<Var name="_ease.5" expression="1+(#_ease.c3)*(500/1000-1)*(500/1000-1)*(500/1000-1)+(#_ease.c3-1)*(500/1000-1)*(500/1000-1)" type="number" />
+	<Var name="_ease.6" expression="1+(#_ease.c3)*(600/1000-1)*(600/1000-1)*(600/1000-1)+(#_ease.c3-1)*(600/1000-1)*(600/1000-1)" type="number" />
+	<Var name="_ease.7" expression="1+(#_ease.c3)*(700/1000-1)*(700/1000-1)*(700/1000-1)+(#_ease.c3-1)*(700/1000-1)*(700/1000-1)" type="number" />
+	<Var name="_ease.8" expression="1+(#_ease.c3)*(800/1000-1)*(800/1000-1)*(800/1000-1)+(#_ease.c3-1)*(800/1000-1)*(800/1000-1)" type="number" />
+	<Var name="_ease.9" expression="1+(#_ease.c3)*(900/1000-1)*(900/1000-1)*(900/1000-1)+(#_ease.c3-1)*(900/1000-1)*(900/1000-1)" type="number" />
+
+	<Var name="_ease_d.c3" expression="2.70158+#mResumeEaseAdd" type="number" />
+	<Var name="_ease_d.1" expression="1+(#_ease_d.c3)*(100/1000-1)*(100/1000-1)*(100/1000-1)+(#_ease_d.c3-1)*(100/1000-1)*(100/1000-1)" type="number" />
+	<Var name="_ease_d.2" expression="1+(#_ease_d.c3)*(200/1000-1)*(200/1000-1)*(200/1000-1)+(#_ease_d.c3-1)*(200/1000-1)*(200/1000-1)" type="number" />
+	<Var name="_ease_d.3" expression="1+(#_ease_d.c3)*(300/1000-1)*(300/1000-1)*(300/1000-1)+(#_ease_d.c3-1)*(300/1000-1)*(300/1000-1)" type="number" />
+	<Var name="_ease_d.4" expression="1+(#_ease_d.c3)*(400/1000-1)*(400/1000-1)*(400/1000-1)+(#_ease_d.c3-1)*(400/1000-1)*(400/1000-1)" type="number" />
+	<Var name="_ease_d.5" expression="1+(#_ease_d.c3)*(500/1000-1)*(500/1000-1)*(500/1000-1)+(#_ease_d.c3-1)*(500/1000-1)*(500/1000-1)" type="number" />
+	<Var name="_ease_d.6" expression="1+(#_ease_d.c3)*(600/1000-1)*(600/1000-1)*(600/1000-1)+(#_ease_d.c3-1)*(600/1000-1)*(600/1000-1)" type="number" />
+	<Var name="_ease_d.7" expression="1+(#_ease_d.c3)*(700/1000-1)*(700/1000-1)*(700/1000-1)+(#_ease_d.c3-1)*(700/1000-1)*(700/1000-1)" type="number" />
+	<Var name="_ease_d.8" expression="1+(#_ease_d.c3)*(800/1000-1)*(800/1000-1)*(800/1000-1)+(#_ease_d.c3-1)*(800/1000-1)*(800/1000-1)" type="number" />
+	<Var name="_ease_d.9" expression="1+(#_ease_d.c3)*(900/1000-1)*(900/1000-1)*(900/1000-1)+(#_ease_d.c3-1)*(900/1000-1)*(900/1000-1)" type="number" />
+
+	<!-- <Var name="_ease.1" expression="0.35212798" type="number" />
+	<Var name="_ease.2" expression="0.61620224" type="number" />
+	<Var name="_ease.3" expression="0.80423226" type="number" />
+	<Var name="_ease.4" expression="0.92822752" type="number" />
+	<Var name="_ease.5" expression="1.00019750" type="number" />
+	<Var name="_ease.6" expression="1.03215168" type="number" />
+	<Var name="_ease.7" expression="1.03609954" type="number" />
+	<Var name="_ease.8" expression="1.02405056" type="number" />
+	<Var name="_ease.9" expression="1.00801422" type="number" /> -->
+
+	<!-- <Var name="_ease.1" expression="0.40882798" type="number" />
+	<Var name="_ease.2" expression="0.70580224" type="number" />
+	<Var name="_ease.3" expression="0.90713226" type="number" />
+	<Var name="_ease.4" expression="1.02902752" type="number" />
+	<Var name="_ease.5" expression="1.0876975" type="number" />
+	<Var name="_ease.6" expression="1.09935168" type="number" />
+	<Var name="_ease.7" expression="1.08019954" type="number" />
+	<Var name="_ease.8" expression="1.04645056" type="number" />
+	<Var name="_ease.9" expression="1.01431422" type="number" /> -->
+
+	<!-- +0.40882798 -->
+	<!-- +0.70580224 -->
+	<!-- +0.90713226 -->
+	<!-- +1.02902752 -->
+	<!-- +1.08769750 -->
+	<!-- +1.09935168 -->
+	<!-- +1.08019954 -->
+	<!-- +1.04645056 -->
+	<!-- +1.01431422 -->
+
+	<Var name="mBezierSys" >
+		<VariableAnimation>
+			<AniFrame value="0" time="0" />
+			<AniFrame value="#_ease_d.1" time="1*100/#mResumeSpeed" />
+			<AniFrame value="#_ease_d.2" time="2*100/#mResumeSpeed" />
+			<AniFrame value="#_ease_d.3" time="3*100/#mResumeSpeed" />
+			<AniFrame value="#_ease_d.4" time="4*100/#mResumeSpeed" />
+			<AniFrame value="#_ease_d.5" time="5*100/#mResumeSpeed" />
+			<AniFrame value="#_ease_d.6" time="6*100/#mResumeSpeed" />
+			<AniFrame value="#_ease_d.7" time="7*100/#mResumeSpeed" />
+			<AniFrame value="#_ease_d.8" time="8*100/#mResumeSpeed" />
+			<AniFrame value="#_ease_d.9" time="9*100/#mResumeSpeed" />
+			<AniFrame value="1" time="10*100/#mResumeSpeed" />
+			<AniFrame value="1" time="1876461209000" />
+		</VariableAnimation>
+	</Var>
+
+	<Var name="mBezierSys_1" >
+		<VariableAnimation>
+			<AniFrame value="0" time="0" />
+			<AniFrame value="0" time="200" />
+			<AniFrame value="#_ease.1" time="200+1*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.2" time="200+2*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.3" time="200+3*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.4" time="200+4*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.5" time="200+5*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.6" time="200+6*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.7" time="200+7*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.8" time="200+8*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.9" time="200+9*100/#mResumeSpeed" />
+			<AniFrame value="1" time="200+10*100/#mResumeSpeed" />
+			<AniFrame value="1" time="1876461209000" />
+		</VariableAnimation>
+	</Var>
+
+	<Var name="mBezierSys_2" >
+		<VariableAnimation>
+			<AniFrame value="0" time="0" />
+			<AniFrame value="0" time="400" />
+			<AniFrame value="#_ease.1" time="400+1*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.2" time="400+2*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.3" time="400+3*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.4" time="400+4*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.5" time="400+5*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.6" time="400+6*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.7" time="400+7*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.8" time="400+8*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.9" time="400+9*100/#mResumeSpeed" />
+			<AniFrame value="1" time="400+10*100/#mResumeSpeed" />
+			<AniFrame value="1" time="1876461209000" />
+		</VariableAnimation>
+	</Var>
+
+	<Var name="mBezierSys_3" >
+		<VariableAnimation>
+			<AniFrame value="0" time="0" />
+			<AniFrame value="0" time="600" />
+			<AniFrame value="#_ease.1" time="600+1*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.2" time="600+2*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.3" time="600+3*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.4" time="600+4*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.5" time="600+5*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.6" time="600+6*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.7" time="600+7*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.8" time="600+8*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.9" time="600+9*100/#mResumeSpeed" />
+			<AniFrame value="1" time="600+10*100/#mResumeSpeed" />
+			<AniFrame value="1" time="1876461209000" />
+		</VariableAnimation>
+	</Var>
+
+	<Var name="mBezierSys_4" >
+		<VariableAnimation>
+			<AniFrame value="0" time="0" />
+			<AniFrame value="0" time="800" />
+			<AniFrame value="#_ease.1" time="800+1*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.2" time="800+2*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.3" time="800+3*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.4" time="800+4*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.5" time="800+5*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.6" time="800+6*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.7" time="800+7*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.8" time="800+8*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.9" time="800+9*100/#mResumeSpeed" />
+			<AniFrame value="1" time="800+10*100/#mResumeSpeed" />
+			<AniFrame value="1" time="1876461209000" />
+		</VariableAnimation>
+	</Var>
+
+	<Var name="mBezierSys_5" >
+		<VariableAnimation>
+			<AniFrame value="0" time="0" />
+			<AniFrame value="0" time="1000" />
+			<AniFrame value="#_ease.1" time="1000+1*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.2" time="1000+2*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.3" time="1000+3*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.4" time="1000+4*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.5" time="1000+5*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.6" time="1000+6*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.7" time="1000+7*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.8" time="1000+8*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.9" time="1000+9*100/#mResumeSpeed" />
+			<AniFrame value="1" time="1000+10*100/#mResumeSpeed" />
+			<AniFrame value="1" time="1876461209000" />
+		</VariableAnimation>
+	</Var>
+
+	<Var name="mBezierSys_6" >
+		<VariableAnimation>
+			<AniFrame value="0" time="0" />
+			<AniFrame value="0" time="1200" />
+			<AniFrame value="#_ease.1" time="1200+1*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.2" time="1200+2*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.3" time="1200+3*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.4" time="1200+4*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.5" time="1200+5*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.6" time="1200+6*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.7" time="1200+7*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.8" time="1200+8*100/#mResumeSpeed" />
+			<AniFrame value="#_ease.9" time="1200+9*100/#mResumeSpeed" />
+			<AniFrame value="1" time="1200+10*100/#mResumeSpeed" />
+			<AniFrame value="1" time="1876461209000" />
+		</VariableAnimation>
+	</Var>
+
+	<!-- <Var name="mBezierSys" >
+		<VariableAnimation>
+			<AniFrame value="0" time="0" />
+			<AniFrame value="0.32782798" time="1*100/#mResumeSpeed" />
+			<AniFrame value="0.57780224" time="2*100/#mResumeSpeed" />
+			<AniFrame value="0.76013226" time="3*100/#mResumeSpeed" />
+			<AniFrame value="0.88502752" time="4*100/#mResumeSpeed" />
+			<AniFrame value="0.96269750" time="5*100/#mResumeSpeed" />
+			<AniFrame value="1.00335168" time="6*100/#mResumeSpeed" />
+			<AniFrame value="1.01719954" time="7*100/#mResumeSpeed" />
+			<AniFrame value="1.01445056" time="8*100/#mResumeSpeed" />
+			<AniFrame value="1.00531422" time="9*100/#mResumeSpeed" />
+			<AniFrame value="1" time="10*100/#mResumeSpeed" />
+			<AniFrame value="1" time="1876461209000" />
+		</VariableAnimation>
+	</Var>
+
+	<Var name="mBezierSys_1" >
+		<VariableAnimation>
+			<AniFrame value="0" time="0" />
+			<AniFrame value="0" time="200" />
+			<AniFrame value="0.32782798" time="200+1*100/#mResumeSpeed" />
+			<AniFrame value="0.57780224" time="200+2*100/#mResumeSpeed" />
+			<AniFrame value="0.76013226" time="200+3*100/#mResumeSpeed" />
+			<AniFrame value="0.88502752" time="200+4*100/#mResumeSpeed" />
+			<AniFrame value="0.96269750" time="200+5*100/#mResumeSpeed" />
+			<AniFrame value="1.00335168" time="200+6*100/#mResumeSpeed" />
+			<AniFrame value="1.01719954" time="200+7*100/#mResumeSpeed" />
+			<AniFrame value="1.01445056" time="200+8*100/#mResumeSpeed" />
+			<AniFrame value="1.00531422" time="200+9*100/#mResumeSpeed" />
+			<AniFrame value="1" time="200+10*100/#mResumeSpeed" />
+			<AniFrame value="1" time="1876461209000" />
+		</VariableAnimation>
+	</Var>
+
+	<Var name="mBezierSys_2" >
+		<VariableAnimation>
+			<AniFrame value="0" time="0" />
+			<AniFrame value="0" time="400" />
+			<AniFrame value="0.32782798" time="400+1*100/#mResumeSpeed" />
+			<AniFrame value="0.57780224" time="400+2*100/#mResumeSpeed" />
+			<AniFrame value="0.76013226" time="400+3*100/#mResumeSpeed" />
+			<AniFrame value="0.88502752" time="400+4*100/#mResumeSpeed" />
+			<AniFrame value="0.96269750" time="400+5*100/#mResumeSpeed" />
+			<AniFrame value="1.00335168" time="400+6*100/#mResumeSpeed" />
+			<AniFrame value="1.01719954" time="400+7*100/#mResumeSpeed" />
+			<AniFrame value="1.01445056" time="400+8*100/#mResumeSpeed" />
+			<AniFrame value="1.00531422" time="400+9*100/#mResumeSpeed" />
+			<AniFrame value="1" time="400+10*100/#mResumeSpeed" />
+			<AniFrame value="1" time="1876461209000" />
+		</VariableAnimation>
+	</Var>
+
+	<Var name="mBezierSys_3" >
+		<VariableAnimation>
+			<AniFrame value="0" time="0" />
+			<AniFrame value="0" time="600" />
+			<AniFrame value="0.32782798" time="600+1*100/#mResumeSpeed" />
+			<AniFrame value="0.57780224" time="600+2*100/#mResumeSpeed" />
+			<AniFrame value="0.76013226" time="600+3*100/#mResumeSpeed" />
+			<AniFrame value="0.88502752" time="600+4*100/#mResumeSpeed" />
+			<AniFrame value="0.96269750" time="600+5*100/#mResumeSpeed" />
+			<AniFrame value="1.00335168" time="600+6*100/#mResumeSpeed" />
+			<AniFrame value="1.01719954" time="600+7*100/#mResumeSpeed" />
+			<AniFrame value="1.01445056" time="600+8*100/#mResumeSpeed" />
+			<AniFrame value="1.00531422" time="600+9*100/#mResumeSpeed" />
+			<AniFrame value="1" time="600+10*100/#mResumeSpeed" />
+			<AniFrame value="1" time="1876461209000" />
+		</VariableAnimation>
+	</Var>
+
+	<Var name="mBezierSys_4" >
+		<VariableAnimation>
+			<AniFrame value="0" time="0" />
+			<AniFrame value="0" time="800" />
+			<AniFrame value="0.32782798" time="800+1*100/#mResumeSpeed" />
+			<AniFrame value="0.57780224" time="800+2*100/#mResumeSpeed" />
+			<AniFrame value="0.76013226" time="800+3*100/#mResumeSpeed" />
+			<AniFrame value="0.88502752" time="800+4*100/#mResumeSpeed" />
+			<AniFrame value="0.96269750" time="800+5*100/#mResumeSpeed" />
+			<AniFrame value="1.00335168" time="800+6*100/#mResumeSpeed" />
+			<AniFrame value="1.01719954" time="800+7*100/#mResumeSpeed" />
+			<AniFrame value="1.01445056" time="800+8*100/#mResumeSpeed" />
+			<AniFrame value="1.00531422" time="800+9*100/#mResumeSpeed" />
+			<AniFrame value="1" time="800+10*100/#mResumeSpeed" />
+			<AniFrame value="1" time="1876461209000" />
+		</VariableAnimation>
+	</Var>
+
+	<Var name="mBezierSys_5" >
+		<VariableAnimation>
+			<AniFrame value="0" time="0" />
+			<AniFrame value="0" time="1000" />
+			<AniFrame value="0.32782798" time="1000+1*100/#mResumeSpeed" />
+			<AniFrame value="0.57780224" time="1000+2*100/#mResumeSpeed" />
+			<AniFrame value="0.76013226" time="1000+3*100/#mResumeSpeed" />
+			<AniFrame value="0.88502752" time="1000+4*100/#mResumeSpeed" />
+			<AniFrame value="0.96269750" time="1000+5*100/#mResumeSpeed" />
+			<AniFrame value="1.00335168" time="1000+6*100/#mResumeSpeed" />
+			<AniFrame value="1.01719954" time="1000+7*100/#mResumeSpeed" />
+			<AniFrame value="1.01445056" time="1000+8*100/#mResumeSpeed" />
+			<AniFrame value="1.00531422" time="1000+9*100/#mResumeSpeed" />
+			<AniFrame value="1" time="1000+10*100/#mResumeSpeed" />
+			<AniFrame value="1" time="1876461209000" />
+		</VariableAnimation>
+	</Var> -->
+
+</ROOT>

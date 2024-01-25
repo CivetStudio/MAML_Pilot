@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Lockscreen version="1" frameRate="1000" screenWidth="1080" vibrate="false">
+
+	<Var name="_ars" expression="" type="string[]" values="'CountHour', 'CountMin', 'CountSec', 'CountWeek', 'CountMonth', 'CountYear', 'mDisFriday', 'CurrentHour', 'mHourLevel', 'mWeekLevel', 'mMonthLevel', 'mYearLevel', 'HourR', 'MinuteR', 'SecondR'" />
+	<Var name="_arr" expression="" type="number[]" values="#CountHour, #CountMin, #CountSec, #CountWeek, #CountMonth, #CountYear, #mDisFriday, #CurrentHour, #mHourLevel, #mWeekLevel, #mMonthLevel, #mYearLevel, #HourR, #MinuteR, #SecondR" />
+	<Widget.Count disabled="0" alias="倒计时变量" _port="CountHour, CountMin, CountSec, CountWeek, CountMonth, CountYear, mDisFriday, CurrentHour, mHourLevel, mWeekLevel, mMonthLevel, mYearLevel, HourR, MinuteR, SecondR" />
+
+	<Array count="15" indexName="_i">
+		<Text x="100" y="100+100*#_i" color="#00FF00" size="48" textExp="@_ars[#_i]+': '+#_arr[#_i]" />
+	</Array>
+
+	<!-- <Var name="__maml_version" expression="0" type="number" /> -->
+
+</Lockscreen>

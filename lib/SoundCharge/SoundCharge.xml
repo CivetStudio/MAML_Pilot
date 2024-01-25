@@ -1,0 +1,16 @@
+<ROOT>
+
+	<ValueHolder name="mSoundChargeFile" />
+	<ValueHolder name="mSoundChargeKeepCur" />
+	<Var name="mChargeAudioTrigger" expression="#mChargeAudio" threshold="1" >
+		<Trigger>
+			<SoundCommand sound="mSoundChargeFile" loop="false" volume="1" keepCur="mSoundChargeKeepCur" />
+		</Trigger>
+	</Var>
+	<Var name="mChargeAudioVar" expression="eq(#battery_state,1)+eq(#battery_state,3)" threshold="1" >
+		<Trigger>
+			<VariableCommand name="mChargeAudio" expression="#mChargeAudio+1" condition="eq(#battery_state,1)+eq(#battery_state,3)" />
+		</Trigger>
+	</Var>
+
+</ROOT>

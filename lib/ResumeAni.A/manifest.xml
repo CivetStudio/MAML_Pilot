@@ -1,0 +1,41 @@
+<ROOT>
+    <Var name="S_TimeLoop">
+        <VariableAnimation>
+            <AniFrame value="1" time="0" />
+            <AniFrame value="864000" time="864000" />
+        </VariableAnimation>
+    </Var>
+    <Var name="realtime_refresh" expression="ifelse(eq(#LangsId,2),#time,#S_TimeLoop+eq(#LangsId,0)*int(#time_sys/300))" threshold="1">
+        <Trigger>
+            <VariableCommand name="mResumeTimeV" expression="ifelse(ne(#LangsId,2)*ne(#LangsId,0),#mResumeTimeVF,eq(#LangsId,0),0.3,1)" condition="ne(#mResumeTime,1)*ne(#resume_flag,0)" />
+            <VariableCommand name="mXplay5A" expression="eq(#screen_width/#screen_height,1440/2560)*eq(#screen_density,0)" condition="1" />
+            <VariableCommand name="mXplay6A" expression="eq(#screen_width/#screen_height,1440/2560)*eq(#screen_density,480)" condition="1" />
+            <VariableCommand name="mX9S_PlusL" expression="eq(#screen_width/#screen_height,1440/2560)*ne(#screen_density,0)" condition="1" />
+            <VariableCommand name="mFindX3" expression="eq(#screen_width/#screen_height,1440/3216)" condition="1" />
+            <VariableCommand name="mResumeTimeVF_Vivo" expression="ifelse(eq(#screen_height,2160)+eq(#screen_height,2340)+eq(#screen_height,2256)+eq(#screen_height,2376),6,eq(#mXplay5A,1),0.188,eq(#mXplay6A,1),5,eq(#mX9S_PlusL,1),5,1)" condition="1" />
+            <VariableCommand name="mResumeTimeVF_Oppo" expression="ifelse(eq(#screen_height,2280),6,eq(#mFindX3,1),1,1)" condition="1" />
+            <VariableCommand name="mResumeTimeVF" expression="ifelse(eq(#LangsId,5),3,eq(#LangsId,0),#mResumeTimeVF_Oppo,1)" condition="1" />
+            <VariableCommand name="mResumeTime" expression="min(#mResumeTime+(88/2/2.2/1000/#mResumeTimeV),1)" condition="ne(#mResumeTime,1)*ne(#resume_flag,0)" />
+            <VariableCommand name="mResumeTime_1" expression="min(#mResumeTime_1+(88/2/2.2/1000/#mResumeTimeV),1)" condition="ge(#mResumeTime,0.25)" />
+            <VariableCommand name="mResumeTime_2" expression="min(#mResumeTime_2+(88/2/2.2/1000/#mResumeTimeV),1)" condition="ge(#mResumeTime,0.5)" />
+            <VariableCommand name="mResumeTime_3" expression="min(#mResumeTime_3+(88/2/2.2/1000/#mResumeTimeV),1)" condition="ge(#mResumeTime,0.75)" />
+            <VariableCommand name="mResumeTime_4" expression="min(#mResumeTime_4+(88/2/2.2/1000/#mResumeTimeV),1)" condition="ge(#mResumeTime,1)" />
+            <VariableCommand name="mResumeTime_5" expression="min(#mResumeTime_5+(88/2/2.2/1000/#mResumeTimeV),1)" condition="ge(#mResumeTime,0.875)" />
+            <VariableCommand name="PI" expression="3.1415926535898" />
+            <VariableCommand name="EaseC1" expression="1.70158" />
+            <VariableCommand name="EaseC2" expression="1.525*#EaseC1" />
+            <VariableCommand name="EaseC3" expression="1+#EaseC1" />
+            <VariableCommand name="EaseC4" expression="(2*#PI)/3" />
+            <VariableCommand name="EaseC5" expression="(2*#PI)/4.5" />
+            <VariableCommand name="EaseN1" expression="7.5625" />
+            <VariableCommand name="EaseD1" expression="2.75" />
+            <VariableCommand name="mBezierTrans" expression="1+#EaseC3*(#mResumeTime-1)*(#mResumeTime-1)*(#mResumeTime-1)+#EaseC1*(#mResumeTime-1)*(#mResumeTime-1)" condition="ne(#mResumeTime,1)*ne(#resume_flag,0)" />
+            <VariableCommand name="mBezierTrans_1" expression="1+(#EaseC3-1)*(#mResumeTime_1-1)*(#mResumeTime_1-1)*(#mResumeTime_1-1)+(#EaseC1-1)*(#mResumeTime_1-1)*(#mResumeTime_1-1)" condition="ge(#mResumeTime,0.25)" />
+            <VariableCommand name="mBezierTrans_2" expression="1+(#EaseC3-1)*(#mResumeTime_2-1)*(#mResumeTime_2-1)*(#mResumeTime_2-1)+(#EaseC1-1)*(#mResumeTime_2-1)*(#mResumeTime_2-1)" condition="ge(#mResumeTime,0.5)" />
+            <VariableCommand name="mBezierTrans_3" expression="1+(#EaseC3-1)*(#mResumeTime_3-1)*(#mResumeTime_3-1)*(#mResumeTime_3-1)+(#EaseC1-1)*(#mResumeTime_3-1)*(#mResumeTime_3-1)" condition="ge(#mResumeTime,0.75)" />
+            <VariableCommand name="mBezierTrans_4" expression="1+(#EaseC3-1)*(#mResumeTime_4-1)*(#mResumeTime_4-1)*(#mResumeTime_4-1)+(#EaseC1-1)*(#mResumeTime_4-1)*(#mResumeTime_4-1)" condition="ge(#mResumeTime,1)" />
+            <VariableCommand name="mBezierTrans_5" expression="1+(#EaseC3-1)*(#mResumeTime_5-1)*(#mResumeTime_5-1)*(#mResumeTime_5-1)+(#EaseC1-1)*(#mResumeTime_5-1)*(#mResumeTime_5-1)" condition="ge(#mResumeTime,0.875)" />
+            <PlaceHolder name="ResumeAniCommand" />
+        </Trigger>
+    </Var>
+</ROOT>

@@ -1,0 +1,26 @@
+<Template>
+	
+	<ExternalCommands>
+		<Trigger action="init,resume">
+			<!-- ContentProvider接口在切屏时必须主动更新一次  -->
+			<BinderCommand name="getWearableAndHeadSetData" command="refresh" />
+		</Trigger>
+	</ExternalCommands>
+
+	<VariableBinders>
+		<ContentProviderBinder name="getWearableAndHeadSetData" uri="content://com.miui.securitycenter.widgetProvider/getWearableAndHeadSetData" columns="wearableBattery,wearableType,headsetBattery" countName="hasGetWearableAndHeadSetData">
+			<!-- 穿戴设备电量，连接状态为真实电量，如果未连接，为nul -->
+			<Variable name="_wearableBattery" type="string" column="wearableBattery" />
+			<!-- 穿戴设备类型：１：手环 ２：手表 -->
+			<Variable name="_wearableType" type="int" column="wearableType" />
+			<!-- 耳机电量，连接时为耳机电量，未连接时为-1 -->
+			<Variable name="_headsetBattery" type="int" column="headsetBattery" />
+			<Trigger >
+				<VariableCommand name="_wearableBatteryStr" expression="strReplaceAll(@_wearableBattery,'%','')" type="string" />
+				<VariableCommand name="_wearableBatteryLevel" expression="ifelse(strIsEmpty(@_wearableBattery),0,int(@_wearableBatteryStr))" type="number" />
+				<VariableCommand name="_headsetBatteryLevel" expression="max(#_headsetBattery,0)" type="number" />
+			</Trigger>
+		</ContentProviderBinder>
+	</VariableBinders>
+
+</Template>

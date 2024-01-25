@@ -1,0 +1,60 @@
+<Template>
+
+	<VariableBinders>
+		<ContentProviderBinder name="getPowerData" uri="content://com.miui.securitycenter.widgetProvider/getPowerData" columns="leftChargeTime,enduranceTime,powerSaveModeStatus,quickChargeStatus,chargestate" countName="hasGetPowerData">
+			<!-- 预计充满时间/ms -->
+			<Variable name="_leftChargeTime" type="long" column="leftChargeTime" />
+			<!-- 预计可用时间/ms -->
+			<Variable name="_enduranceTime" type="long" column="enduranceTime" />
+			<!-- 是否快充 -->
+			<Variable name="_quickChargeStatus" type="int" column="quickChargeStatus" />
+			<!-- 充电状态 -->
+			<Variable name="_chargestate" type="int" column="chargestate" />
+			<!-- 是否开启省电模式 -->
+			<Variable name="_powerSaveModeStatus" type="int" column="powerSaveModeStatus" />
+		</ContentProviderBinder>
+		
+		<!-- 省电模式状态 -->
+		<BroadcastBinder action="miui.intent.action.POWER_SAVE_MODE_CHANGED">
+			<Variable name="_powerSaveModeStatus" type="int" extra="POWER_SAVE_MODE_OPEN_MAML" />
+			<Trigger>
+				<BinderCommand name="getPowerData" command="refresh" />
+				<AnimationCommand target="Fra" command="play" />
+			</Trigger>
+		</BroadcastBinder>
+
+	</VariableBinders>
+
+	<!-- 开屏刷新数据 -->
+	<ExternalCommands>
+		<Trigger action="init,resume">
+			<BinderCommand name="getPowerData" command="refresh" />
+		</Trigger>
+	</ExternalCommands>
+	
+	<!-- 预计可用时间 时/分 -->
+	<Var name="usableTimeHour" expression="ifelse(int(#_enduranceTime/3600000) != 0,int(#_enduranceTime/3600000),0)" type="number" />
+	<Var name="usableTimeMinute" expression="ifelse(int((#_enduranceTime%3600000)/60000) != 0,int((#_enduranceTime%3600000)/60000), 0)" type="number" />
+	<!-- 剩余充电时间 时/分 -->
+	<Var name="theRemainingTimeHour" expression="ifelse(int(#_leftChargeTime/3600000) != 0,int(#_leftChargeTime/3600000),0)" type="number" />
+	<Var name="theRemainingTimeMinute" expression="ifelse(int((#_leftChargeTime%3600000)/60000) != 0,int((#_leftChargeTime%3600000)/60000),0)" type="number" />
+
+	<!-- 前台时，每分钟主动获取一次数据 -->
+	<Var name="getPowerDataCol" expression="#minute" threshold="1">
+		<Trigger>
+			<BinderCommand name="getPowerData" command="refresh" />
+		</Trigger>
+	</Var>
+
+	<!-- 省电模式开关 -->
+	<!-- <Button x="0" y="0" w="#view_width" h="#view_height">
+		<Triggers>
+			<Trigger action="up">
+				<IntentCommand action="com.miui.intent.action.CHANGE_POWER_SAVE_MODE" broadcast="true">
+					<Extra name="POWER_SAVE_MODE_OPEN" type="boolean" expression="!#_powerSaveModeStatus" />
+				</IntentCommand>
+			</Trigger>
+		</Triggers>
+	</Button> -->
+	
+</Template>

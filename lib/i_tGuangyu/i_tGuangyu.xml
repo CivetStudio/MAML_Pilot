@@ -1,0 +1,16 @@
+<Template>
+
+	<Props>
+		<item name="condition" type="string" description="条件判断" default="$#tc$" />
+	</Props>
+
+    <!-- 光遇 -->
+    <IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.netease.sky" class="com.tgc.sky.TGCBootActivity" />
+    <IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.netease.sky" class="com.netease.ntunisdk.external.protocol.ProtocolLauncher" />
+    <IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.netease.sky.nearme.gamecenter" class="com.tgc.sky.TGCBootActivity" />
+    <IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.netease.sky.vivo" class="com.tgc.sky.TGCBootActivity" />
+    <IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.tencent.tmgp.eyou.eygy" class="com.tgc.sky.TGCBootActivity" />
+    <IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.netease.sky.mi" class="com.tgc.sky.TGCBootActivity" />
+    <IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.netease.sky.huawei" class="com.netease.ntunisdk.external.protocol.ProtocolLauncher" />
+
+</Template>

@@ -1,0 +1,17 @@
+<ROOT>
+
+	<ExternalCommands>
+		<Trigger action="resume" >
+			<VariableCommand expression="ifelse(eq(#mDrinkDate,#date),#mDrinkCup,0)" name="mDrinkCount" />
+			<VariableCommand name="mDrinkDate" expression="#date" />
+		</Trigger>
+	</ExternalCommands>
+
+	<Var name="mClearDaily" expression="ifelse(#__maml_version,#minute,#time)" threshold="1" >
+		<Trigger>
+			<VariableCommand name="mDrinkCup" expression="0" condition="ne(#date,#mDrinkDate)" />
+			<VariableCommand name="mDrinkCount" expression="0" condition="ne(#date,#mDrinkDate)" />
+		</Trigger>
+	</Var>
+	
+</ROOT>

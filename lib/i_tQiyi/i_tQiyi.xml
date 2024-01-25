@@ -1,0 +1,10 @@
+<Template>
+
+	<Props>
+		<item name="condition" type="string" description="条件判断" default="$#tc$" />
+	</Props>
+
+    <!-- 爱奇艺 -->
+    <IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.qiyi.video" class="com.qiyi.video.WelcomeActivity" />
+
+</Template>

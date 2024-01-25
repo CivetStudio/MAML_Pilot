@@ -1,0 +1,10 @@
+<Template>
+
+	<Props>
+		<item name="condition" type="string" description="条件判断" default="$#tc$" />
+	</Props>
+
+    <!-- 汽车之家 -->
+    <IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.cubic.autohome" class="com.cubic.autohome.MainActivity" />
+
+</Template>
