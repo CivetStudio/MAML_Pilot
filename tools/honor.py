@@ -63,12 +63,12 @@ def detect_lockscreen_view(process_xml):
                         del elem.attrib[attr]
 
             # 处理 DateTime 标签
-            if elem.tag == 'DateTime':
-                elem.tag = 'Text'
-                elem.attrib['paras'] = f"formatDate('{elem.attrib['format']}',@time_sys)"
-                elem.attrib['format'] = '%s'
-                del elem.attrib['value']
-                print(f"  Refactoring <{elem.tag} />: {etree.tostring(elem, encoding='utf-8').decode('utf-8').strip()}")
+            # if elem.tag == 'DateTime':
+            #     elem.tag = 'Text'
+            #     elem.attrib['paras'] = f"formatDate('{elem.attrib['format']}',@time_sys)"
+            #     elem.attrib['format'] = '%s'
+            #     del elem.attrib['value']
+            #     print(f"  Refactoring <{elem.tag} />: {etree.tostring(elem, encoding='utf-8').decode('utf-8').strip()}")
 
             # 删除不支持的标签
             elif elem.tag != 'DateTime' and elem.tag != 'Text':
@@ -88,6 +88,8 @@ def process_lockscreen_var(process_xml):
                 tag.parent.parent.name == 'ExternalCommands':
             var_comp_name = tag.get('name')
             var_comp_exp = tag.get('expression')
+            var_comp_type = tag.get('type')
+
             var_comp_persist = 'false' if tag.get('persist') is None else 'true'
 
             # 输出同名变量
@@ -97,22 +99,46 @@ def process_lockscreen_var(process_xml):
 
             # 查询是否有同名的 Var 变量
             var_tag_form = bool(soup.find_all('Var', attrs={'name': var_comp_name}) != [])
-            print(var_tag_form)
+            # print(var_tag_form)
 
             if not var_tag_form:
                 print(f'<Var name="{var_comp_name}" expression="{var_comp_exp}" />')
                 if var_comp_persist == 'false':
-                    new_var_honor = soup.new_tag('Var', attrs={'name': var_comp_name, 'expression': var_comp_exp})
+                    new_var_honor = soup.new_tag('Var', attrs={'name': var_comp_name, 'expression': var_comp_exp, 'type': var_comp_type})
                 else:
-                    new_var_honor = soup.new_tag('Var', attrs={'name': var_comp_name, 'expression': var_comp_exp, 'persist': var_comp_persist})
+                    new_var_honor = soup.new_tag('Var', attrs={'name': var_comp_name, 'expression': var_comp_exp, 'type': var_comp_type, 'persist': var_comp_persist})
                 if 'rand()' in var_comp_exp:
                     new_var_honor['const'] = 'true'
                 soup.Lockscreen.append(new_var_honor)
 
+    for intent in soup.find_all('IntentCommand'):
+        package_name = intent.get('package')
+        class_name = intent.get('class')
+        if str(package_name).startswith('com.huawei.')\
+                or (str(package_name) == 'com.android.deskclock' and str(class_name) == 'com.android.deskclock.AlarmsMainActivity')\
+                or (str(package_name) == 'com.android.calendar' and str(class_name) == 'com.android.calendar.AllInOneActivity'):
+            intent.extract()
+
+    for var in soup.find_all('Var'):
+        var_name = var.get('name')
+        var_exp = var.get('expression')
+        var_filter = f"#{str(var_name)}+1"
+        if var_exp and var_filter in str(var_exp):
+            print("Loop:", var)
+            var['expression'] = '0'
+        if f'#{var_name}' in str(soup):
+            var['type'] = 'number'
+        elif f'@{var_name}' in str(soup):
+            var['type'] = 'string'
+        else:
+            var['type'] = 'number'
+
     with open(process_xml, 'w', encoding='utf-8') as f:
-        f.write(str(soup.prettify(indent_width=4).replace('    ', '\t')))
+        f.write(str(soup.prettify(indent_width=4).replace('    ', '\t').replace('@_description', '@Weather.today.weatherIconDes').replace('ifelse(ne(#LangsId,2),#time+#time_sys,round(#S_TimeLoop))', '#time')))
 
 
 # 示例用法
 detect_lockscreen_view(maml_main_xml)
 process_lockscreen_var(maml_main_xml)
+# 查找变量内是否循环套用 <Var name="a" expression="#a+1" />
+# 未知原因丢失 Var.type 属性

@@ -47,6 +47,13 @@
 		</Button>
 
 		<Text x="100+#Ani_#_i*300" y="100+#_i*100" color="#ff0000" size="50" text="Ani_#_i" />
+		<!-- <Image x="50+#_i*60" y="60+#_i*90" src="img.png" srcid="#_i" /> -->
+
+	</C_Array>
+
+	<C_Array count="3" indexName="_i">
+
+		<Text x="100+#Ani_#_i*300" y="100+#_i*100" color="#ff0000" size="50" text="Ani_#_i" />
 		<Image x="50+#_i*60" y="60+#_i*90" src="img.png" srcid="#_i" />
 
 	</C_Array>

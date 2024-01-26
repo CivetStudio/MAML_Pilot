@@ -23,6 +23,14 @@ def convert_images_to_webp(input_folder, output_folder):
 
                 # 打开图像并保存为 WebP 格式
                 img = Image.open(input_path)
+                width, height = img.size
+                image_compress_ratio = 720 / 1080
+                new_width = int(width * image_compress_ratio)
+                new_height = int(height * image_compress_ratio)
+                img = img.resize((new_width, new_height))
+                # image.size = width * image_compress_ratio, height * image_compress_ratio
+                # image.save(_file_path)
+
                 img.save(output_path, 'webp')
 
                 print(f"Converted {relative_path} to {os.path.basename(output_path)}")
@@ -33,7 +41,7 @@ def convert_images_to_webp(input_folder, output_folder):
 
 
 # 替换为你的输入和输出文件夹路径
-input_folder_path = '/path/to/output/folder'
+input_folder_path = '/Users/wangshilong/Downloads/锁屏二退场动画/锁屏一开屏动画2'
 
 # 执行转换
 try:

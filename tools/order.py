@@ -105,5 +105,6 @@ def orderXML(input_file, output_file=None):
     with open(output_file, 'w', encoding='utf-8') as file:
         file.write(cleaned_xml_str)
 
-# if __name__ == "__main__":
-#     orderXML('/Users/wangshilong/Desktop/导出/待办/季节/国内版/OPPO/lockscreen/advance/source.xml')
+
+if __name__ == "__main__":
+    orderXML('/Users/wangshilong/Desktop/导出/待办/萌星球/吴良金/玄武腾龙/国内版/HONOR/lockscreen/advance/maml.xml')

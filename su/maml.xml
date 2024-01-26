@@ -21,17 +21,17 @@
 			<!-- <CircleShape radius="1.3" xPosition="0.7" yPosition="0.1" /> -->
 		</FluidsView>
 
-	<StereoView fixed="1" sAngle="90" can3D="1" resistance="1.8" x="#StereoView.x" y="#StereoView.y" w="#StereoView.w" h="#StereoView.h" alpha="#StereoView.a" visibility="#StereoView.v" >
-		<StereoGroup>
+		<StereoView fixed="1" sAngle="90" can3D="1" resistance="1.8" x="#StereoView.x" y="#StereoView.y" w="#StereoView.w" h="#StereoView.h" alpha="#StereoView.a" visibility="#StereoView.v" >
+			<StereoGroup>
 
-		</StereoGroup>
-		<StereoGroup>
+			</StereoGroup>
+			<StereoGroup>
 
-		</StereoGroup>
-		<StereoGroup>
+			</StereoGroup>
+			<StereoGroup>
 
-		</StereoGroup>
-	</StereoView>
+			</StereoGroup>
+		</StereoView>
 
 	</i_Hidden>
 

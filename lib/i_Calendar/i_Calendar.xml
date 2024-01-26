@@ -8,6 +8,7 @@
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.coloros.calendar" class="com.android.calendar.AllInOneActivity" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" category="android.intent.category.APP_CALENDAR" package="com.bbk.calendar" class="com.bbk.calendar.MainActivity" />
 	<!-- alias="mCivetCode_5" -->
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.hihonor.calendar" class="com.android.calendar.AllInOneActivity" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.android.calendar" class="com.android.calendar.AllInOneActivity" />
 	<!-- <IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.huawei.calendar" class="com.android.calendar.AllInOneActivity" /> -->
 

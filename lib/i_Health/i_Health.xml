@@ -8,6 +8,8 @@
 	<IntentCommand condition="($condition)" action="com.mi.health.action.ROUTER" package="com.mi.health" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.vivo.health" class="com.vivo.health.main.activity.GuideActivity" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.heytap.health" class="com.heytap.health.oobe.LaunchActivity" />
+	<!-- <IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.hihonor.health" class="com.hihonor.health.main.MainActivity" /> -->
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.hihonor.health" class="com.hihonor.health.splash.SplashActivity" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.huawei.health" class="com.huawei.health.MainActivity" />
 
 </Template>

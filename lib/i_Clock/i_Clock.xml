@@ -12,6 +12,7 @@
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.coloros.alarmclock" class="com.coloros.alarmclock.AlarmClock" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.coloros.alarmclock" class="com.oplus.alarmclock.AlarmClock" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.android.deskclock" class="com.android.deskclock.DeskClockTabActivity" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.hihonor.deskclock" class="com.android.deskclock.AlarmsMainActivity" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.android.deskclock" class="com.android.deskclock.AlarmsMainActivity" />
 
 </Template>
