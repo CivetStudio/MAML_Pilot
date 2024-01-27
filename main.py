@@ -83,6 +83,7 @@
     Waiting for stabilized
         // 未考虑到min max函数包含在内的情况（/Users/wangshilong/Downloads/萌星球/蔡晶/五福临门/国内版/OPPO/lockscreen/advance/maml.xml）
 01.25 新增 C_Array 数组标签处理（支持 Image / Text / Button，原理即将元素中的 {#countName} 循环替换为 {count} 所对应的数字，算法同小米）
+01.27 修复 C_Array 数组标签处理（需在变量混淆之前处理）
 
 // 检测图片是否在代码内：
     1. "pic.png": search directly
@@ -121,7 +122,8 @@ from splitTools import splitVar, splitExt, splitBinders, splitGroup, preLoadVar,
 # from tools.order import orderXML
 
 maml_main_xml = ''
-if 'PYCHARM_HOSTED' in os.environ and sys.platform.startswith('darwin'):
+win_local = 0
+if 'PYCHARM_HOSTED' in os.environ and sys.platform.startswith('darwin') or win_local:
     # print("macOS or PyCharm")
     sys_version = 0
     current_dir = ''
@@ -1220,6 +1222,13 @@ def saveXML(save_file):
                 print(f'TextVar: {text_tag_var}')
                 _soup.Lockscreen.append(text_tag_var)
 
+        # C_Array 数组标签处理
+        from tools.array import c_array
+        for code in _soup.find_all('C_Array'):
+            c_array_r = c_array(str(code))
+            code.insert_after(c_array_r)
+            code.extract()
+
         print('\t')
 
     # Var.Trigger是否为空 --04.13 //内存可优化?:Test
@@ -1783,13 +1792,6 @@ def getAlias():
                 var_tag.decompose()
         _soup_temp = str(_soup_final2)
         # print(f'删除变量动画: {_soup_temp})
-
-        # C_Array 数组标签处理
-        from tools.array import c_array
-        for code in _soup_final.find_all('C_Array'):
-            c_array_r = c_array(str(code))
-            code.insert_after(c_array_r)
-            code.extract()
 
         _vars = []
         # 遍历Var标签
