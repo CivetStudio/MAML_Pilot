@@ -14,6 +14,12 @@
 	<!-- <Var name="mBalanceTime" expression="ifelse(eq(#LangsId,0)+eq(#LangsId,5),1/max(1.6*#LangsId,0.5),1)" type="number" /> -->
 	<!-- speed * mBalanceTime -->
 
+	<Var expression="#time" threshold="1" >
+		<Trigger>
+			<VariableCommand name="val" expression="min(#val+#xxx,1)" type="number" />
+		</Trigger>
+	</Var>
+
 	<i_Hidden alias="Pad 锁屏" >
 
 		<!-- MatePad SE 1200x1920 -->

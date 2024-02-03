@@ -32,7 +32,8 @@
 		<Trigger>
 			<!-- <VariableCommand name="mResumeTimeV" expression="ifelse(eq(#LangsId,0),0.3,eq(#LangsId,5),3,1)" condition="1" /> -->
 			<!-- <VariableCommand name="mResumeTimeV" expression="ifelse(ne(#LangsId,2)*ne(#LangsId,0),#mResumeTimeVF,eq(#LangsId,0),0.3,1)" condition="1" /> -->
-			<VariableCommand name="mResumeTimeV" expression="ifelse(ne(#LangsId,2)*ne(#LangsId,0),#mResumeTimeVF,eq(#LangsId,0),0.14448,1)" condition="1" />
+			<VariableCommand name="mResumeTimeV" expression="1" condition="1" />
+			<!-- <VariableCommand name="mResumeTimeV" expression="ifelse(ne(#LangsId,2)*ne(#LangsId,0),#mResumeTimeVF,eq(#LangsId,0),0.14448,1)" condition="1" /> -->
 			<!-- 越大越慢 -->
 			<VariableCommand name="mXplay5A" expression="eq(#screen_width/#screen_height,1440/2560)*eq(#screen_density,0)" condition="1" />
 			<VariableCommand name="mXplay6A" expression="eq(#screen_width/#screen_height,1440/2560)*eq(#screen_density,480)" condition="1" />
@@ -46,15 +47,17 @@
 			<!-- <VariableCommand name="mResumeTimeVF" expression="ifelse(eq(#LangsId,5),3,eq(#LangsId,0),#mResumeTimeVF_Oppo*2,1)" condition="1" /> -->
 			<!-- <VariableCommand name="mResumeTimeVF" expression="ifelse(eq(#LangsId,5),#mResumeTimeVF_Vivo,eq(#LangsId,0),#mResumeTimeVF_Oppo,1)" condition="1" /> -->
 			<VariableCommand name="mResumeDelay" expression="min(#mResumeDelay+0.0444*ifelse(eq(#LangsId,0)+eq(#LangsId,5),2,eq(#LangsId,2),2,1),1)" type="number" />
-			<VariableCommand name="mResumeTime" expression="ge(#mResumeDelay,1)*min(#mResumeTime+(max(#mResumeSpeed,1)*88/2/2.2/1000/#mResumeTimeV),1.0)" condition="1" />
-			<VariableCommand name="mResumeTime.t" expression="ge(#mResumeDelay,1)*min(#mResumeTime+(max(#mResumeSpeed,1)*88/2/2.2/1000/#mResumeTimeV),1.2)" condition="1" />
+			<VariableCommand name="mResumeTime" expression="ge(#mResumeDelay,1)*min(#mResumeTime+#mBalanceTime*(max(#mResumeSpeed,1)*0.0125),1.0)" condition="1" />
+			<VariableCommand name="mResumeTime.t" expression="ge(#mResumeDelay,1)*min(#mResumeTime+#mBalanceTime*(max(#mResumeSpeed,1)*0.0125),1.2)" condition="1" />
 			<!-- 线性动画 -->
-			<VariableCommand name="mResumeTime_1" expression="ge(#mResumeTime.t,0.2)*min(#mResumeTime_1+(max(#mResumeSpeed,1)*88/2/2.2/1000/#mResumeTimeV),1)" condition="1" />
-			<VariableCommand name="mResumeTime_2" expression="ge(#mResumeTime.t,0.4)*min(#mResumeTime_2+(max(#mResumeSpeed,1)*88/2/2.2/1000/#mResumeTimeV),1)" condition="1" />
-			<VariableCommand name="mResumeTime_3" expression="ge(#mResumeTime.t,0.6)*min(#mResumeTime_3+(max(#mResumeSpeed,1)*88/2/2.2/1000/#mResumeTimeV),1)" condition="1" />
-			<VariableCommand name="mResumeTime_4" expression="ge(#mResumeTime.t,0.8)*min(#mResumeTime_4+(max(#mResumeSpeed,1)*88/2/2.2/1000/#mResumeTimeV),1)" condition="1" />
-			<VariableCommand name="mResumeTime_5" expression="ge(#mResumeTime.t,1.0)*min(#mResumeTime_5+(max(#mResumeSpeed,1)*88/2/2.2/1000/#mResumeTimeV),1)" condition="1" />
-			<VariableCommand name="mResumeTime_6" expression="ge(#mResumeTime.t,1.2)*min(#mResumeTime_6+(max(#mResumeSpeed,1)*88/2/2.2/1000/#mResumeTimeV),1)" condition="1" />
+
+			<!-- 88/2/2.2/1000/#mResumeTimeV -->
+			<VariableCommand name="mResumeTime_1" expression="ge(#mResumeTime.t,0.2)*min(#mResumeTime_1+#mBalanceTime*(max(#mResumeSpeed,1)*0.0125),1)" condition="1" />
+			<VariableCommand name="mResumeTime_2" expression="ge(#mResumeTime.t,0.4)*min(#mResumeTime_2+#mBalanceTime*(max(#mResumeSpeed,1)*0.0125),1)" condition="1" />
+			<VariableCommand name="mResumeTime_3" expression="ge(#mResumeTime.t,0.6)*min(#mResumeTime_3+#mBalanceTime*(max(#mResumeSpeed,1)*0.0125),1)" condition="1" />
+			<VariableCommand name="mResumeTime_4" expression="ge(#mResumeTime.t,0.8)*min(#mResumeTime_4+#mBalanceTime*(max(#mResumeSpeed,1)*0.0125),1)" condition="1" />
+			<VariableCommand name="mResumeTime_5" expression="ge(#mResumeTime.t,1.0)*min(#mResumeTime_5+#mBalanceTime*(max(#mResumeSpeed,1)*0.0125),1)" condition="1" />
+			<VariableCommand name="mResumeTime_6" expression="ge(#mResumeTime.t,1.2)*min(#mResumeTime_6+#mBalanceTime*(max(#mResumeSpeed,1)*0.0125),1)" condition="1" />
 			<VariableCommand name="PI" expression="3.1415926535898" />
 			<VariableCommand name="EaseC1" expression="1.70158+#mResumeEaseAdd" />
 			<VariableCommand name="EaseC2" expression="1.525*#EaseC1" />

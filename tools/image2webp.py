@@ -41,7 +41,7 @@ def convert_images_to_webp(input_folder, output_folder):
 
 
 # 替换为你的输入和输出文件夹路径
-input_folder_path = '/Users/wangshilong/Downloads/锁屏二退场动画/锁屏一开屏动画2'
+input_folder_path = '/Users/wangshilong/Downloads/【02.02】机械龙新切图'
 
 # 执行转换
 try:

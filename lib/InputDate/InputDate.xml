@@ -64,6 +64,7 @@
 	<ValueHolder name="CountSetBtnH_b" alias="清除/确定-按钮高度" />
 
 	<PlaceHolder name="InputDateVar" />
+	<!-- <Var name="CountNum_Sys" expression="0" type="number" /> -->
 
 	<ExternalCommands>
 
@@ -95,6 +96,7 @@
 			<VariableCommand name="Exam_Month" expression="max(min(#EventMonth,12),1)" persist="true" />
 			<VariableCommand name="Exam_Date" expression="max(min(#EventDate,#EventMaxDate),1)" persist="true" />
 			<VariableCommand name="EventYear" expression="#EventYear_0*1000+#EventYear_1*100+#EventYear_2*10+#EventYear_3" persist="true" />
+			<!-- <VariableCommand name="EventYear" expression="max(#EventYear_0*1000+#EventYear_1*100+#EventYear_2*10+#EventYear_3,1900)" persist="true" /> -->
 
 			<VariableCommand name="EventMonth" expression="max(min(#EventMonth_0*10+#EventMonth_1,12),1)" persist="true" />
 			<VariableCommand name="EventDate" expression="max(min(#EventDate_0*10+#EventDate_1,#EventMaxDate),1)" persist="true" />
@@ -405,23 +407,65 @@
 
 		<Image x="CountSetBgX" y="CountSetBgY" align="center" alignV="center" src="CountSetBgSrc" />
 
-		<!-- 年份第一位 -->
-		<Image w="CountSetNumImg_W" h="CountSetNumImg_H" x="CountSetNumX_0-CountSetNumImg_W*1.5" y="CountSetNumY" align="center" alignV="center" src="CountSetNumSrc" srcid="#mCountNum_0" alpha="ifelse(ge(#InputYearNum,0),255,80)" visibility="ge(CountDigitVal,0+1)" />
-		<!-- 年份第二位 -->
-		<Image w="CountSetNumImg_W" h="CountSetNumImg_H" x="CountSetNumX_0-CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" src="CountSetNumSrc" srcid="#mCountNum_1" alpha="ifelse(ge(#InputYearNum,1),255,80)" visibility="ge(CountDigitVal,1+1)" />
-		<!-- 年份第三位 -->
-		<Image w="CountSetNumImg_W" h="CountSetNumImg_H" x="CountSetNumX_0+CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" src="CountSetNumSrc" srcid="#mCountNum_2" alpha="ifelse(ge(#InputYearNum,2),255,80)" visibility="ge(CountDigitVal,2+1)" />
-		<!-- 年份第四位 -->
-		<Image w="CountSetNumImg_W" h="CountSetNumImg_H" x="CountSetNumX_0+CountSetNumImg_W*1.5" y="CountSetNumY" align="center" alignV="center" src="CountSetNumSrc" srcid="#mCountNum_3" alpha="ifelse(ge(#InputYearNum,3),255,80)" visibility="ge(CountDigitVal,3+1)" />
+		<Group visibility="eq(#CountNum_Sys,0)" >
 
-		<!-- 月份第一位 -->
-		<Image w="CountSetNumImg_W" h="CountSetNumImg_H" x="CountSetNumX_1-CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" src="CountSetNumSrc" srcid="#mCountNum_4" alpha="ifelse(ge(#InputYearNum,4),255,80)" visibility="ge(CountDigitVal,4+1)" />
-		<!-- 月份第二位 -->
-		<Image w="CountSetNumImg_W" h="CountSetNumImg_H" x="CountSetNumX_1+CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" src="CountSetNumSrc" srcid="#mCountNum_5" alpha="ifelse(ge(#InputYearNum,5),255,80)" visibility="ge(CountDigitVal,5+1)" />
-		<!-- 日期第一位 -->
-		<Image w="CountSetNumImg_W" h="CountSetNumImg_H" x="CountSetNumX_2-CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" src="CountSetNumSrc" srcid="#mCountNum_6" alpha="ifelse(ge(#InputYearNum,6),255,80)" visibility="ge(CountDigitVal,6+1)" />
-		<!-- 日期第二位 -->
-		<Image w="CountSetNumImg_W" h="CountSetNumImg_H" x="CountSetNumX_2+CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" src="CountSetNumSrc" srcid="#mCountNum_7" alpha="ifelse(ge(#InputYearNum,7),255,80)" visibility="ge(CountDigitVal,7+1)" />
+			<!-- 年份第一位 -->
+			<Image w="CountSetNumImg_W" h="CountSetNumImg_H" x="CountSetNumX_0-CountSetNumImg_W*1.5" y="CountSetNumY" align="center" alignV="center" src="CountSetNumSrc" srcid="#mCountNum_0" alpha="ifelse(ge(#InputYearNum,0),255,80)" visibility="ge(CountDigitVal,0+1)" />
+			<!-- 年份第二位 -->
+			<Image w="CountSetNumImg_W" h="CountSetNumImg_H" x="CountSetNumX_0-CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" src="CountSetNumSrc" srcid="#mCountNum_1" alpha="ifelse(ge(#InputYearNum,1),255,80)" visibility="ge(CountDigitVal,1+1)" />
+			<!-- 年份第三位 -->
+			<Image w="CountSetNumImg_W" h="CountSetNumImg_H" x="CountSetNumX_0+CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" src="CountSetNumSrc" srcid="#mCountNum_2" alpha="ifelse(ge(#InputYearNum,2),255,80)" visibility="ge(CountDigitVal,2+1)" />
+			<!-- 年份第四位 -->
+			<Image w="CountSetNumImg_W" h="CountSetNumImg_H" x="CountSetNumX_0+CountSetNumImg_W*1.5" y="CountSetNumY" align="center" alignV="center" src="CountSetNumSrc" srcid="#mCountNum_3" alpha="ifelse(ge(#InputYearNum,3),255,80)" visibility="ge(CountDigitVal,3+1)" />
+
+			<!-- 月份第一位 -->
+			<Image w="CountSetNumImg_W" h="CountSetNumImg_H" x="CountSetNumX_1-CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" src="CountSetNumSrc" srcid="#mCountNum_4" alpha="ifelse(ge(#InputYearNum,4),255,80)" visibility="ge(CountDigitVal,4+1)" />
+			<!-- 月份第二位 -->
+			<Image w="CountSetNumImg_W" h="CountSetNumImg_H" x="CountSetNumX_1+CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" src="CountSetNumSrc" srcid="#mCountNum_5" alpha="ifelse(ge(#InputYearNum,5),255,80)" visibility="ge(CountDigitVal,5+1)" />
+			<!-- 日期第一位 -->
+			<Image w="CountSetNumImg_W" h="CountSetNumImg_H" x="CountSetNumX_2-CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" src="CountSetNumSrc" srcid="#mCountNum_6" alpha="ifelse(ge(#InputYearNum,6),255,80)" visibility="ge(CountDigitVal,6+1)" />
+			<!-- 日期第二位 -->
+			<Image w="CountSetNumImg_W" h="CountSetNumImg_H" x="CountSetNumX_2+CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" src="CountSetNumSrc" srcid="#mCountNum_7" alpha="ifelse(ge(#InputYearNum,7),255,80)" visibility="ge(CountDigitVal,7+1)" />
+
+		</Group>
+
+		<Group visibility="eq(#CountNum_Sys,1)" >
+
+			<!-- 年份第一位 -->
+			<Group alpha="ifelse(ge(#InputYearNum,0),255,80)" visibility="ge(CountDigitVal,0+1)" >
+				<Text x="CountSetNumX_0-CountSetNumImg_W*1.5" y="CountSetNumY" align="center" alignV="center" color="#000000" size="#CountNum_Size" format="%d" paras="#mCountNum_0" />
+			</Group>
+			<!-- 年份第二位 -->
+			<Group alpha="ifelse(ge(#InputYearNum,1),255,80)" visibility="ge(CountDigitVal,1+1)" >
+				<Text x="CountSetNumX_0-CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" color="#000000" size="#CountNum_Size" format="%d" paras="#mCountNum_1" />
+			</Group>
+			<!-- 年份第三位 -->
+			<Group alpha="ifelse(ge(#InputYearNum,2),255,80)" visibility="ge(CountDigitVal,2+1)" >
+				<Text x="CountSetNumX_0+CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" color="#000000" size="#CountNum_Size" format="%d" paras="#mCountNum_2" />
+			</Group>
+			<!-- 年份第四位 -->
+			<Group alpha="ifelse(ge(#InputYearNum,3),255,80)" visibility="ge(CountDigitVal,3+1)" >
+				<Text x="CountSetNumX_0+CountSetNumImg_W*1.5" y="CountSetNumY" align="center" alignV="center" color="#000000" size="#CountNum_Size" format="%d" paras="#mCountNum_3" />
+			</Group>
+
+			<!-- 月份第一位 -->
+			<Group alpha="ifelse(ge(#InputYearNum,4),255,80)" visibility="ge(CountDigitVal,4+1)" >
+				<Text x="CountSetNumX_1-CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" color="#000000" size="#CountNum_Size" format="%d" paras="#mCountNum_4" />
+			</Group>
+			<!-- 月份第二位 -->
+			<Group alpha="ifelse(ge(#InputYearNum,5),255,80)" visibility="ge(CountDigitVal,5+1)" >
+				<Text x="CountSetNumX_1+CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" color="#000000" size="#CountNum_Size" format="%d" paras="#mCountNum_5" />
+			</Group>
+			<!-- 日期第一位 -->
+			<Group alpha="ifelse(ge(#InputYearNum,6),255,80)" visibility="ge(CountDigitVal,6+1)" >
+				<Text x="CountSetNumX_2-CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" color="#000000" size="#CountNum_Size" format="%d" paras="#mCountNum_6" />
+			</Group>
+			<!-- 日期第二位 -->
+			<Group alpha="ifelse(ge(#InputYearNum,7),255,80)" visibility="ge(CountDigitVal,7+1)" >
+				<Text x="CountSetNumX_2+CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" color="#000000" size="#CountNum_Size" format="%d" paras="#mCountNum_7" />
+			</Group>
+
+		</Group>
 
 	</Group>
 

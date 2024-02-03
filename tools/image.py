@@ -2,6 +2,9 @@
 # import easyocr
 import pyperclip
 from PIL import Image
+import os
+import os.path
+import re
 
 
 preview_url = pyperclip.paste().split('\n')
@@ -9,6 +12,32 @@ print(f'preview_url: {preview_url}')
 
 max_width = []
 max_height = []
+
+
+def main_single(source):
+
+    walk_names = os.walk(rf'{source}')
+
+    for (directory, sub_directorys, file_names) in walk_names:
+        for name in file_names:
+            m = re.match(r'(.+)\.png$', name, re.I)
+            if m:
+                src = os.path.join(directory, name)
+                if source is not None:
+                    dst = os.path.join(directory, m.group(1)) + '.png'
+                    img = Image.open(src)
+                    width = img.size[0]
+                    height = img.size[1]
+                    if width % 2 == 1:
+                        width = width + 1
+                    if height % 2 == 1:
+                        height = height + 1
+                    # print(width)
+                    # print(height)
+                    print(f"w: {width}, h: {height}")
+                    img_type = 'png'
+                    img = img.resize((width, height), Image.Resampling.LANCZOS)
+                    img.save(dst, img_type)
 
 
 def main(source):
@@ -83,14 +112,29 @@ def fixNum(num):
     return num
 
 
-for k in range(len(preview_url)):
-    main(preview_url[k])
+# 判断传入文件夹或者多个文件
+if len(preview_url) == 1:
+    # 传入文件夹则偶数尺寸处理
+    single_mode = 1
+else:
+    # 传入多个文件则取最大值处理
+    single_mode = 0
 
-w = fixNum(max(max_width))
-h = fixNum(max(max_height))
-print(f"max_width: {max_width}, max_height: {max_height}")
-print(f"w: {w}, h: {h}")
+if not single_mode:
 
-for k in range(len(preview_url)):
-    # crop_image(preview_url[k], 798, 798, "center")
-    crop_image(preview_url[k], w, h, "center")
+    for k in range(len(preview_url)):
+        main(preview_url[k])
+
+    w = fixNum(max(max_width))
+    h = fixNum(max(max_height))
+
+    for k in range(len(preview_url)):
+        # crop_image(preview_url[k], 798, 798, "center")
+        crop_image(preview_url[k], w, h, "center")
+
+    print(f"max_width: {max_width}, max_height: {max_height}")
+    print(f"w: {w}, h: {h}")
+
+else:
+    for k in range(len(preview_url)):
+        main_single(preview_url[k])

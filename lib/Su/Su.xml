@@ -8,6 +8,10 @@
 
 	<Var name="vivo_length" expression="len(@weather_cur_temp)" />
 
+	<!-- {#time}: #speed/max(1.6*#LangsId,0.5) -->
+	<Var name="mBalanceTime" expression="ifelse(eq(#LangsId,0)+eq(#LangsId,5),1/max(1.6*#LangsId,0.5),1)" type="number" />
+	<!-- speed * mBalanceTime -->
+
 	<ExternalCommands>
 		<Trigger action="resume" >
 			<VariableCommand name="LangsId" expression="ifelse(#__thememanager_version,4,#lunarDay,2,ge(#vivo_length,2),5,eq(#lunarDay,0)*eq(#cur_weather_temp,0)*eq(#__thememanager_version,0),5,eq(#lunarDay,0)*eq(#cur_weather_temp,0)*eq(#__thememanager_version,0)*ne(#mCountDown,0),5,eq(#lunarDay,0)*eq(#cur_weather_temp,0)*eq(#__thememanager_version,0)*ne(#mCountDownA,0),5,eq(#lunarDay,0)*eq(#cur_weather_temp,0)*eq(#__thememanager_version,0)*ne(#steps_value,0),5,0)" persist="true" />

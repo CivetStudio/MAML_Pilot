@@ -50,7 +50,9 @@ def splitExt(save_file):
             action = t['action']
             # for c in t.find_all(True):
             # content = str(c)
-            content = str(t.contents).replace('[', '').replace('],', '').replace(']', '').strip()
+            ec_contents = [item for item in t.contents if item != '\n']
+            # content = str(t.contents).replace('[', '').replace('],', '').replace(']', '').strip()
+            content = str(ec_contents).replace('[', '').replace(']', '')
             if action not in trigger_dict:
                 trigger_dict[action] = [content]
             else:
@@ -71,7 +73,10 @@ def splitExt(save_file):
         old_external_commands = soup.find_all('ExternalCommands')[0]
         # old_external_commands.replace_with(external_commands)
         old_external_commands.decompose()
-        soup.Lockscreen.append(external_commands)
+        external_commands_str = str(external_commands).replace('&lt;', '<').replace('&gt;', '>').replace(", ' ',", "").replace("' ',", "").replace(", ' '", "")
+        e_soup = BeautifulSoup(external_commands_str, features="lxml-xml")
+        # print('e_soup:',e_soup)
+        soup.Lockscreen.append(e_soup)
 
     # 输出到文件中
     with open(save_file, 'w', encoding='utf-8') as f:

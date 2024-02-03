@@ -78,12 +78,29 @@
 01.05 删除无用【VarArray】标签
     VarArray: {@/#}{name}
 01.08 自动修复不带【name】属性的【threshold】/【*Animation】标签
-01.17 重新整理【splitGroup】函数下的属性eval问题（避免#mResumeAni_值被加入按钮）
+‼️01.17 重新整理【splitGroup】函数下的属性eval问题（避免#mResumeAni_值被加入按钮）
     简化按钮内属性表达式 simplify_expression()
-    Waiting for stabilized
-        // 未考虑到min max函数包含在内的情况（/Users/wangshilong/Downloads/萌星球/蔡晶/五福临门/国内版/OPPO/lockscreen/advance/maml.xml）
+    // BUG：未考虑到min max函数包含在内的情况（/Users/wangshilong/Downloads/萌星球/蔡晶/五福临门/国内版/OPPO/lockscreen/advance/maml.xml）
 01.25 新增 C_Array 数组标签处理（支持 Image / Text / Button，原理即将元素中的 {#countName} 循环替换为 {count} 所对应的数字，算法同小米）
 01.27 修复 C_Array 数组标签处理（需在变量混淆之前处理）
+01.29 稍微修复 lib 随机后缀算法（目前只能有两个 _port模式 或者 无_port模式）
+‼️01.29 新增 lib_dom_id, lib_dom_input 变量，支持在插件上加入 _id 属性，形成代码后缀（Exam_CountDays_{_id})
+    // BUG：目前会导致SysTime失效？少用！
+02.01 新增 C_Array 数组标签写法 <C_Array begin="0" end="1" indexName="_i" ></C_Array> 可与 count 属性交替使用
+    修复 ExternalCommands 合并数组生成冗余引号问题 e_soup
+02.02 新增 Image['act'] 写法：act="{_action_: up|double|click},{_action_tag_id_}"
+    <_action_tag_id_><VariableCommand /></_action_tag_id_>
+    该写法在混淆前解析（相当于在不破坏 maml.xml 的情况下改动）
+
+    // 需要改进的点：
+    1.当缺少 ['w', 'h'] 属性时，能否从文件路径中寻找对应值（考虑srcid, srcExp）
+    2.Dev
+
+02.02 新增 C_Array 数组标签写法: 支持单条的 VariableCommand 命令（不可与其他标签共用）
+    <C_Array count="4" indexName="index">
+        <VariableCommand name="test_#index" expression="#index" type="number" />
+    </C_Array>
+    16:18 已修复为自动识别代码
 
 // 检测图片是否在代码内：
     1. "pic.png": search directly
@@ -228,7 +245,7 @@ orig_prettify = BeautifulSoup.prettify
 r = re.compile(r'^(\s*)', re.MULTILINE)
 
 
-def prettify(self, encoding=None, formatter="minimal", indent_width=4):
+def prettify(self, encoding=None, formatter="minimal", indent_width=1):
     return r.sub(r'\1' * indent_width, orig_prettify(self, encoding, formatter))
 
 
@@ -546,7 +563,7 @@ def getLib(lib_file):
 
 
 # 获取库文件主内容并替换Attributes
-def getLibContent(lib_file_main):
+def getLibContent(lib_file_main, soup_dom_id=0, soup_dom_input=None):
     tags_lib.reverse()
     tags_str.reverse()
     tags_attr.reverse()
@@ -651,7 +668,7 @@ def getLibContent(lib_file_main):
                 if target_save != var_from_xml[_i] and len(target_save) >= 0:
                     var_from_xml.append(target_save)
 
-    # soup_dom_str = str(soup.prettify(indent_width=4)).replace('    ', '\t')
+    # soup_dom_str = str(soup.prettify(indent_width=1)).replace('    ', '\t')
 
     # 整理排序 + 去除系统变量
     var_from_target = list(set(var_from_xml).difference(set(var_forbid_name)))
@@ -661,15 +678,22 @@ def getLibContent(lib_file_main):
 
     # print('var_from_target: ', var_from_target, '\n')
 
-    soup_dom_str = str(_soup.prettify(indent_width=4)).replace('    ', '\t')
+    soup_dom_str = str(_soup.prettify(indent_width=1)).replace('    ', '\t')
 
     # 循环替换变量
     if var_alias_all == 1:
 
+        # lib 随机后缀算法
         if var_alias != 1:
-            soup_dom_hex = randomHex(8).replace('0x', '').lower()
+            if soup_dom_id:
+                soup_dom_hex = soup_dom_input
+            else:
+                # soup_dom_hex = 'm' + hex(zlib.crc32(str(lib_file_name).encode('UTF-8')))[2:].capitalize()
+                soup_dom_hex = randomHex(8).replace('0x', '').lower()
+            # print(lib_file_name, soup_dom_hex)
         else:
             soup_dom_hex = ''
+        # print(lib_file_name)
 
         for _i in range(len(var_from_target)):
             if var_alias == 1:
@@ -1022,24 +1046,24 @@ def getLibContent(lib_file_main):
         _f0.write(soup_dom_str)
     # print(soup_dom_str)
 
-    if var_alias_anti == 1:
-
-        var_from_target.sort(reverse=False)
-        # print('var_from_target: ', var_from_target, '\n')
-        alias_str = '<AntiAliasing version="1"></AntiAliasing>'
-        _soup = BeautifulSoup(alias_str, features="lxml-xml")
-        for alias in _soup.find_all('AntiAliasing'):
-            for _j in range(len(var_from_target)):
-                alias_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_j]).encode('UTF-8')))[2:].capitalize()
-                alias_dom_hex = 'm' if len(alias_dom_concat) == 8 else ''
-                alias_str_new = _soup.new_tag('Aliasing', initial=str(var_from_target[_j]), after=str(alias_dom_concat + alias_dom_hex))
-                alias.append(alias_str_new)
-
-        with open(anti_xml, 'w', encoding='utf-8') as _f0:
-            _f0.write(str(_soup.prettify(indent_width=4)).replace('    ', '\t'))
-
-    else:
-        if os.path.exists(anti_xml): os.remove(anti_xml)
+    # if var_alias_anti == 1:
+    #
+    #     var_from_target.sort(reverse=False)
+    #     # print('var_from_target: ', var_from_target, '\n')
+    #     alias_str = '<AntiAliasing version="1"></AntiAliasing>'
+    #     _soup = BeautifulSoup(alias_str, features="lxml-xml")
+    #     for alias in _soup.find_all('AntiAliasing'):
+    #         for _j in range(len(var_from_target)):
+    #             alias_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_j]).encode('UTF-8')))[2:].capitalize()
+    #             alias_dom_hex = 'm' if len(alias_dom_concat) == 8 else ''
+    #             alias_str_new = _soup.new_tag('Aliasing', initial=str(var_from_target[_j]), after=str(alias_dom_concat + alias_dom_hex))
+    #             alias.append(alias_str_new)
+    #
+    #     with open(anti_xml, 'w', encoding='utf-8') as _f0:
+    #         _f0.write(str(_soup.prettify(indent_width=1)).replace('    ', '\t'))
+    #
+    # else:
+    #     if os.path.exists(anti_xml): os.remove(anti_xml)
 
     removeLibProps(process_xml, process_xml)
     return
@@ -1106,7 +1130,7 @@ def parseXML(parse_file_0, parse_file_1):
         comment.extract()
 
     _dev_time = getTimeSys(dev_url)
-    _soup_indent = str(_soup.prettify(indent_width=4)).replace('\n', '').replace('$_devTime', str(_dev_time))
+    _soup_indent = str(_soup.prettify(indent_width=1)).replace('\n', '').replace('$_devTime', str(_dev_time))
 
     with open(parse_file_1, 'w', encoding='utf-8') as _f0:
         _f0.write(_soup_indent)
@@ -1205,7 +1229,7 @@ def saveXML(save_file):
         # DateTime自动获取
         for date_time in _soup.find_all('DateTime'):
             date_time_size = str(date_time.get('size'))
-            if str('"mTextSize_' + date_time_size + '"') not in str(_soup):
+            if str('"mTextSize_' + date_time_size + '"') not in str(_soup) and date_time_size.isnumeric():
                 date_time_var = _soup.new_tag('Var')
                 date_time_var['name'] = 'mTextSize_' + date_time_size
                 date_time_var['expression'] = f'int(sqrt({date_time_size})*#mTextSize_Var)'
@@ -1215,7 +1239,7 @@ def saveXML(save_file):
         # Text自动获取
         for text_tag in _soup.find_all('Text'):
             text_tag_size = str(text_tag.get('size'))
-            if str('"mTextSize_' + text_tag_size + '"') not in str(_soup):
+            if str('"mTextSize_' + text_tag_size + '"') not in str(_soup) and text_tag_size.isnumeric():
                 text_tag_var = _soup.new_tag('Var')
                 text_tag_var['name'] = 'mTextSize_' + text_tag_size
                 text_tag_var['expression'] = f'int(sqrt({text_tag_size})*#mTextSize_Var)'
@@ -1225,9 +1249,71 @@ def saveXML(save_file):
         # C_Array 数组标签处理
         from tools.array import c_array
         for code in _soup.find_all('C_Array'):
+            # print(code)
             c_array_r = c_array(str(code))
+            # print(c_array_r)
             code.insert_after(c_array_r)
             code.extract()
+
+        # 若 Image['rotation'] == '0' del Image['pivotX'], Image['pivotY'], Image['rotation'] // HONOR
+        for image in _soup.find_all('Image'):
+            if image.get('rotation') == '0':
+                del image['pivotX'], image['pivotY'], image['rotation']
+            if image.get('act'):
+                _action = image.get('act')
+                _action_ = str(_action.split(',')[0])
+                _action_tag_id_ = str(_action.split(',')[1])
+                # print(_action_, _action_tag_id_)
+
+                for ac in _soup.find_all():
+                    if ac.name == _action_tag_id_:
+                        _action_condition = ac.get('condition')
+                        # ac_contents = [str(item).replace('\n', '') for item in ac.contents]
+                        ac_contents = [item for item in ac.contents if item != '\n']
+
+                        _action_content = str(ac_contents).replace('[', '').replace(']', '')
+
+                        # _action_content = str(ac).replace(f'<{_action_tag_id_}>', '').replace(f'</{_action_tag_id_}>', '')
+                        # print(_action_content)
+                        ac.extract()
+                # _action_content = BeautifulSoup(_action_content, 'lxml-xml')
+
+                # 创建 Button 标签
+                _action_button = _soup.new_tag('Button')
+                _action_triggers = _soup.new_tag('Triggers')
+                _action_trigger = _soup.new_tag('Trigger')
+                _action_trigger['action'] = _action_
+                if _action_condition:
+                    _action_trigger['condition'] = _action_condition
+                _action_button.append(_action_triggers)
+                _action_button.Triggers.append(_action_trigger)
+                _action_button.Triggers.Trigger.append(_action_content)
+
+                # 获取 Button 参数
+                _action_button_x = image.get('x', '0')
+                _action_button_y = image.get('y', '0')
+                _action_button_w = image.get('w', '1')
+                _action_button_h = image.get('h', '1')
+                _action_button_align = image.get('align', 'left')
+                _action_button_alignV = image.get('alignV', 'top')
+                if _action_button_align == 'center':
+                    _action_button_x = f"{_action_button_x}-int({_action_button_w}/2)"
+                elif _action_button_align == 'right':
+                    _action_button_x = f"{_action_button_x}-int({_action_button_w})"
+
+                if _action_button_alignV == 'center':
+                    _action_button_y = f"{_action_button_y}-int({_action_button_h}/2)"
+                elif _action_button_alignV == 'bottom':
+                    _action_button_y = f"{_action_button_y}-int({_action_button_h})"
+
+                _action_button['x'] = _action_button_x
+                _action_button['y'] = _action_button_y
+                _action_button['w'] = _action_button_w
+                _action_button['h'] = _action_button_h
+
+                # print(_action_button)
+                image.insert_after(_action_button)
+                del image['act']
 
         print('\t')
 
@@ -1239,7 +1325,7 @@ def saveXML(save_file):
             if var_contents == ['\n']:
                 var.decompose()
 
-    soup_dom_str = str(_soup.prettify(indent_width=4)).replace('    ', '\t') \
+    soup_dom_str = str(_soup.prettify(indent_width=1)).replace('    ', '\t') \
         # .replace(' _splitExt="0"', '').replace(' _splitGroup="0"', '').replace(' _preload="0"', '')
 
     with open(save_file, 'w', encoding='utf-8') as _f0:
@@ -1299,9 +1385,10 @@ def getAlias():
     _origin_xml = "source.xml"
     _anti_xml = "anti.xml"
     _anti_list_xml = "disable.xml"
+    _source_xml = maml_main_xml.replace(maml_file_name, _origin_xml)
 
     if var_get_source == 1:
-        shutil.copy2(_success_xml, maml_main_xml.replace(maml_file_name, _origin_xml))
+        shutil.copy2(_success_xml, _source_xml)
     # shutil.copy2(_success_xml, _origin_xml)
 
     # # 筛选name及target，并添加后缀（6位随机数）
@@ -1364,7 +1451,7 @@ def getAlias():
 
     # print(var_from_xml)
 
-    # soup_dom_str = str(soup.prettify(indent_width=4)).replace('    ', '\t')
+    # soup_dom_str = str(soup.prettify(indent_width=1)).replace('    ', '\t')
 
     # 整理排序数组 + 去除系统变量
     var_from_target = list(set(_var_from_xml).difference(set(var_forbid_name)))
@@ -1374,7 +1461,7 @@ def getAlias():
 
     # print(var_from_target)
 
-    soup_dom_str = str(_soup.prettify(indent_width=4)).replace('    ', '\t').replace('&amp;#', '&#')
+    soup_dom_str = str(_soup.prettify(indent_width=1)).replace('    ', '\t').replace('&amp;#', '&#')
 
     # 循环替换变量
     if _var_alias_all == 1:
@@ -1927,7 +2014,8 @@ def getAlias():
                 if image.get('src') and 'srcid' in image.attrs:
                     image_srcid = str(image.get('srcid'))
                     # print(image_srcid)
-                    if (image_srcid.startswith('int(') or image_srcid.startswith('max(')) and '%' not in image_srcid:
+                    # and '%' not in image_srcid
+                    if image_srcid.startswith('int(') or image_srcid.startswith('max('):
                         image_srcid_a = ''
                         image_srcid_b = ''
                     else:
@@ -1941,7 +2029,7 @@ def getAlias():
                     del image['srcid']
             print('\t')
 
-        soup_dom_str = str(_soup_final.prettify(indent_width=4))\
+        soup_dom_str = str(_soup_final.prettify(indent_width=1))\
             .replace('    ', '\t').replace('&amp;#', '&#')\
             .replace('__widget_auto_size__', maml_folder_name.replace('widget_', ''))
 
@@ -1960,11 +2048,13 @@ def getAlias():
         else:
             _f0.write(soup_dom_str.replace('&amp;#', '&#'))
 
-    order_xml_mode = 0
+    import tools.order
+    order_xml_mode = 1
+
     if order_xml_mode:
-        import tools.order
         tools.order.orderXML(_success_xml)
-        # tools.order.orderXML(_success_xml, _success_xml.replace('manifest.xml', 'ordered.xml'))
+    if var_get_source:
+        tools.order.orderXML(_source_xml)
 
     # End
 
@@ -1982,7 +2072,7 @@ def getAlias():
                 alias.append(alias_str_new)
 
         with open(_anti_xml, 'w', encoding='utf-8') as _f0:
-            _f0.write(str(_soup.prettify(indent_width=4)).replace('    ', '\t'))
+            _f0.write(str(_soup.prettify(indent_width=1)).replace('    ', '\t'))
 
     else:
         if os.path.exists(_anti_xml): os.remove(_anti_xml)
@@ -1997,7 +2087,7 @@ def getAlias():
                 print(alias_list_str)
                 anti_list.append(alias_list_str)
         with open(_anti_list_xml, 'w', encoding='utf-8') as _f0:
-            _f0.write(str(_soup.prettify(indent_width=4)).replace('    ', '\t'))
+            _f0.write(str(_soup.prettify(indent_width=1)).replace('    ', '\t'))
 
     return
 
@@ -2079,6 +2169,7 @@ for tag in soup.find_all(True):
                     lib_soup_attr_def.clear()
                     tags_attr.clear()
 
+                    # print(lib[i], 'Here')
                     getLib(lib[i])
                     # lib_valueholder_num = len(lib_valueholder)
                     # print('lib_valueholder: ', lib_valueholder, '\n')
@@ -2141,7 +2232,13 @@ for tag in soup.find_all(True):
                                 # print('lib_placeholder_to_string: ', lib_placeholder_to_string)
 
                     # 获取库文件主内容并替换Attributes
-                    getLibContent(lib[i])
+                    if lib[i] == 'InputDate' and tag.get('_id') is not None:
+                        lib_dom_id = 1
+                        lib_dom_input = tag.get('_id')
+                    else:
+                        lib_dom_id = 0
+                        lib_dom_input = None
+                    getLibContent(lib[i], lib_dom_id, lib_dom_input)
 
                 # for placeholder in tag.find_all(True):
                 # 	if placeholder.name == str(lib_placeholder):
@@ -2482,5 +2579,5 @@ conn.commit()
 # 关闭数据库连接
 conn.close()
 
-time.sleep(2)
+# time.sleep(2)
 sys.exit(0)
