@@ -2,6 +2,7 @@
 # 2024/02/03 - 全平台锁屏打包工具（支付华为/OPPO/VIVO/荣耀）
 
 import os
+import sys
 import time
 import shutil
 import zipfile
@@ -82,7 +83,7 @@ def copy_folder_contents(source_folder, destination_folder):
 
 
 lock_path = '/theme/lock'
-temp_folder = 'tmp'
+temp_folder = 'temp_folder'
 tmp_huawei = temp_folder + '_' + 'huawei'
 tmp_honor = temp_folder + '_' + 'honor'
 tmp_oppo = temp_folder + '_' + 'oppo'
@@ -334,9 +335,14 @@ def main(platform=1, hw=0, oppo=0, vivo=0, honor=0):
         for k in range(len(target_pack_path)):
             if os.path.isdir(target_pack_path[k]):
                 theme_name = target_pack_path[k].split('/')
-                for i in range(len(theme_name)):
-                    if str(theme_name[i]) == 'advance':
-                        theme_name = theme_name[max(i-4, 0)]
+                if current_dir != os.path.dirname(target_pack_path[k]):
+                    for i in range(len(theme_name)):
+                        if str(theme_name[i]) == 'advance':
+                            theme_name = theme_name[max(i-4, 0)]
+                else:
+                    # print(current_dir, os.path.dirname(target_pack_path[k]))
+                    sys.exit("Source Folder is 'Sample Folder'")
+                    # theme_name = os.path.basename(target_pack_path[k])
                 print(f'Theme: {theme_name}')
                 if platform_hw:
                     print('Pack Huawei: \t')
@@ -381,5 +387,6 @@ def main(platform=1, hw=0, oppo=0, vivo=0, honor=0):
 
 # 执行主程序
 if __name__ == '__main__':
+    current_dir = os.path.dirname(sys.argv[0])
     # platform = 1, hw = 0, oppo = 0, vivo = 0, honor = 0
     main(1, 0, 0, 0, 0)

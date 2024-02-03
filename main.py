@@ -92,7 +92,7 @@
     <_action_tag_id_><VariableCommand /></_action_tag_id_>
     该写法在混淆前解析（相当于在不破坏 maml.xml 的情况下改动）
 
-    // 需要改进的点：
+    // ⚠️需要改进的点：
     1.当缺少 ['w', 'h'] 属性时，能否从文件路径中寻找对应值（考虑srcid, srcExp）
     2.Dev
 
@@ -110,7 +110,7 @@
 // 检测 IntentCommand 中 package 与 class 是否都存在
     （VIEW除外）
 
-历史遗留问题:
+⚠️历史遗留问题:
       1 四个空格转为/t
       2 &lt; &gt; 应该为&amp;lt &amp;gt
       3 lib文件夹下模块内变量名称混淆
