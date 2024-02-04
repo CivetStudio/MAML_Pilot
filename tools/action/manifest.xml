@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Lockscreen _dev="civet" _devTime="1706862718155" compiler="true" frameRate="240" screenWidth="1080" version="1" vibrate="false">
+	<!--欢迎定制锁屏：灵貓 QQ 1876461209  /  Welcome to customize the lock screen: Civet QQ 1876461209-->
+	<!--违规抄袭将依据《中华人民共和国民法典》追究法律责任  /  Illegal plagiarism will be investigated for legal liability in accordance with the Civil Code of the People's Republic of China.-->
+	<ExternalCommands>
+		<Trigger action="resume">
+			<VariableCommand name="m72f76d34" type="number" expression="0"/>
+			<VariableCommand name="mEbfe3c8e" type="number" expression="3"/>
+		</Trigger>
+		<Trigger action="pause">
+			<VariableCommand name="m5f05da2m" type="number" expression="1"/>
+			<VariableCommand name="m9cf90c18" type="number" expression="2"/>
+		</Trigger>
+	</ExternalCommands>
+	<Var name="mE8b7be43" type="number" expression="0"/>
+	<Image x="100" y="100" align="center" alignV="center" w="300" h="300" src="assests/up.png"/>
+	<Button x="100-int(300/2)" y="100-int(300/2)" w="300" h="300">
+		<Triggers>
+			<Trigger action="up">
+				<Command target="mBezierAni_R_1.animation" value="play" condition="#tc"/>
+				<Command target="mBezierAni_R_1.animation" value="stop" condition="#tc"/>
+				<VariableCommand name="m6e1bdd9b" type="number" expression="1" condition="#tc"/>
+				<Command target="mBezierAni_R_0.animation" value="play" condition="#tc"/>
+				<Command target="mBezierAni_R_0.animation" value="stop" condition="#tc"/>
+				<VariableCommand name="m191ced0d" type="number" expression="0" condition="#tc"/>
+			</Trigger>
+		</Triggers>
+	</Button>
+	<Image x="200" y="300" align="left" alignV="top" w="100" h="100" src="assets/double.png"/>
+	<Button x="200" y="300" w="100" h="100">
+		<Triggers>
+			<Trigger action="double">
+				<VariableCommand name="mDae7f2ef" type="number" expression="1"/>
+			</Trigger>
+		</Triggers>
+	</Button>
+	<Group x="1000" y="500" visibility="#act">
+		<Image x="400" y="500" align="right" alignV="bottom" w="200" h="600" src="assets/click.png"/>
+	</Group>
+	<Image x="1" y="1" src="a.png"/>
+	<Button x="1200" y="400" w="200" h="600" visibility="(#act)">
+		<Triggers>
+			<Trigger action="click">
+				<VariableCommand name="mDae7f2ef" type="number" expression="1"/>
+			</Trigger>
+		</Triggers>
+	</Button>
+</Lockscreen>

@@ -236,8 +236,9 @@ print('\t')
 print(f'Source: {maml_main_xml}')
 print(f'Folder: {maml_folder_name}')
 
+logging_path = os.path.join(current_dir, 'logs')
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s',
-                    filename=os.path.join(current_dir, 'main.log'))
+                    filename=os.path.join(logging_path, 'main.log'))
 
 start_time = time.time()  # 记录开始时间
 
@@ -264,7 +265,8 @@ if not os.path.exists(assets_folder_name):
     os.makedirs(assets_folder_name)
 
 # 连接到数据库
-conn = sqlite3.connect(os.path.join(current_dir, "counter.db"))
+database_path = os.path.join(logging_path, 'db')
+conn = sqlite3.connect(os.path.join(database_path, "counter.db"))
 
 # 创建表格（如果不存在）
 conn.execute('''CREATE TABLE IF NOT EXISTS counter
@@ -276,15 +278,15 @@ conn.execute('''CREATE TABLE IF NOT EXISTS counter
              dev_time TEXT);''')
 
 # 读取计数器的值
-cursor = conn.execute("SELECT count FROM counter WHERE id = 1")
-row = cursor.fetchone()
-if row is None:
-    count = 0
+cursor = conn.cursor()
+cursor.execute('SELECT id FROM counter ORDER BY id DESC LIMIT 1')
+count = cursor.fetchone()
+if count is None:
+    count = 1
 else:
-    count = row[0]
-
-# 更新计数器并写入新的数据行
-count += 1
+    cursor.execute('SELECT count FROM counter ORDER BY count DESC LIMIT 1')
+    count = cursor.fetchone()
+    count = int(count[0]) + 1
 
 # 关闭数据库连接
 conn.close()
@@ -2570,7 +2572,7 @@ log_message = f"Script Run Time: {run_time} seconds, <CompressRate value=\"{comp
 logging.info(log_message)
 
 # 连接到数据库
-conn = sqlite3.connect(os.path.join(current_dir, "counter.db"))
+conn = sqlite3.connect(os.path.join(database_path, "counter.db"))
 
 conn.execute("INSERT INTO counter (count, source, compress_rate, run_time, dev_time) VALUES (?, ?, ?, ?, ?)",
              (count, maml_main_xml, compress_rate, run_time, dev_time))

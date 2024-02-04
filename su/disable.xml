@@ -157,6 +157,8 @@
 	<DisableAliasing name="Weather.yesterday.winddir"/>
 	<DisableAliasing name="Weather.yesterday.winddirDes"/>
 	<DisableAliasing name="__android_version"/>
+	<DisableAliasing name="night_mode"/>
+	<DisableAliasing name="darkMode"/>
 	<DisableAliasing name="__darkmode"/>
 	<DisableAliasing name="__darkmode_wallpaper"/>
 	<DisableAliasing name="__maml_version"/>
@@ -212,6 +214,9 @@
 	<DisableAliasing name="festival"/>
 	<DisableAliasing name="flashlight"/>
 	<DisableAliasing name="flashlightValue"/>
+	<DisableAliasing name="face_enable"/>
+	<DisableAliasing name="face_detect_state_msg"/>
+	<DisableAliasing name="face_detect_help_msg"/>
 	<DisableAliasing name="fod_enable"/>
 	<DisableAliasing name="fod_height"/>
 	<DisableAliasing name="fod_state_msg"/>
@@ -227,6 +232,7 @@
 	<DisableAliasing name="hour"/>
 	<DisableAliasing name="hour12"/>
 	<DisableAliasing name="hour24"/>
+	<DisableAliasing name="isPreviewMode"/>
 	<DisableAliasing name="isMatePad_H_2560"/>
 	<DisableAliasing name="isMatePad_V_1600"/>
 	<DisableAliasing name="isSupportMicro"/>
@@ -237,8 +243,6 @@
 	<DisableAliasing name="lunarMonth"/>
 	<DisableAliasing name="lunarYear"/>
 	<DisableAliasing name="lunar_solar_term"/>
-	<DisableAliasing name="mBzIds"/>
-	<DisableAliasing name="mBzIds_2H"/>
 	<DisableAliasing name="mCivetCode_000"/>
 	<DisableAliasing name="mCivetCode_001"/>
 	<DisableAliasing name="mCivetCode_002"/>
@@ -250,8 +254,6 @@
 	<DisableAliasing name="mCivetCode_008"/>
 	<DisableAliasing name="mCivetCode_009"/>
 	<DisableAliasing name="mCivetCode_010"/>
-	<DisableAliasing name="mDarkMode"/>
-	<DisableAliasing name="mDarkModeId"/>
 	<DisableAliasing name="mGlobalVar"/>
 	<DisableAliasing name="mGlobalVar_2H"/>
 	<DisableAliasing name="media_genres"/>
@@ -299,7 +301,10 @@
 	<DisableAliasing name="screen_density"/>
 	<DisableAliasing name="second"/>
 	<DisableAliasing name="shake"/>
-	<DisableAliasing name="sj"/>
+	<DisableAliasing name="shake_record"/>
+	<DisableAliasing name="x_acc"/>
+	<DisableAliasing name="y_acc"/>
+	<DisableAliasing name="z_acc"/>
 	<DisableAliasing name="sms_unread_count"/>
 	<DisableAliasing name="sport_value"/>
 	<DisableAliasing name="step"/>
@@ -359,4 +364,11 @@
 	<DisableAliasing name="year_lunar"/>
 	<DisableAliasing name="year_lunar1864"/>
 	<DisableAliasing name="year_lunar_leap"/>
+	<DisableAliasing name="lunar_calendar_enable"/>
+	<DisableAliasing name="battery_enable"/>
+	<DisableAliasing name="notification_enable"/>
+	<DisableAliasing name="preview_mode"/>
+	<DisableAliasing name="connectedStatus"/>
+	<DisableAliasing name="headsetName"/>
+	<DisableAliasing name="headsetBatteryLevel"/>
 </DisableAliasingList>

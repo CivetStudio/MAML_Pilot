@@ -32,8 +32,8 @@ def validate_xml_with_xsd(xml_content, xsd_content):
 
 def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    xsd_filename = "manifest.xsd"
-    # xsd_filename = "manifest_hw.xsd"
+    xsd_filename = "xsd/manifest.xsd"
+    # xsd_filename = "xsd/manifest_hw.xsd"
     xsd_path = os.path.join(script_dir, xsd_filename)
 
     # Read XSD content as bytes

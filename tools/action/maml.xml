@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Lockscreen frameRate="240" screenWidth="1080" version="1" vibrate="false" _dev="civet" _devTime="$_devTime" _splitExt="1" _splitGroup="1" _preload="1" _getSource="true" compiler="true" >
+
+	<Var name="a" expression="0" type="number" />
+
+	<Image x="100" y="100" align="center" alignV="center" src="assests/up.png" w="300" h="300" act="up,Compose.a" />
+	<Compose.a >
+
+		<!-- <VariableCommand name="test1" expression="1" type="number" />
+		<VariableCommand name="test2" expression="2" type="number" />
+		<VariableCommand name="test3" expression="3" type="number" />
+		<VariableCommand name="test4" expression="4" type="number" /> -->
+
+		<C_Array count="2" indexName="index" >
+
+			<VariableCommand name="mBezierFlag_#index" expression="#index" type="number" condition="#tc" />
+
+			<Command target="mBezierAni_R_#index.animation" value="stop" condition="#tc" />
+			<Command target="mBezierAni_R_#index.animation" value="play" condition="#tc" />
+
+		</C_Array>
+
+	</Compose.a>
+
+	<ExternalCommands>
+		<Trigger action="resume" >
+			<VariableCommand name="resume_0" expression="0" type="number" />
+			<VariableCommand name="resume_3" expression="3" type="number" />
+		</Trigger>
+	</ExternalCommands>
+
+	<ExternalCommands>
+		<Trigger action="pause" >
+			<VariableCommand name="resume_1" expression="1" type="number" />
+			<VariableCommand name="resume_2" expression="2" type="number" />
+		</Trigger>
+	</ExternalCommands>
+
+	<Image x="200" y="300" align="left" alignV="top" src="assets/double.png" w="100" h="100" act="double,Compose.b" />
+	<Compose.b>
+		<VariableCommand name="double" expression="1" type="number" />
+	</Compose.b>
+
+
+	<Group x="1000" y="500" visibility="#act" >
+
+		<Image x="400" y="500" align="right" alignV="bottom" src="assets/click.png" w="200" h="600" act="click,Compose.c" />
+		<Compose.c>
+			<VariableCommand name="double" expression="1" type="number" />
+		</Compose.c>
+
+	</Group>
+
+	<Image x="1" y="1" src="a.png" />
+
+</Lockscreen>
