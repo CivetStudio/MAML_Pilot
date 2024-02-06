@@ -201,88 +201,24 @@ def preLoadExt(save_file):
         f.write(str(soup.prettify(indent_width=4).replace('    ', '\t')))
 
 
+def evalNum(number):
+    new_number = str(number)
+    try:
+        new_number = str(eval(number))
+    except Exception:
+        pass
+    return str(new_number)
+
+
 def splitGroup(manifest_xml, manifest_root):
-
-    def simplify_expression(expression):
-        # 定义匹配变量的正则表达式
-        var_pattern = r'#([a-zA-Z0-9_]+)'
-
-        # 匹配括号内的内容
-        bracket_pattern = r'\(([^()]+)\)'
-
-        # 查找所有匹配的变量
-        _vars = re.findall(var_pattern, expression)
-
-        # 使用正则表达式匹配括号内的内容，并组成一个数组
-        matches = re.findall(bracket_pattern, expression)
-
-        new_expression = ""
-        # print(matches, len(matches))
-
-        # for match in matches:
-        #     sub_expr = simplify_expression(match)
-        #     expression = expression.replace(f'({match})', f'[{sub_expr}]', 1)  # 仅替换一次
-
-        if len(matches) == 1:
-            new_expression = str(matches[0])
-
-        else:
-            for exp_i in range(len(matches)):
-
-                eval_match = str(matches[exp_i])
-                try:
-                    eval_match = str(eval(eval_match))
-                except Exception as e:
-                    # pass
-                    print(f"\tError: {e}")
-                eval_match = str(eval_match).replace('.0', '')
-
-                if str(matches[exp_i]).startswith('-'):
-                    content = '0' + eval_match
-                else:
-                    content = eval_match
-
-                if exp_i == 0:
-                    new_expression = str(content)
-                else:
-                    new_expression = str(new_expression) + '+' + str(content)
-
-                try:
-                    new_expression = str(eval(new_expression))
-                except Exception as e:
-                    # pass
-                    print(f"\tError: {e}")
-
-            if '#' in new_expression or '@' in new_expression:
-                new_expression = f"int({new_expression})"
-
-        return new_expression
 
     with open(manifest_xml, 'r', encoding='utf-8') as f:
         xml_str = f.read()
 
     # 解析xml文件
     soup = BeautifulSoup(xml_str, features="lxml-xml")
-    # group_tags = []
     button_str = []
-    # button_contents = ''
 
-    # 遍历所有Group标签
-    # for group in soup.find_all('Group'):
-    #     group_tags.append(group.name)
-
-    # 嵌套Group标签数量
-    # group_num = len(group_tags)-1
-    # print('group_num: ',group_num)
-
-    # 遍历所有Group标签
-    # for group in soup.find_all('Group'):
-    #     group_x = group.get('x', '0')
-    #     group_y = group.get('y', '0')
-    #     group_visibility = group.get('visibility', '')
-    #     print('group_x:', group_x)
-    #     print('group_y:', group_y)
-    #     print('group_visibility:', group_visibility, '\n')
     if manifest_root != 'Widget':
 
         # 检测/移除空属性
@@ -304,126 +240,52 @@ def splitGroup(manifest_xml, manifest_root):
                 group_y = '(' + button.parent.get('y', '0') + ')' + '+(' + button.get('y', '0') + ')'
                 group_visibility = '(' + button.parent.get('visibility', '1') + ')*(' + button.get('visibility','1') + ')'
 
-                # # 纯数字时累加/累乘处理
-                # if '#' in group_x or '@' in group_x:
-                #     group_x = 'int(' + group_x + ')'
-                # else:
-                #     group_x = str(eval(group_x.replace("()", "0")))
-                #     # print(group_x)
-                #
-                # if '#' in group_y or '@' in group_y:
-                #     group_y = 'int(' + group_y + ')'
-                # else:
-                #     group_y = str(eval(group_y))
-                #
-                # if '#' in group_visibility or '@' in group_visibility:
-                #     group_visibility = group_visibility
-                # else:
-                #     # group_visibility = eval(group_visibility)
-                #     group_visibility = group_visibility
+                group_x = evalNum(group_x)
+                group_y = evalNum(group_y)
 
                 # 第二层 Group标签
                 if button.parent.parent.name == 'Group':
                     # print('Secondary', '\n')
-                    group_x = group_x + '+(' + button.parent.parent.get('x', '0') + ')'
-                    group_y = group_y + '+(' + button.parent.parent.get('y', '0') + ')'
+                    group_x = group_x + '+(' + evalNum(button.parent.parent.get('x', '0')) + ')'
+                    group_y = group_y + '+(' + evalNum(button.parent.parent.get('y', '0')) + ')'
                     group_visibility = group_visibility + '*(' + button.parent.parent.get('visibility', '1') + ')'
 
-                    # # 纯数字时累加/累乘处理
-                    # if '#' in group_x or '@' in group_x:
-                    #     group_x = 'int(' + group_x + ')'
-                    # else:
-                    #     group_x = str(eval(group_x))
-                    #     # group_x = str(eval(group_x.replace("()", "0")))
-                    #     # print(group_x)
-                    #
-                    # if '#' in group_y or '@' in group_y:
-                    #     group_y = 'int(' + group_y + ')'
-                    # else:
-                    #     group_y = str(eval(group_y))
-                    #
-                    # if '#' in group_visibility or '@' in group_visibility:
-                    #     group_visibility = group_visibility
-                    # else:
-                    #     # group_visibility = eval(group_visibility)
-                    #     group_visibility = group_visibility
+                    group_x = evalNum(group_x)
+                    group_y = evalNum(group_y)
 
                     # 第三层 Group标签
                     if button.parent.parent.parent.name == 'Group':
                         # print('Tertiary', '\n')
-                        group_x = group_x + '+(' + button.parent.parent.parent.get('x', '0') + ')'
-                        group_y = group_y + '+(' + button.parent.parent.parent.get('y', '0') + ')'
+                        group_x = group_x + '+(' + evalNum(button.parent.parent.parent.get('x', '0')) + ')'
+                        group_y = group_y + '+(' + evalNum(button.parent.parent.parent.get('y', '0')) + ')'
                         group_visibility = group_visibility + '*(' + button.parent.parent.parent.get('visibility','1') + ')'
 
-                        # # 纯数字时累加/累乘处理
-                        # if '#' in group_x or '@' in group_x:
-                        #     group_x = 'int(' + group_x + ')'
-                        # else:
-                        #     group_x = str(eval(group_x.replace("()", "0")))
-                        #     # print(group_x)
-                        #
-                        # if '#' in group_y or '@' in group_y:
-                        #     group_y = 'int(' + group_y + ')'
-                        # else:
-                        #     group_y = str(eval(group_y))
-                        #
-                        # if '#' in group_visibility or '@' in group_visibility:
-                        #     group_visibility = group_visibility
-                        # else:
-                        #     # group_visibility = eval(group_visibility)
-                        #     group_visibility = group_visibility
+                        group_x = evalNum(group_x)
+                        group_y = evalNum(group_y)
 
                         # 第四层 Group标签
                         if button.parent.parent.parent.parent.name == 'Group':
                             # print('Quaternary', '\n')
-                            group_x = group_x + '+(' + button.parent.parent.parent.parent.get('x', '0') + ')'
-                            group_y = group_y + '+(' + button.parent.parent.parent.parent.get('y', '0') + ')'
+                            group_x = group_x + '+(' + evalNum(button.parent.parent.parent.parent.get('x', '0')) + ')'
+                            group_y = group_y + '+(' + evalNum(button.parent.parent.parent.parent.get('y', '0')) + ')'
                             group_visibility = group_visibility + '*(' + button.parent.parent.parent.parent.get('visibility', '1') + ')'
 
-                            # # 纯数字时累加/累乘处理
-                            # if '#' in group_x or '@' in group_x:
-                            #     group_x = 'int(' + group_x + ')'
-                            # else:
-                            #     group_x = str(eval(group_x.replace("()", "0")))
-                            #     # print(group_x)
-                            #
-                            # if '#' in group_y or '@' in group_y:
-                            #     group_y = 'int(' + group_y + ')'
-                            # else:
-                            #     group_y = str(eval(group_y))
-                            #
-                            # if '#' in group_visibility or '@' in group_visibility:
-                            #     group_visibility = group_visibility
-                            # else:
-                            #     # group_visibility = eval(group_visibility)
-                            #     group_visibility = group_visibility
+                            group_x = evalNum(group_x)
+                            group_y = evalNum(group_y)
 
                 group_x = str(group_x).replace('+(0)', '')
-                # .replace('#mResumeAni_1', '1').replace('#mResumeAni_2', '1').replace('#mResumeAni_3', '1')\
-                # .replace('#mResumeAni_4', '1').replace('#mResumeAni_5', '1').replace('#mResumeAni', '1')
                 group_y = str(group_y).replace('+(0)', '')
-                # .replace('#mResumeAni_1', '1').replace('#mResumeAni_2', '1').replace('#mResumeAni_3', '1')\
-                # .replace('#mResumeAni_4', '1').replace('#mResumeAni_5', '1').replace('#mResumeAni', '1')
 
-                try:
-                    group_x = eval(group_x)
-                    group_y = eval(group_y)
-                except Exception as group_e:
-                    print(f"\tError: {group_e}")
-
-                # 不稳定 尝试两两相加 数组删除元素
-                # if 'max(' not in str(group_x) and 'min(' not in str(group_x) and\
-                #         'max(' not in str(group_y) and 'min(' not in str(group_y):
-                #     group_x = str(simplify_expression(group_x))
-                #     group_y = str(simplify_expression(group_y))
+                group_x = evalNum(group_x)
+                group_y = evalNum(group_y)
 
                 group_visibility = str(group_visibility).replace('(1)*', '').replace('*(1)', '')
                 if '*(0)' in group_visibility:
                     group_visibility = "0"
 
                 # Printer
-                # print('group_x: ', group_x)
-                # print('group_y: ', group_y)
+                print('\tgroup_x: ', group_x)
+                print('\tgroup_y: ', group_y)
                 # print('group_visibility: ', group_visibility, '\n')
 
                 button_str.append(button.contents)
@@ -439,7 +301,7 @@ def splitGroup(manifest_xml, manifest_root):
                 button_alpha = button.get('alpha', '')
 
                 # Printer
-                print(f'\t<Button x="{group_x}" y="{group_y}" w="{button_w}" h="{button_h} visibility="{group_visibility}" >')
+                print(f'\t<Button x="{group_x}" y="{group_y}" w="{button_w}" h="{button_h}" visibility="{group_visibility}" >')
                 # print('button_name: ', button.get('name', ''))
                 # print('button_w: ', button.get('w', '1'))
                 # print('button_h: ', button.get('h', '1'))

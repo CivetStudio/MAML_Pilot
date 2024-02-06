@@ -17,6 +17,14 @@
 			<VariableCommand name="mResumeAni_5" expression="0" type="number" />
 			<VariableCommand name="mResumeAni_6" expression="0" type="number" />
 
+			<VariableCommand name="mBezierTrans" expression="0" type="number" />
+			<VariableCommand name="mBezierTrans_1" expression="0" type="number" />
+			<VariableCommand name="mBezierTrans_2" expression="0" type="number" />
+			<VariableCommand name="mBezierTrans_3" expression="0" type="number" />
+			<VariableCommand name="mBezierTrans_4" expression="0" type="number" />
+			<VariableCommand name="mBezierTrans_5" expression="0" type="number" />
+			<VariableCommand name="mBezierTrans_6" expression="0" type="number" />
+
 		</Trigger>
 	</ExternalCommands>
 
@@ -110,6 +118,22 @@
 			<!-- <VariableCommand name="resume_flag" expression="1" delay="400" /> -->
 
 			<VariableCommand name="mResumeDelay" expression="0" />
+			<VariableCommand name="mResumeAni" expression="0" type="number" />
+			<VariableCommand name="mResumeAni_1" expression="0" type="number" />
+			<VariableCommand name="mResumeAni_2" expression="0" type="number" />
+			<VariableCommand name="mResumeAni_3" expression="0" type="number" />
+			<VariableCommand name="mResumeAni_4" expression="0" type="number" />
+			<VariableCommand name="mResumeAni_5" expression="0" type="number" />
+			<VariableCommand name="mResumeAni_6" expression="0" type="number" />
+
+			<VariableCommand name="mBezierTrans" expression="0" type="number" />
+			<VariableCommand name="mBezierTrans_1" expression="0" type="number" />
+			<VariableCommand name="mBezierTrans_2" expression="0" type="number" />
+			<VariableCommand name="mBezierTrans_3" expression="0" type="number" />
+			<VariableCommand name="mBezierTrans_4" expression="0" type="number" />
+			<VariableCommand name="mBezierTrans_5" expression="0" type="number" />
+			<VariableCommand name="mBezierTrans_6" expression="0" type="number" />
+
 			<!--
 			<VariableCommand name="mResumeTime_1" expression="0" />
 			<VariableCommand name="mResumeTime_2" expression="0" />

@@ -24,9 +24,11 @@ def convert_images_to_webp(input_folder, output_folder):
                 # 打开图像并保存为 WebP 格式
                 img = Image.open(input_path)
                 width, height = img.size
-                image_compress_ratio = 720 / 1080
+                image_compress_ratio = 1 + 0 * 720 / 1080
                 new_width = int(width * image_compress_ratio)
                 new_height = int(height * image_compress_ratio)
+                new_width = 1440
+                new_height = 1440
                 img = img.resize((new_width, new_height))
                 # image.size = width * image_compress_ratio, height * image_compress_ratio
                 # image.save(_file_path)
@@ -41,7 +43,7 @@ def convert_images_to_webp(input_folder, output_folder):
 
 
 # 替换为你的输入和输出文件夹路径
-input_folder_path = '/Users/wangshilong/Downloads/【02.02】机械龙新切图'
+input_folder_path = '/Users/wangshilong/Downloads/gif'
 
 # 执行转换
 try:

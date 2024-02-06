@@ -9,7 +9,7 @@
 	<Var name="vivo_length" expression="len(@weather_cur_temp)" />
 
 	<!-- {#time}: #speed/max(1.6*#LangsId,0.5) -->
-	<Var name="mBalanceTime" expression="ifelse(eq(#LangsId,0)+eq(#LangsId,5),1/max(1.6*#LangsId,0.5),1)" type="number" />
+	<Var name="mBalanceTime" expression="ifelse(eq(#LangsId,0)+eq(#LangsId,5),1/max(1.6*#LangsId,0.770158),1)" type="number" />
 	<!-- speed * mBalanceTime -->
 
 	<ExternalCommands>

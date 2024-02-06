@@ -78,14 +78,16 @@
 01.05 删除无用【VarArray】标签
     VarArray: {@/#}{name}
 01.08 自动修复不带【name】属性的【threshold】/【*Animation】标签
-‼️01.17 重新整理【splitGroup】函数下的属性eval问题（避免#mResumeAni_值被加入按钮）
+01.17 重新整理【splitGroup】函数下的属性eval问题（避免#mResumeAni_值被加入按钮）
     简化按钮内属性表达式 simplify_expression()
     // BUG：未考虑到min max函数包含在内的情况（/Users/wangshilong/Downloads/萌星球/蔡晶/五福临门/国内版/OPPO/lockscreen/advance/maml.xml）
+    // 02.05 使用新的函数 evalNum()
 01.25 新增 C_Array 数组标签处理（支持 Image / Text / Button，原理即将元素中的 {#countName} 循环替换为 {count} 所对应的数字，算法同小米）
 01.27 修复 C_Array 数组标签处理（需在变量混淆之前处理）
 01.29 稍微修复 lib 随机后缀算法（目前只能有两个 _port模式 或者 无_port模式）
-‼️01.29 新增 lib_dom_id, lib_dom_input 变量，支持在插件上加入 _id 属性，形成代码后缀（Exam_CountDays_{_id})
+01.29 新增 lib_dom_id, lib_dom_input 变量，支持在插件上加入 _id 属性，形成代码后缀（Exam_CountDays_{_id})
     // BUG：目前会导致SysTime失效？少用！
+    // BUG: 02.05 将 SysTime 标签前置，已解决?
 02.01 新增 C_Array 数组标签写法 <C_Array begin="0" end="1" indexName="_i" ></C_Array> 可与 count 属性交替使用
     修复 ExternalCommands 合并数组生成冗余引号问题 e_soup
 02.02 新增 Image['act'] 写法：act="{_action_: up|double|click},{_action_tag_id_}"
@@ -129,99 +131,100 @@ import time
 import xml.dom.minidom
 import zlib
 import pyperclip
-import requests
 import subprocess
 from bs4 import BeautifulSoup, Comment
 from lxml import etree as lxml
-import wx
+# import wx
+# import requests
 
 from splitTools import splitVar, splitExt, splitBinders, splitGroup, preLoadVar, preLoadExt, intentMarket
-# from tools.order import orderXML
 
 maml_main_xml = ''
-win_local = 0
+win_local = 1
+mac_local = 0
 if 'PYCHARM_HOSTED' in os.environ and sys.platform.startswith('darwin') or win_local:
     # print("macOS or PyCharm")
     sys_version = 0
     current_dir = ''
     maml_main_xml = pyperclip.paste().replace('\\', '/').replace('"', '')
-else:
-    # print("Windows or macOS")
-    sys_version = 1
-    current_dir = os.path.abspath(sys.argv[0]).replace('\\', '/') \
-        .replace('"', '').replace('main.exe', '').replace('main.py', '') \
-        .replace('MacOS/MamlPilot', 'MacOS')
-    # print(f'sys.argv: {sys.argv}')
-    if len(sys.argv) == 1:
-        if sys.platform.startswith('darwin'):
-            class MyFrame(wx.Frame):
-                def __init__(self, parent, title):
-                    super().__init__(parent, title=title, size=(800, 500))
-                    panel = wx.Panel(self)
-
-                    text = """MAML Pilot——全平台代码加密工具_20230714
-    Designed by 灵貓 / Civet
-    
-    请将XML文件名称改为【maml.xml】并拖入程序中
-    程序文件名请勿修改，修改后无法打开！反馈问题请联系QQ：1876461209
-    
-    功能说明：
-    1.支持代码变量混淆，从Group组中拆分Var变量、Button按钮
-    2.代码标签自动排序：Lockscreen > ExternalCommands > VariableBinders > VariableAnimation > Var.threshold > Var > Weather > Calendar > Healthy > VarArray > ... > Group.Button
-    3.支持MIUI平台的config.xml及var_config.xml中的对应变量转译，只需将文件放于【maml.xml】的同一目录下即可
-    4.已涵盖全平台中的所有全局变量，不会导致锁屏功能失效问题（已试验2900次）
-    5.后续将支持代码插件化功能，类似MIUI主题编辑器中的插件模块
-    """
-
-                    text_ctrl = wx.TextCtrl(panel, style=wx.TE_MULTILINE | wx.TE_READONLY)
-                    # text_ctrl = wx.TextCtrl(panel, style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_DONTWRAP)
-                    text_ctrl.SetValue(text)
-
-                    font = wx.Font(15, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
-                    text_ctrl.SetFont(font)
-
-                    # color = wx.Colour().FromHex("#444653")  # 设置为红色
-                    text_ctrl.SetForegroundColour(wx.WHITE)
-                    text_ctrl.SetBackgroundColour('#2b2b2c')
-
-                    sizer = wx.BoxSizer(wx.VERTICAL)
-                    sizer.Add(text_ctrl, proportion=1, flag=wx.EXPAND)
-                    panel.SetSizer(sizer)
-
-                    self.CenterOnScreen()
-                    self.Show()
-                    self.Bind(wx.EVT_CLOSE, self.on_close)
-
-                def on_close(self):
-                    self.Destroy()
-
-
-            app = wx.App()
-            frame = MyFrame(None, "MAML Pilot 使用说明")
-            app.MainLoop()
-
-        else:
-            print('\t')
-            print('MAML Pilot——全平台代码加密工具_20230716_V1.3')
-            print('Designed by 灵貓 / Civet')
-            print('\t')
-            print('请将XML文件名称改为【maml.xml】并拖入程序中')
-            print('程序文件名请勿修改，修改后无法打开！反馈问题请联系QQ：1876461209')
-            print('\t')
-            print('功能说明：')
-            print('1.支持代码变量混淆，从Group组中拆分Var变量、Button按钮')
-            print('2.代码标签自动排序：Lockscreen > ExternalCommands > VariableBinders > VariableAnimation > '
-                  'Var.threshold > Var > Weather > Calendar > Healthy > VarArray > ... > Group.Button')
-            print('3.支持MIUI平台的config.xml及var_config.xml中的对应变量转译，只需将文件放于【maml.xml】的同一目录下即可')
-            print('4.已涵盖全平台中的所有全局变量，不会导致锁屏功能失效问题（已试验2900次）')
-            print('5.后续将支持代码插件化功能，类似MIUI主题编辑器中的插件模块')
-            print('（本窗口5秒后自动关闭）')
-
-        time.sleep(5)
-        sys.exit(1)
-    if len(sys.argv) > 1:
-        file_path = sys.argv[1]
-        maml_main_xml = file_path.replace('\\', '/').replace('"', '')
+# if mac_local == 1:
+#     # print("Windows or macOS")
+#     sys_version = 1
+#     current_dir = os.path.abspath(sys.argv[0]).replace('\\', '/') \
+#         .replace('"', '').replace('main.exe', '').replace('main.py', '') \
+#         .replace('MacOS/MamlPilot', 'MacOS')
+#     # print(f'sys.argv: {sys.argv}')
+#     if len(sys.argv) == 1:
+#
+#         sys_text = """MAML Pilot——全平台代码加密工具_20240206
+# Designed by 灵貓 / Civet
+#
+# 请将XML文件名称改为【maml.xml】并拖入程序中
+# 程序文件名请勿修改，修改后无法打开！反馈问题请联系QQ：1876461209
+#
+# 功能说明：
+# 1.支持代码变量混淆，从Group组中拆分Var变量、Button按钮
+# 2.代码标签自动排序：Lockscreen > ExternalCommands > VariableBinders > VariableAnimation > Var.threshold > Var > Weather > Calendar > Healthy > VarArray > ... > Group.Button
+# 3.支持MIUI平台的config.xml及var_config.xml中的对应变量转译，只需将文件放于【maml.xml】的同一目录下即可
+# 4.已涵盖全平台中的所有全局变量，不会导致锁屏功能失效问题（已试验10000+次）
+# 5.后续将支持代码插件化功能，类似MIUI主题编辑器中的插件模块
+# """
+#
+#         if sys.platform.startswith('darwin') and mac_local == 0:
+#             # noinspection PyUnusedLocal
+#             class MyFrame(wx.Frame):
+#                 def __init__(self, parent, title):
+#                     super().__init__(parent, title=title, size=(800, 500))
+#                     panel = wx.Panel(self)
+#
+#                     text_ctrl = wx.TextCtrl(panel, style=wx.TE_MULTILINE | wx.TE_READONLY)
+#                     text_ctrl.SetValue(sys_text)
+#
+#                     font = wx.Font(15, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
+#                     text_ctrl.SetFont(font)
+#
+#                     text_ctrl.SetForegroundColour(wx.WHITE)
+#                     text_ctrl.SetBackgroundColour('#2b2b2c')
+#
+#                     sizer = wx.BoxSizer(wx.VERTICAL)
+#                     sizer.Add(text_ctrl, proportion=1, flag=wx.EXPAND)
+#                     panel.SetSizer(sizer)
+#
+#                     self.CenterOnScreen()
+#                     self.Show()
+#                     self.Bind(wx.EVT_CLOSE, self.on_close)  # 绑定 EVT_CLOSE 事件
+#
+#                 def on_close(self, event):  # 修正 on_close 方法的参数
+#                     self.Destroy()
+#
+#
+#             app = wx.App()
+#             frame = MyFrame(None, "MAML Pilot 使用说明")
+#             app.MainLoop()
+#
+#         else:
+#             print(sys_text)
+#             # print('\t')
+#             # print('MAML Pilot——全平台代码加密工具_20230716_V1.3')
+#             # print('Designed by 灵貓 / Civet')
+#             # print('\t')
+#             # print('请将XML文件名称改为【maml.xml】并拖入程序中')
+#             # print('程序文件名请勿修改，修改后无法打开！反馈问题请联系QQ：1876461209')
+#             # print('\t')
+#             # print('功能说明：')
+#             # print('1.支持代码变量混淆，从Group组中拆分Var变量、Button按钮')
+#             # print('2.代码标签自动排序：Lockscreen > ExternalCommands > VariableBinders > VariableAnimation > '
+#             #       'Var.threshold > Var > Weather > Calendar > Healthy > VarArray > ... > Group.Button')
+#             # print('3.支持MIUI平台的config.xml及var_config.xml中的对应变量转译，只需将文件放于【maml.xml】的同一目录下即可')
+#             # print('4.已涵盖全平台中的所有全局变量，不会导致锁屏功能失效问题（已试验2900次）')
+#             # print('5.后续将支持代码插件化功能，类似MIUI主题编辑器中的插件模块')
+#             # print('（本窗口5秒后自动关闭）')
+#
+#         # time.sleep(5)
+#         # sys.exit(1)
+#     if len(sys.argv) > 1:
+#         file_path = sys.argv[1]
+#         maml_main_xml = file_path.replace('\\', '/').replace('"', '')
 
 maml_rule_file = "maml.xml"
 maml_file_name = os.path.basename(maml_main_xml)
@@ -267,7 +270,6 @@ if not os.path.exists(assets_folder_name):
 # 连接到数据库
 database_path = os.path.join(logging_path, 'db')
 conn = sqlite3.connect(os.path.join(database_path, "counter.db"))
-
 # 创建表格（如果不存在）
 conn.execute('''CREATE TABLE IF NOT EXISTS counter
              (id INTEGER PRIMARY KEY,
@@ -276,7 +278,6 @@ conn.execute('''CREATE TABLE IF NOT EXISTS counter
              compress_rate TEXT,
              run_time TEXT,
              dev_time TEXT);''')
-
 # 读取计数器的值
 cursor = conn.cursor()
 cursor.execute('SELECT id FROM counter ORDER BY id DESC LIMIT 1')
@@ -287,7 +288,6 @@ else:
     cursor.execute('SELECT count FROM counter ORDER BY count DESC LIMIT 1')
     count = cursor.fetchone()
     count = int(count[0]) + 1
-
 # 关闭数据库连接
 conn.close()
 
@@ -406,7 +406,6 @@ anti_xml = "antiAliasing.xml"
 config_xml = maml_main_xml.replace(maml_file_name, 'config.xml')
 var_config_xml = maml_main_xml.replace(maml_file_name, 'var_config.xml')
 # var_config_xml = "var_config.xml"
-dev_url = 'https://www.baidu.com'
 
 # langs_id = 0
 langs_id = 4 if os.path.exists(config_xml) or os.path.exists(var_config_xml) else 2
@@ -426,7 +425,7 @@ var_persist_attr = "const" if langs_id == 0 or langs_id == 4 else "persist"
 
 
 # 获取网络时间戳
-def getTimeSys(url):
+def getTimeSys():
 
     def get_wifi_ssid():
         try:
@@ -450,16 +449,8 @@ def getTimeSys(url):
     wifi_in_vgoing = bool(get_wifi_ssid() == "vgoing")
     # print(wifi_state)
 
-    if wifi_state:
-        timestamp_ms = int(time.time() * 1000)
-        return timestamp_ms
-    else:
-        response = requests.get(url)
-        ts = response.headers['date']
-        gmt_time_obj = time.strptime(ts[5:25], "%d %b %Y %H:%M:%S")
-        gmt_ts = time.mktime(gmt_time_obj)
-        bj_internet_ts = int(gmt_ts + 8 * 3600)
-        return bj_internet_ts
+    timestamp_ms = int(time.time() * 1000)
+    return timestamp_ms
 
 
 # 生成随机16进制数字(length:[0,16])
@@ -603,7 +594,12 @@ def getLibContent(lib_file_main, soup_dom_id=0, soup_dom_input=None):
         if len(lib_placeholder_str2):
             for _k in range(len(lib_placeholder)):
                 lib_soup = str(lib_soup).replace(str(lib_placeholder[_k]), str(lib_placeholder_str2[_k]))
+            # <PlaceHolder name="ResumeAniCommand"/>
+            # print(str(lib_placeholder[_k]))
         _f0.write(str(lib_soup))
+
+    # print(lib_placeholder)
+    # print(lib_placeholder_str2)
 
     if lib_valueholder_num == 0:
         lib_starts_with = '$'
@@ -639,7 +635,9 @@ def getLibContent(lib_file_main, soup_dom_id=0, soup_dom_input=None):
         if _tag.get('name') is not None and _tag.get('name') != '' and _tag.name != "Extra" and not str(
                 _tag.get('name')).startswith("$") and not str(_tag.get('name')).endswith("$"):
             if _tag.name == 'ValueHolder':
+                # and 'Src' not in str(_tag.get('name'))
                 if _tag.get('type') != 'string':
+                    # 当 type 为 string 时，该属性不加入混淆
                     var_from_xml.append(_tag.get('name'))
             # elif tag.name == 'item' and eval(tag.get('default')):
             # 	var_from_xml.append(tag.get('name'))
@@ -1131,7 +1129,7 @@ def parseXML(parse_file_0, parse_file_1):
     for comment in comments:
         comment.extract()
 
-    _dev_time = getTimeSys(dev_url)
+    _dev_time = getTimeSys()
     _soup_indent = str(_soup.prettify(indent_width=1)).replace('\n', '').replace('$_devTime', str(_dev_time))
 
     with open(parse_file_1, 'w', encoding='utf-8') as _f0:
@@ -1259,8 +1257,15 @@ def saveXML(save_file):
 
         # 若 Image['rotation'] == '0' del Image['pivotX'], Image['pivotY'], Image['rotation'] // HONOR
         for image in _soup.find_all('Image'):
-            if image.get('rotation') == '0':
-                del image['pivotX'], image['pivotY'], image['rotation']
+            image_w = image.get('w')
+            image_h = image.get('h')
+            image_px = image.get('pivotX')
+            image_py = image.get('pivotY')
+            image_r = image.get('rotation')
+            if image_r == '0':
+                del image['rotation']
+                if image_px == f"{image_w}/2" and image_py == f"{image_h}/2":
+                    del image['pivotX'], image['pivotY']
             if image.get('act'):
                 _action = image.get('act')
                 _action_ = str(_action.split(',')[0])
@@ -1389,8 +1394,6 @@ def getAlias():
     _anti_list_xml = "disable.xml"
     _source_xml = maml_main_xml.replace(maml_file_name, _origin_xml)
 
-    if var_get_source == 1:
-        shutil.copy2(_success_xml, _source_xml)
     # shutil.copy2(_success_xml, _origin_xml)
 
     # # 筛选name及target，并添加后缀（6位随机数）
@@ -1927,6 +1930,12 @@ def getAlias():
                 if var_contents == ['\n']:
                     var.decompose()
 
+        for var_c in _soup_final.find_all('Trigger'):
+            if var_c.parent.name == 'Var':
+                for var_child in var_c.find_all('Var'):
+                    print(var_child)
+                    var_child.decompose()
+
         # 删除 disabled != 0 的标签
         for _del_var in _soup_final.find_all('Var'):
             if _del_var.get('disabled') is not None:
@@ -2035,6 +2044,17 @@ def getAlias():
             .replace('    ', '\t').replace('&amp;#', '&#')\
             .replace('__widget_auto_size__', maml_folder_name.replace('widget_', ''))
 
+        # # 删除 threshold 中的 Var 标签
+        # for element in _soup_final.find_all():
+        #     if element.name == 'Var' and element.parent.name == 'Trigger' and element.parent.parent.get('threshold') is not None:
+        #         print(element)
+        #         element.decompose()
+        #         _soup_final = BeautifulSoup(str(_soup_final), 'lxml-xml')
+        # print(_soup_final)
+        # sys.exit(0)
+
+        # print(soup_dom_str)
+
         # 检测/移除空属性
         for element in _soup_final.find_all():
             # 遍历元素的所有属性
@@ -2042,7 +2062,6 @@ def getAlias():
                 if attr_value == '' or str(attr_value).strip() == '':
                     print(f'⚠️Warning: {element}')
                     time.sleep(1)
-        # print(soup_dom_str)
 
     with open(_success_xml, 'w', encoding='utf-8') as _f0:
         if var_alias:
@@ -2050,13 +2069,13 @@ def getAlias():
         else:
             _f0.write(soup_dom_str.replace('&amp;#', '&#'))
 
-    import tools.order
     order_xml_mode = 1
-
     if order_xml_mode:
+        import tools.order
         tools.order.orderXML(_success_xml)
     if var_get_source:
-        tools.order.orderXML(_source_xml)
+        import tools.anti
+        tools.anti.convert_to_source(_anti_xml, _success_xml, _source_xml, 1, 0)
 
     # End
 
@@ -2105,27 +2124,45 @@ for root in soup.find_all(True, limit=1):
     manifest_sw = int(root.get('screenWidth'))
     manifest_sh = int(root.get('screenHeight', -1))
 
-# globalPersist变量排除
-for global_persist in soup.find_all(globalPersist=True):
-    # and (global_persist.tag == 'Var' or global_persist.tag == 'Import')
+# globalPersist / _glb变量排除
+for global_persist in soup.find_all(globalPersist=True, _glb=True):
     if global_persist.get('name') is not None:
         print(f"globalPersist: {global_persist['name']}")
         var_forbid_name.append(str(global_persist['name']))
 
-# _glb变量排除
-for global_persist in soup.find_all(_glb=True):
-    # and (global_persist.tag == 'Var' or global_persist.tag == 'Import')
-    if global_persist.get('name') is not None:
-        print(f"globalPersist: {global_persist['name']}")
-        var_forbid_name.append(str(global_persist['name']))
+# # globalPersist变量排除
+# for global_persist in soup.find_all(globalPersist=True):
+#     if global_persist.get('name') is not None:
+#         print(f"globalPersist: {global_persist['name']}")
+#         var_forbid_name.append(str(global_persist['name']))
+#
+# # _glb变量排除
+# for global_persist in soup.find_all(_glb=True):
+#     if global_persist.get('name') is not None:
+#         print(f"globalPersist: {global_persist['name']}")
+#         var_forbid_name.append(str(global_persist['name']))
 
 # <Import name="mGlobalVar" globalPersist="true" />
 
 # 输出除Lockscreen外的所有标签 
 # re.compile("^(?!.*Lockscreen)^(?!.*Widget)^(?!.*Icon)")
 
+# 将 SysTime 标签前置
+# for _sys in soup.find_all('SysTime'):
+#     # print(_sys.name)
+#     new_sys_time = _sys
+#     _sys.extract()
+#
+# if soup.find_all('SysTime'):
+#     for _r in soup.find_all(True, limit=2):
+#         if _r.name != manifest_root:
+#             _r.insert_before(new_sys_time)
+#             print(soup)
+#             soup = BeautifulSoup(str(soup), 'lxml-xml')
+
 print('Disabled:')
 
+# Main / Start
 for tag in soup.find_all(True):
 
     # 匹配库文件标签
@@ -2236,19 +2273,15 @@ for tag in soup.find_all(True):
                     # 获取库文件主内容并替换Attributes
                     if lib[i] == 'InputDate' and tag.get('_id') is not None:
                         lib_dom_id = 1
+                        # _port
+                        var_alias_all = 1
                         lib_dom_input = tag.get('_id')
                     else:
+                        var_alias_all = 0
                         lib_dom_id = 0
                         lib_dom_input = None
+
                     getLibContent(lib[i], lib_dom_id, lib_dom_input)
-
-                # for placeholder in tag.find_all(True):
-                # 	if placeholder.name == str(lib_placeholder):
-                # 		print(placeholder.name, '\n')
-                # 		print(placeholder, '\n')
-
-                # 		for p in placeholder.contents:
-                # 			lib_placeholder_str += str(placeholder.contents[p])
 
                 # print('l_lib: ',len(lib_slots))
                 # print('l_tags: ',len(tags_slots), '\n')
@@ -2259,7 +2292,7 @@ for tag in soup.find_all(True):
 soup = BeautifulSoup(open(parse_xml, encoding="utf-8"), features="lxml-xml")
 for name_exp in soup.find_all(nameExp=True):
     print(f"nameExp[{randomHex(8)}]: {str(name_exp)}")
-dev_time = getTimeSys(dev_url)
+dev_time = getTimeSys()
 soup_indent = str(soup)
 # print('soup: ', soup)
 
@@ -2314,7 +2347,6 @@ removeEmpty(os.path.join(os.getcwd(), assets_folder_name))
 cleanCache()
 getAlias()
 
-
 # print('lib: ',lib, '\n')
 # print('tags_lib: ',tags_lib, '\n')
 # print('tags_str: ',tags_str, '\n')
@@ -2323,7 +2355,30 @@ getAlias()
 # print('lib_soup_attr_def: ',lib_soup_attr_def, '\n')
 # print('lib_soup_str: ',lib_soup_str, '\n')
 
-# calculateMemory
+
+def compressMAML():
+
+    # 读取 XML 文件
+    with open(maml_main_xml, "rb") as file:
+        xml_string = file.read()
+
+    # 解析 XML
+    _soup = BeautifulSoup(xml_string, "xml")
+
+    # 查找并删除带有 disabled 属性且值不为0的标签
+    for element in _soup.find_all(attrs={"disabled": lambda x: x and x != "0"}):
+        element.extract()
+
+    # 获取更新后的 XML 字符串
+    updated_xml = str(_soup)
+
+    # 计算字符串的大小（KB）
+    size_in_kb = len(updated_xml.encode("utf-8")) / 1024
+
+    # 打印删除后的 XML 大小
+    # print(f"删除后的 XML 大小：{size_in_kb:.2f} KB")
+
+    return size_in_kb
 
 
 def calculateMemory(folder_path=None):
@@ -2506,8 +2561,11 @@ def applyTestClass(xml_file_path):
         apply_theme_class(mtz_file, ip_address_arr[ip_address_id])
 
 
+end_time = time.time()  # 记录结束时间
+run_time = f'{(end_time - start_time):.2f}'  # 计算运行时间
 local_xml = os.path.abspath(sys.argv[0]).replace('main.py', maml_rule_file)
 
+# calculateMemory and applyTestClass
 
 if 'PYCHARM_HOSTED' in os.environ and maml_main_xml != local_xml and maml_folder_name == 'advance':
     calculateMemory()
@@ -2519,50 +2577,13 @@ if 'PYCHARM_HOSTED' in os.environ and maml_main_xml != local_xml and maml_folder
 
         connected = 1
         # connected 1:USB连接 0:Wi-Fi连接
-
-        # try:
-        #     result = subprocess.run(f"adb shell", shell=True, capture_output=True, text=True)
-        #     print(result.stderr)
-        #     if "adb: no devices/emulators found" in result.stderr:
-        #         connected = 0
-        #         # print(f'Connect: {connected}')
-        # except Exception as _e:
-        #     print(f"Error: {_e} - connected()")
-
         try:
             print(f'Connect: {connected}')
             applyTestClass(maml_main_xml)
         except Exception as e:
             print(f"Error: {e}")
 
-end_time = time.time()  # 记录结束时间
-run_time = f'{(end_time - start_time):.2f}'  # 计算运行时间
-
-
-def compressMAML():
-
-    # 读取 XML 文件
-    with open(maml_main_xml, "rb") as file:
-        xml_string = file.read()
-
-    # 解析 XML
-    _soup = BeautifulSoup(xml_string, "xml")
-
-    # 查找并删除带有 disabled 属性且值不为0的标签
-    for element in _soup.find_all(attrs={"disabled": lambda x: x and x != "0"}):
-        element.extract()
-
-    # 获取更新后的 XML 字符串
-    updated_xml = str(_soup)
-
-    # 计算字符串的大小（KB）
-    size_in_kb = len(updated_xml.encode("utf-8")) / 1024
-
-    # 打印删除后的 XML 大小
-    # print(f"删除后的 XML 大小：{size_in_kb:.2f} KB")
-
-    return size_in_kb
-
+# calculateCompressRate
 
 maml_size = compressMAML()
 manifest_size = os.path.getsize(success_xml) / 1024  # 转换为KB
@@ -2573,13 +2594,10 @@ logging.info(log_message)
 
 # 连接到数据库
 conn = sqlite3.connect(os.path.join(database_path, "counter.db"))
-
 conn.execute("INSERT INTO counter (count, source, compress_rate, run_time, dev_time) VALUES (?, ?, ?, ?, ?)",
              (count, maml_main_xml, compress_rate, run_time, dev_time))
 conn.commit()
-
 # 关闭数据库连接
 conn.close()
-
 # time.sleep(2)
 sys.exit(0)

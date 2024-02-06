@@ -13,7 +13,7 @@
 	<!-- 倒计时设置面板 -->
 	<ValueHolder name="CountSetBgX" alias="X坐标" />
 	<ValueHolder name="CountSetBgY" alias="Y坐标" />
-	<ValueHolder name="CountSetBgSrc" alias="背景图片路径" />
+	<ValueHolder name="CountSetBgSrc" type="string" alias="背景图片路径" />
 	<ValueHolder name="CountSetBgV" alias="可见性" />
 
 	<!-- 倒计时设置面板-下划线数字素材 -->
@@ -24,7 +24,7 @@
 	<!-- <ValueHolder name="CountSetNumImg_W" alias="单个数字图片宽度" /> -->
 	<ValueHolder name="CountSetNumImg_W" alias="数字图片宽度" />
 	<ValueHolder name="CountSetNumImg_H" alias="数字图片高度" />
-	<ValueHolder name="CountSetNumSrc" alias="图片路径" />
+	<ValueHolder name="CountSetNumSrc" type="string" alias="图片路径" />
 
 	<!-- 数字输入按钮 -->
 	<ValueHolder name="CountSetBtnX_1" alias="数字1-按钮X坐标" />
