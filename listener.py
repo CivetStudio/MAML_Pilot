@@ -1,7 +1,6 @@
 import os
 import sys
 import pyperclip
-# from lxml import etree as lxml
 import time
 import subprocess
 from watchdog.observers import Observer
@@ -98,6 +97,5 @@ def monitor_folder(folder_path):
 
 
 # 使用示例
-# execute_script()
 file_to_monitor = maml_main_xml  # 监听对象
 monitor_folder(file_to_monitor)

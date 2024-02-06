@@ -90,8 +90,7 @@ tmp_oppo = temp_folder + '_' + 'oppo'
 tmp_vivo = temp_folder + '_' + 'vivo'
 async_load = 'true'
 
-hw_theme_xml = f"""
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+hw_theme_xml = f"""<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <HWTheme>
   <item style="slide"/>
   <item package="com.huawei.ucdlockscreen"/>
@@ -106,8 +105,7 @@ hw_theme_xml = f"""
 </HWTheme>
 """
 
-ho_theme_xml = """
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+ho_theme_xml = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <HnTheme>
   <item style="slide"/>
   <item package="com.hihonor.android.thememanager"/>
@@ -124,8 +122,7 @@ ho_theme_xml = """
 time_sys = int(time.time() * 1000)
 vivo_author = '灵貓'
 print(f'Start: {time_sys}')
-vivo_theme_xml = f"""
-<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+vivo_theme_xml = f"""<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <theme>
     <id>{time_sys}</id>
     <version><![CDATA[3.0.0]]></version>
@@ -389,4 +386,4 @@ def main(platform=1, hw=0, oppo=0, vivo=0, honor=0):
 if __name__ == '__main__':
     current_dir = os.path.dirname(sys.argv[0])
     # platform = 1, hw = 0, oppo = 0, vivo = 0, honor = 0
-    main(0, 1, 0, 0, 0)
+    main(0, 0, 1, 0, 0)

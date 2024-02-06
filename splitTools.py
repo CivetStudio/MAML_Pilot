@@ -1,3 +1,5 @@
+import sys
+
 from bs4 import BeautifulSoup
 import zlib
 import time
@@ -291,14 +293,18 @@ def splitGroup(manifest_xml, manifest_root):
                 button_str.append(button.contents)
 
                 # 获取原Button标签 其他属性
-                button_name = button.get('name', '')
+                # button_name = button.get('name', '')
                 button_w = button.get('w', '1')
                 button_h = button.get('h', '1')
-                button_align = button.get('align', '')
-                button_alignV = button.get('alignV', '')
-                button_alignChildren = button.get('alignChildren', '')
-                button_interceptTouch = button.get('interceptTouch', '')
-                button_alpha = button.get('alpha', '')
+                # button_align = button.get('align', '')
+                # button_alignV = button.get('alignV', '')
+                # button_alignChildren = button.get('alignChildren', '')
+                # button_interceptTouch = button.get('interceptTouch', '')
+                # button_alpha = button.get('alpha', '')
+
+                button['x'] = group_x
+                button['y'] = group_y
+                button['visibility'] = group_visibility
 
                 # Printer
                 print(f'\t<Button x="{group_x}" y="{group_y}" w="{button_w}" h="{button_h}" visibility="{group_visibility}" >')
@@ -310,32 +316,38 @@ def splitGroup(manifest_xml, manifest_root):
                 # print('button_alignChildren: ', button.get('alignChildren', ''))
                 # print('button_interceptTouch: ', button.get('interceptTouch', ''))
                 # print('button_alpha: ', button.get('alpha', ''), '\n')
-                button.extract()
+                new_end_tag = soup.new_tag('End')
+                soup.Lockscreen.append(new_end_tag)
+                new_end_tag.insert_after(button)
+                new_end_tag.decompose()
 
-                # 新建一个Button标签，放于最下方
-                new_button = soup.new_tag('Button', x=group_x, y=group_y, visibility=group_visibility)
-                for i in range(len(button_str)):
-                    new_button.contents = button_str[i]
-
-                if button_name:
-                    new_button['name'] = button_name
-                if button_w:
-                    new_button['w'] = button_w
-                if button_h:
-                    new_button['h'] = button_h
-                if button_align:
-                    new_button['align'] = button_align
-                if button_alignV:
-                    new_button['alignV'] = button_alignV
-                if button_alignChildren:
-                    new_button['alignChildren'] = button_alignChildren
-                if button_interceptTouch:
-                    new_button['interceptTouch'] = button_interceptTouch
-                if button_alpha:
-                    new_button['alpha'] = button_alpha
-
-                # print(new_button)
-                soup.Lockscreen.append(new_button)
+                # # 新建一个Button标签，放于最下方
+                # new_button = soup.new_tag('Button', x=group_x, y=group_y, visibility=group_visibility)
+                # for i in range(len(button_str)):
+                #     new_button.contents = button_str[i]
+                # # print(new_button.contents)
+                #
+                # if button_name:
+                #     new_button['name'] = button_name
+                # if button_w:
+                #     new_button['w'] = button_w
+                # if button_h:
+                #     new_button['h'] = button_h
+                # if button_align:
+                #     new_button['align'] = button_align
+                # if button_alignV:
+                #     new_button['alignV'] = button_alignV
+                # if button_alignChildren:
+                #     new_button['alignChildren'] = button_alignChildren
+                # if button_interceptTouch:
+                #     new_button['interceptTouch'] = button_interceptTouch
+                # if button_alpha:
+                #     new_button['alpha'] = button_alpha
+                #
+                # # print(new_button)
+                # soup.Lockscreen.append(new_button)
+                # # print(new_button)
+                # sys.exit(100)
         print('\t')
 
         # 移除空标签

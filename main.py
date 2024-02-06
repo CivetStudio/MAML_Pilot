@@ -88,6 +88,7 @@
 01.29 新增 lib_dom_id, lib_dom_input 变量，支持在插件上加入 _id 属性，形成代码后缀（Exam_CountDays_{_id})
     // BUG：目前会导致SysTime失效？少用！
     // BUG: 02.05 将 SysTime 标签前置，已解决?
+    // BUG: 02.06 将 threshold 中的 Var 标签删除
 02.01 新增 C_Array 数组标签写法 <C_Array begin="0" end="1" indexName="_i" ></C_Array> 可与 count 属性交替使用
     修复 ExternalCommands 合并数组生成冗余引号问题 e_soup
 02.02 新增 Image['act'] 写法：act="{_action_: up|double|click},{_action_tag_id_}"
@@ -2416,7 +2417,7 @@ def calculateMemory(folder_path=None):
                     # (width >= 1080 and height >= 960) or (width >= 540 and height >= 1200):
 
                     if not any(os.path.basename(_file_path) == ext for ext in ['bg.png', 'statusbar.png']):
-                        if memory_mb >= 6 and width > 720:
+                        if memory_mb >= 3 and width > 720:
                             print(f"Oversize: {width} x {height}, {_file_path.replace(folder_path_abs, '')}, {memory_mb} MB")
                             _file_path_abs = _file_path.replace(folder_path_abs, '')
                             # if (os.path.dirname(_file_path).endswith('assets') or os.path.dirname(_file_path).endswith('a') or os.path.dirname(_file_path).endswith('b')) \
