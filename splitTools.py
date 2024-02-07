@@ -136,47 +136,54 @@ def preLoadVar(save_file):
     for importer in lockscreen.find_all('Import'):
         importer.decompose()
 
-    if lockscreen.Wallpaper is not None and lockscreen.Wallpaper.parent.name == 'Lockscreen':
+    start_tag = soup.new_tag('Start')
+    # print(start_tag)
+    lockscreen.insert(1, start_tag)
+    # print(soup)
+
+    if lockscreen.Start is not None and lockscreen.Start.parent.name == 'Lockscreen':
 
         for var in lockscreen.find_all('Var'):
             # if var.parent != 'Weather' and var.parent != 'Calendar' and var.parent != 'Healthy' and var.parent != 'Array':
             if var.parent.name == 'Lockscreen' and var.parent.name != 'Array':
                 var.extract()
-                lockscreen.Wallpaper.insert_before(var)
+                lockscreen.Start.insert_before(var)
 
         for var_animation in lockscreen.find_all('Var'):
             if var_animation.find("VariableAnimation"):
                 var_animation.extract()
-                lockscreen.Wallpaper.insert_before(var_animation)
+                lockscreen.Start.insert_before(var_animation)
 
         for var_threshold in lockscreen.find_all('Var'):
             if var_threshold.get("threshold") is not None:
                 var_threshold.extract()
-                lockscreen.Wallpaper.insert_before(var_threshold)
+                lockscreen.Start.insert_before(var_threshold)
 
         for hw_weather in lockscreen.find_all('Weather'):
             hw_weather.extract()
-            lockscreen.Wallpaper.insert_before(hw_weather)
+            lockscreen.Start.insert_before(hw_weather)
 
         for hw_calendar in lockscreen.find_all('Calendar'):
             hw_calendar.extract()
-            lockscreen.Wallpaper.insert_before(hw_calendar)
+            lockscreen.Start.insert_before(hw_calendar)
 
         for hw_healthy in lockscreen.find_all('Healthy'):
             hw_healthy.extract()
-            lockscreen.Wallpaper.insert_before(hw_healthy)
+            lockscreen.Start.insert_before(hw_healthy)
 
         for var_array in lockscreen.find_all('VarArray'):
             var_array.extract()
-            lockscreen.Wallpaper.insert_before(var_array)
+            lockscreen.Start.insert_before(var_array)
 
         for countdown_time in lockscreen.find_all('CountDownTime'):
             countdown_time.extract()
-            lockscreen.Wallpaper.insert_before(countdown_time)
+            lockscreen.Start.insert_before(countdown_time)
 
     else:
         # Try to change mode into 'Lockscreen.Wallpaper' origin: 'Lockscreen.Image'
-        print("Prompt: 'preLoadVar' canceled, missed of 'Lockscreen.Wallpaper'")
+        print("Prompt: 'preLoadVar' canceled, missed of 'Lockscreen.Start'")
+
+    start_tag.decompose()
 
     with open(save_file, 'w', encoding='utf-8') as f:
         f.write(str(soup.prettify(indent_width=4).replace('    ', '\t')))

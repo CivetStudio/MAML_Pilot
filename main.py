@@ -86,9 +86,9 @@
 01.27 修复 C_Array 数组标签处理（需在变量混淆之前处理）
 01.29 稍微修复 lib 随机后缀算法（目前只能有两个 _port模式 或者 无_port模式）
 01.29 新增 lib_dom_id, lib_dom_input 变量，支持在插件上加入 _id 属性，形成代码后缀（Exam_CountDays_{_id})
-    // BUG：目前会导致SysTime失效？少用！
-    // BUG: 02.05 将 SysTime 标签前置，已解决?
-    // BUG: 02.06 将 threshold 中的 Var 标签删除
+    // BUG：目前会导致SysTime失效
+    // BUG: 02.05 将 SysTime 标签前置
+    // Done: 02.06 将 threshold 中的 Var 标签删除
 02.01 新增 C_Array 数组标签写法 <C_Array begin="0" end="1" indexName="_i" ></C_Array> 可与 count 属性交替使用
     修复 ExternalCommands 合并数组生成冗余引号问题 e_soup
 02.02 新增 Image['act'] 写法：act="{_action_: up|double|click},{_action_tag_id_}"
@@ -112,6 +112,8 @@
         and search "pic.png" or "pic_" in code
 // 检测 IntentCommand 中 package 与 class 是否都存在
     （VIEW除外）
+// 需求：【Mask / Paint】从Group中提取
+// 图片减半、重命名功能
 
 ⚠️历史遗留问题:
       1 四个空格转为/t
@@ -119,7 +121,6 @@
       3 lib文件夹下模块内变量名称混淆
 """
 
-# 需求：【Mask / Paint】从Group中提取
 
 import logging
 import os
@@ -1934,7 +1935,7 @@ def getAlias():
         for var_c in _soup_final.find_all('Trigger'):
             if var_c.parent.name == 'Var':
                 for var_child in var_c.find_all('Var'):
-                    print(var_child)
+                    # print(var_child)
                     var_child.decompose()
 
         # 删除 disabled != 0 的标签
