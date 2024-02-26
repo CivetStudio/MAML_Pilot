@@ -407,9 +407,21 @@ def intentMarket(save_file):
         for i in soup.find_all('IntentCommand'):
             IntentCommand += 1
             # 第三方APP自动跳转商店
+            # ['com.android', 'com.coloros', 'com.oppo', 'com.nearme', 'com.heytap', 'com.oplus',
+            #  'com.miui', 'com.vivo', 'com.bbk', 'com.iqoo', 'com.huawei', 'com.hihonor']
             if not str(i.get('package')).startswith('com.android') \
                     and not str(i.get('package')).startswith('com.huawei') \
                     and not str(i.get('package')).startswith('com.example.android.notepad') \
+                    and not str(i.get('package')).startswith('com.coloros') \
+                    and not str(i.get('package')).startswith('com.oppo') \
+                    and not str(i.get('package')).startswith('com.nearme') \
+                    and not str(i.get('package')).startswith('com.heytap') \
+                    and not str(i.get('package')).startswith('com.oplus') \
+                    and not str(i.get('package')).startswith('com.miui') \
+                    and not str(i.get('package')).startswith('com.vivo') \
+                    and not str(i.get('package')).startswith('com.bbk') \
+                    and not str(i.get('package')).startswith('com.iqoo') \
+                    and not str(i.get('package')).startswith('com.hihonor') \
                     and str(i.get('action')).upper() == 'ANDROID.INTENT.ACTION.MAIN'\
                     and i.get('package') is not None\
                     and i.get('class') is not None:

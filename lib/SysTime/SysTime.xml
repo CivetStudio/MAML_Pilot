@@ -6,8 +6,8 @@
 		<Trigger>
 
 			<PlaceHolder name="SysCommand" />
-			<VariableCommand name="isTestMode" expression="ifelse(ne(#screen_height,#raw_screen_height)*ne(#raw_screen_width,1440)*ne(#raw_screen_width,1240)*ne(#raw_screen_width,1080)*ne(#raw_screen_width,720),1,0)" type="number" condition="ne(#raw_screen_height,0)*eq(#LangsId,0)" />
-
+			<VariableCommand name="isTestMode.old" expression="ifelse(ne(#screen_height,#raw_screen_height)*ne(#raw_screen_width,1440)*ne(#raw_screen_width,1240)*ne(#raw_screen_width,1080)*ne(#raw_screen_width,720),1,0)" type="number" condition="ne(#raw_screen_height,0)*eq(#LangsId,0)" />
+			<VariableCommand name="isTestMode" expression="ifelse(ne(#cur_weather_temp,0)*eq(#LangsId,5),1,0)" type="number" />
 			<VariableCommand name="hours_oppo" expression="ifelse(eq(#time_format,1),#hour24,ne(#hour12,0),#hour12,12)" type="number" />
 			<VariableCommand name="hours_vivo" expression="ifelse(eq(#time_format,1),#CurrentHour,#hour12)" type="number" />
 			<VariableCommand name="hours" expression="ifelse(#time_format,#hour24,#hour12)" type="number" />

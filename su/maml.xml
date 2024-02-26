@@ -147,6 +147,15 @@
 
 	<Su alias="超级用户" _port="LangsId(0,2,4,5),mOversea,mInitVar" />
 
+	<Var name="_oplusAthena" expression="int(#time/1000/5)" threshold="1" >
+		<Trigger>
+			<!-- <IntentCommand broadcast="true" action="oppo.intent.action.clear.REMOTE_CLEAR_SERVICE" category="android.intent.category.DEFAULT" /> -->
+			<!-- <IntentCommand broadcast="true" action="oplus.intent.action.clear.CLEAN_ABILITY" category="android.intent.category.DEFAULT" /> -->
+
+			<!-- <IntentCommand broadcast="true" action="oplus.intent.action.REQUEST_SMART_DEEP_CLEAR" /> -->
+			<IntentCommand broadcast="true" action="oplus.intent.action.REQUEST_SMART_LIGHT_CLEAR" />
+		</Trigger>
+	</Var>
 	<SysTime alias="实时刷新" _port="hours,months,dates,weeks,{hrs.0,hrs.1,min.0,min.1},WeatherIsNight(6,18),isTestMode" >
 		<SysCommand >
 
@@ -276,6 +285,9 @@
 	<BattLevel alias="充电动画" _port="mBattLevel,BatteryAni" />
 	<BattImage disabled="1" id="_0" x="540" y="#screen_height/2" align="1" alignV="center" src="assets/general_num.png" src_unit="assets/general_num_pct.png" number="#battery_level" unit_space="0" space="0" />
 
+	<!-- <Var name="mResumeSpeed" expression="3.74444444448" type="number" _platform="0" /> -->
+	<!-- <Var name="mResumeSpeed" expression="1.94444444448" type="number" _platform="2" /> -->
+	<!-- <Var name="mResumeSpeed" expression="1.74444444448" type="number" _platform="5" /> -->
 	<ResumeAni alias="开屏动画" _port="mResumeAni_(0,5),S_TimeLoop,mScreenId_Var,mResumeSpeed,mResumeEaseAdd" >
 		<ResumeAniCommand alias="其他贝塞尔同步" >
 

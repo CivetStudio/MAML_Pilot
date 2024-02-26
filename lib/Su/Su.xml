@@ -50,7 +50,7 @@
 	<Var name="notification" expression="1" />
 	<!-- <Var name="hours" expression="ifelse(eq(#LangsId,0),#hours_oppo,#hours_vivo)" /> -->
 	<!-- <Var name="mTextSize_Var" expression="ne(#LangsId,4)*ifelse(eq(#LangsId,2),0,eq(#LangsId,0),0,1)" type="number" /> -->
-	<Var name="mTextSize_Var" expression="ne(#LangsId,4)*ifelse(eq(#LangsId,2),0,eq(#LangsId,0)*ne(#frame_rate,0),0-0.2,1)" type="number" />
+	<Var name="mTextSize_Var" expression="ne(#LangsId,4)*ifelse(eq(#LangsId,2),0,eq(#LangsId,0)*ne(#frame_rate,0),0-0.12,eq(#LangsId,5),2,1)" type="number" />
 
 	<CountDownTime name="mCountDown" date="12-31" countDownType="loop" unit="day" />
 	<CountDownTime name="mCountDownA" date="theDayAfterTomorrow" countDownType="loop" unit="day" />

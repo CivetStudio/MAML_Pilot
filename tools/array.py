@@ -167,6 +167,22 @@ def c_array(code):
 
             array.extract()
 
+        pattern = r'\{([^}]+)\}'
+
+        # 遍历所有标签
+        for tag in soup.find_all():
+            # 遍历标签的属性
+            for attr, value in tag.attrs.items():
+                # 判断属性值中是否包含正则匹配的格式
+                if re.search(pattern, value):
+                    # 获取匹配的内容
+                    match = re.search(pattern, value)
+                    expression = match.group(1)
+                    # 解析表达式并计算结果
+                    evaluated_value = eval(expression)
+                    # 在属性值中进行替换
+                    tag[attr] = tag[attr].replace(match.group(), str(evaluated_value))
+
     if __name__ == '__main__':
         print(soup.prettify(indent_width=4))
     return soup

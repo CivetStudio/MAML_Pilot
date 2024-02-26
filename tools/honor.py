@@ -16,20 +16,6 @@ def prettify(self, encoding=None, formatter="minimal", indent_width=4):
 BeautifulSoup.prettify = prettify
 
 
-maml_main_xml = pyperclip.paste().replace('\\', '/').replace('"', '')
-
-maml_rule_file = "maml.xml"
-maml_file_name = os.path.basename(maml_main_xml)
-
-# 判断 maml_file_name 是否以 maml_rule_file 结尾
-if maml_rule_file not in maml_file_name:
-    print(f"Error: File must be '{maml_rule_file}'")
-    sys.exit(1)
-
-print('\t')
-print(f'Source: {maml_main_xml}\n')
-
-
 def get_line_number(file_path, target_str):
     with open(file_path, 'r', encoding='utf-8') as f:
         lines = f.readlines()
@@ -138,7 +124,22 @@ def process_lockscreen_var(process_xml):
 
 
 # 示例用法
-detect_lockscreen_view(maml_main_xml)
-process_lockscreen_var(maml_main_xml)
+if __name__ == '__main__':
+
+    maml_main_xml = pyperclip.paste().replace('\\', '/').replace('"', '')
+
+    maml_rule_file = "maml.xml"
+    maml_file_name = os.path.basename(maml_main_xml)
+
+    # 判断 maml_file_name 是否以 maml_rule_file 结尾
+    if maml_rule_file not in maml_file_name:
+        print(f"Error: File must be '{maml_rule_file}'")
+        sys.exit(1)
+
+    print('\t')
+    print(f'Source: {maml_main_xml}\n')
+
+    detect_lockscreen_view(maml_main_xml)
+    process_lockscreen_var(maml_main_xml)
 # 查找变量内是否循环套用 <Var name="a" expression="#a+1" />
 # 未知原因丢失 Var.type 属性

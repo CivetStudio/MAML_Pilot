@@ -97,13 +97,13 @@
 
     // ⚠️需要改进的点：
     1.当缺少 ['w', 'h'] 属性时，能否从文件路径中寻找对应值（考虑srcid, srcExp）
-    2.Dev
-
+    2.支持 Rectangle 用法
 02.02 新增 C_Array 数组标签写法: 支持单条的 VariableCommand 命令（不可与其他标签共用）
     <C_Array count="4" indexName="index">
         <VariableCommand name="test_#index" expression="#index" type="number" />
     </C_Array>
     16:18 已修复为自动识别代码
+02.21 新增 SoundCommand 自动处理：带 condition 属性的 SoundCommand 标签单独处理
 
 // 检测图片是否在代码内：
     1. "pic.png": search directly
@@ -1264,6 +1264,7 @@ def saveXML(save_file):
             image_px = image.get('pivotX')
             image_py = image.get('pivotY')
             image_r = image.get('rotation')
+            image_v = image.get('visibility', '1')
             if image_r == '0':
                 del image['rotation']
                 if image_px == f"{image_w}/2" and image_py == f"{image_h}/2":
@@ -1319,6 +1320,7 @@ def saveXML(save_file):
                 _action_button['y'] = _action_button_y
                 _action_button['w'] = _action_button_w
                 _action_button['h'] = _action_button_h
+                _action_button['visibility'] = image_v
 
                 # print(_action_button)
                 image.insert_after(_action_button)
@@ -1978,6 +1980,48 @@ def getAlias():
                     frame_point += 1
                     frame_time['time'] = frame_control_time[frame_point]
 
+        # 带 condition 属性的 SoundCommand 标签单独处理
+        print('SoundCommand: ')
+        _sound_collect = []
+        for sound in _soup_final.find_all('SoundCommand'):
+            if sound.get('condition') is not None:
+                print(f"\t{sound}")
+
+                time_sys = str(time.time())
+                sound_thrs_uuid = sound.encode('UTF-8')
+                sound_thrs_uuid2 = hex(zlib.crc32(time_sys.encode('UTF-8')))[2:].capitalize()
+                sound_thrs_name = hex(zlib.crc32(sound_thrs_uuid))[2:].capitalize() + sound_thrs_uuid2
+                # print(sound_thrs_name)
+
+                new_sound_var = soup.new_tag('VariableCommand')
+                new_sound_var['name'] = sound_thrs_name
+                new_sound_var['expression'] = f'#{sound_thrs_name}+1'
+                new_sound_var['type'] = 'number'
+                new_sound_var['condition'] = sound['condition']
+                sound.insert_after(new_sound_var)
+
+                new_sound_thrs = soup.new_tag('Var')
+                new_sound_thrs['name'] = f'__{sound_thrs_name}'
+                new_sound_thrs['expression'] = f'#{sound_thrs_name}'
+                new_sound_thrs['threshold'] = '1'
+                new_sound_thrs['type'] = 'number'
+                new_sound_thrs_t = soup.new_tag('Trigger')
+                new_sound_thrs_c = BeautifulSoup(str(sound).replace('condition', 'alias'), 'lxml-xml')
+                new_sound_thrs_t.append(new_sound_thrs_c)
+                # print(new_sound_thrs_t)
+                new_sound_thrs.append(new_sound_thrs_t)
+                # print(new_sound_thrs)
+                _sound_collect.append(new_sound_thrs)
+                # print(sound.parent)
+                sound.decompose()
+                # print(str(_soup_final))
+        # print(_sound_collect)
+        for _s in range(len(_sound_collect)):
+            _soup_final.Lockscreen.append(_sound_collect[_s])
+        # print(_soup_final)
+        # time.sleep(10000)
+        print('\t')
+
         # 保存前的最后一步: 定义一个函数用于将中文和特殊字符转换为 Unicode 字符串
         unicode_mode = 1
         if unicode_mode:
@@ -2059,11 +2103,12 @@ def getAlias():
 
         # 检测/移除空属性
         for element in _soup_final.find_all():
-            # 遍历元素的所有属性
-            for attr_name, attr_value in element.attrs.items():
-                if attr_value == '' or str(attr_value).strip() == '':
-                    print(f'⚠️Warning: {element}')
-                    time.sleep(1)
+            if '[]' not in str(element):
+                # 遍历元素的所有属性
+                for attr_name, attr_value in element.attrs.items():
+                    if attr_value == '' or str(attr_value).strip() == '':
+                        print(f'⚠️Warning: {element}')
+        time.sleep(1)
 
     with open(_success_xml, 'w', encoding='utf-8') as _f0:
         if var_alias:
@@ -2127,22 +2172,22 @@ for root in soup.find_all(True, limit=1):
     manifest_sh = int(root.get('screenHeight', -1))
 
 # globalPersist / _glb变量排除
-for global_persist in soup.find_all(globalPersist=True, _glb=True):
+# for global_persist in soup.find_all(globalPersist=True, _glb=True):
+#     if global_persist.get('name') is not None:
+#         print(f"globalPersist: {global_persist['name']}")
+#         var_forbid_name.append(str(global_persist['name']))
+
+# globalPersist变量排除
+for global_persist in soup.find_all(globalPersist=True):
     if global_persist.get('name') is not None:
         print(f"globalPersist: {global_persist['name']}")
         var_forbid_name.append(str(global_persist['name']))
 
-# # globalPersist变量排除
-# for global_persist in soup.find_all(globalPersist=True):
-#     if global_persist.get('name') is not None:
-#         print(f"globalPersist: {global_persist['name']}")
-#         var_forbid_name.append(str(global_persist['name']))
-#
-# # _glb变量排除
-# for global_persist in soup.find_all(_glb=True):
-#     if global_persist.get('name') is not None:
-#         print(f"globalPersist: {global_persist['name']}")
-#         var_forbid_name.append(str(global_persist['name']))
+# _glb变量排除
+for global_persist in soup.find_all(_glb=True):
+    if global_persist.get('name') is not None:
+        print(f"globalPersist: {global_persist['name']}")
+        var_forbid_name.append(str(global_persist['name']))
 
 # <Import name="mGlobalVar" globalPersist="true" />
 
@@ -2418,7 +2463,8 @@ def calculateMemory(folder_path=None):
                     # (width >= 1080 and height >= 960) or (width >= 540 and height >= 1200):
 
                     if not any(os.path.basename(_file_path) == ext for ext in ['bg.png', 'statusbar.png']):
-                        if memory_mb >= 3 and width > 720:
+                        if memory_mb >= 1:
+                        # if memory_mb >= 3 and width > 720:
                             print(f"Oversize: {width} x {height}, {_file_path.replace(folder_path_abs, '')}, {memory_mb} MB")
                             _file_path_abs = _file_path.replace(folder_path_abs, '')
                             # if (os.path.dirname(_file_path).endswith('assets') or os.path.dirname(_file_path).endswith('a') or os.path.dirname(_file_path).endswith('b')) \

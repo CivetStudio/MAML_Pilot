@@ -6,7 +6,10 @@
 		<item name="h" type="string" description="高度" default="80" />
 		<item name="颜色" type="string" description="颜色" default="#ff00ff00" />
 	</Props>
-	<Rectangle x="$x" y="$y" w="$w" h="$h" fillColor="$颜色" />
+
+	<C_Array count="3" indexName="_r" >
+		<Rectangle x="$x" y="$y+100*#_r" w="$w" h="$h" fillColor="$颜色" />
+	</C_Array>
 
 	<Group>
 		<Slots slotName="几何图形" />

@@ -175,6 +175,12 @@ def pack_huawei(path, filename="HUAWEI"):
 
 def pack_honor(path, filename="HONOR"):
 
+    def process_xml(honor_xml_file):
+
+        from tools.honor import detect_lockscreen_view, process_lockscreen_var
+        detect_lockscreen_view(honor_xml_file)
+        process_lockscreen_var(honor_xml_file)
+
     global honor_zip_path
 
     if os.path.exists(tmp_honor):
@@ -189,6 +195,7 @@ def pack_honor(path, filename="HONOR"):
     with open(os.path.join(os.path.abspath(tmp_honor_0), 'theme.xml'), "w") as xml_file:
         xml_file.write(ho_theme_xml)
     copy_folder_contents(path, tmp_honor_1)
+    process_xml(os.path.join(tmp_honor_1, 'manifest.xml'))
 
     honor_path = os.path.abspath(tmp_honor).replace(tmp_honor, 'honor')
     honor_zip_path = os.path.join(os.path.dirname(path), f'{theme_name}_{filename}.zip')
@@ -386,4 +393,4 @@ def main(platform=1, hw=0, oppo=0, vivo=0, honor=0):
 if __name__ == '__main__':
     current_dir = os.path.dirname(sys.argv[0])
     # platform = 1, hw = 0, oppo = 0, vivo = 0, honor = 0
-    main(0, 0, 1, 0, 0)
+    main(0, 0, 0, 1, 0)

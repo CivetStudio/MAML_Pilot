@@ -13,5 +13,12 @@
 			<VariableCommand name="mDrinkCount" expression="0" condition="ne(#date,#mDrinkDate)" />
 		</Trigger>
 	</Var>
-	
+
+	<Var name="mClearDaily2" expression="#date" threshold="1" >
+		<Trigger>
+			<VariableCommand name="mDrinkCup" expression="0" />
+			<VariableCommand name="mDrinkCount" expression="0" />
+		</Trigger>
+	</Var>
+
 </ROOT>
