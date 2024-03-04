@@ -115,10 +115,14 @@
 // 需求：【Mask / Paint】从Group中提取
 // 图片减半、重命名功能
 
+// 检测format是否为纯数字 / 或format内无%
+// 值内 ## 1# 错误
+
 ⚠️历史遗留问题:
       1 四个空格转为/t
       2 &lt; &gt; 应该为&amp;lt &amp;gt
       3 lib文件夹下模块内变量名称混淆
+      4 插件属性完整性检测 <i_Theme designId="" condition="" /> designId 为空时 condition 出错
 """
 
 
@@ -1249,7 +1253,7 @@ def saveXML(save_file):
                 _soup.Lockscreen.append(text_tag_var)
 
         # C_Array 数组标签处理
-        from tools.array import c_array
+        from tools.arrayc import c_array
         for code in _soup.find_all('C_Array'):
             # print(code)
             c_array_r = c_array(str(code))
@@ -1278,6 +1282,7 @@ def saveXML(save_file):
                 for ac in _soup.find_all():
                     if ac.name == _action_tag_id_:
                         _action_condition = ac.get('condition')
+                        _action_visibility = ac.get('visibility', '1')
                         # ac_contents = [str(item).replace('\n', '') for item in ac.contents]
                         ac_contents = [item for item in ac.contents if item != '\n']
 
@@ -1320,7 +1325,7 @@ def saveXML(save_file):
                 _action_button['y'] = _action_button_y
                 _action_button['w'] = _action_button_w
                 _action_button['h'] = _action_button_h
-                _action_button['visibility'] = image_v
+                _action_button['visibility'] = f"({image_v})*({_action_visibility})"
 
                 # print(_action_button)
                 image.insert_after(_action_button)
@@ -2615,7 +2620,7 @@ local_xml = os.path.abspath(sys.argv[0]).replace('main.py', maml_rule_file)
 
 # calculateMemory and applyTestClass
 
-if 'PYCHARM_HOSTED' in os.environ and maml_main_xml != local_xml and maml_folder_name == 'advance':
+if 'PYCHARM_HOSTED' in os.environ and maml_main_xml != local_xml and (maml_folder_name == 'advance' or maml_folder_name.startswith('widget')):
     calculateMemory()
     apply_test = 1
     ip_address_id = 4 if wifi_in_vgoing else 0

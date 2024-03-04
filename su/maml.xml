@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Lockscreen frameRate="240" screenWidth="1080" version="1" vibrate="false" _dev="civet" _devTime="$_devTime" _splitExt="1" _splitGroup="1" _preload="1" _getSource="0" compiler="true" >
 
-	<!-- <几何图形 x="300" y="400" color="#ffffff" w="500" h="600" /> -->
-
 	<!-- 欢迎定制锁屏：灵貓 QQ 1876461209 -->
 
 	<!-- 违规抄袭将依据《中华人民共和国民法典》《中华人民共和国民法通则》《中华人民共和国著作权法》《计算机软件保护条例》《软件产品管理办法》《侵权责任法》《中华人民共和国知识产权法》追究法律责任 -->
@@ -16,8 +14,10 @@
 
 	<i_Hidden alias="Pad 锁屏" >
 
+		<!-- * MatePad 10.4 1000x2000 -->
+		<!-- * MatePad SE 10.4 1200x2000 -->
+
 		<!-- MatePad SE 1200x1920 -->
-		<!-- MatePad SE 10.4 1200x2000 -->
 		<!-- MatePad 11 1600x2560 -->
 		<!-- MatePad 11.5 1440x2200 -->
 		<!-- MatePad Air 1800x2880 -->
@@ -28,6 +28,7 @@
 		<!-- vivo Pad 2 1968x2800 -->
 
 		<Var name="mVersmode" expression="ifelse(lt(#screen_width,#screen_height),1,0)" type="number" alias="竖屏模式" _glb="true" />
+		<Var name="mPadmode" expression="ifelse(gt(#screen_width,#screen_height),1,0)" type="number" alias="横屏模式" _glb="true" />
 
 	</i_Hidden>
 
@@ -147,15 +148,15 @@
 
 	<Su alias="超级用户" _port="LangsId(0,2,4,5),mOversea,mInitVar" />
 
-	<Var name="_oplusAthena" expression="int(#time/1000/5)" threshold="1" >
+	<!-- <Var name="_oplusAthena" expression="int(#time/1000/5)" threshold="1" >
 		<Trigger>
-			<!-- <IntentCommand broadcast="true" action="oppo.intent.action.clear.REMOTE_CLEAR_SERVICE" category="android.intent.category.DEFAULT" /> -->
-			<!-- <IntentCommand broadcast="true" action="oplus.intent.action.clear.CLEAN_ABILITY" category="android.intent.category.DEFAULT" /> -->
-
-			<!-- <IntentCommand broadcast="true" action="oplus.intent.action.REQUEST_SMART_DEEP_CLEAR" /> -->
+			<IntentCommand broadcast="true" action="oplus.intent.action.REQUEST_SMART_DEEP_CLEAR" />
 			<IntentCommand broadcast="true" action="oplus.intent.action.REQUEST_SMART_LIGHT_CLEAR" />
 		</Trigger>
-	</Var>
+	</Var> -->
+
+	<!-- _port里的内容为插件提供的全局变量 -->
+
 	<SysTime alias="实时刷新" _port="hours,months,dates,weeks,{hrs.0,hrs.1,min.0,min.1},WeatherIsNight(6,18),isTestMode" >
 		<SysCommand >
 
@@ -284,6 +285,7 @@
 
 	<BattLevel alias="充电动画" _port="mBattLevel,BatteryAni" />
 	<BattImage disabled="1" id="_0" x="540" y="#screen_height/2" align="1" alignV="center" src="assets/general_num.png" src_unit="assets/general_num_pct.png" number="#battery_level" unit_space="0" space="0" />
+	<Var name="$id_digit" expression="3" type="number" alias="Default: _digit == 0" />
 
 	<!-- <Var name="mResumeSpeed" expression="3.74444444448" type="number" _platform="0" /> -->
 	<!-- <Var name="mResumeSpeed" expression="1.94444444448" type="number" _platform="2" /> -->

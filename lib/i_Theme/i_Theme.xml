@@ -16,6 +16,7 @@
 
 	<!-- 主题 -->
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.bbk.theme" class="com.bbk.theme.Theme" />
+	<IntentCommand condition="($condition)" action="com.vivo.action.theme.Theme" package="com.bbk.theme" class="com.bbk.theme.Theme" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.miui.themestore" class="com.miui.themestore.ThemeResourceTabActivity" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.android.thememanager" class="com.android.thememanager.ThemeResourceTabActivity" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.nearme.themespace" class="com.nearme.themespace.activities.ThemeActivity" />

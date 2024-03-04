@@ -17,11 +17,12 @@ import os
 
 # 输入参数
 arc_num = 20  # 圆环数量
-stroke_color = '#39ce76'  # 描边颜色，输入6位hex值
-stroke_width = 11 * 2  # 描边宽度 w * 2
+stroke_color = '#ffa902'  # 描边颜色，输入6位hex值
+stroke_width = 22 * 2  # 描边宽度 w * 2
 startAngle = -90  # startAngle 单位为度数，表示圆环的覆盖角度
-real_width = 96  # 圆环宽度
-real_height = 96  # 圆环高度
+direct = -1  # 1：顺时针 -1：逆时针
+real_width = 80  # 圆环宽度
+real_height = 80  # 圆环高度
 filename = 'circle'  # 图片名称
 
 # 内部变量
@@ -74,4 +75,6 @@ for filename in os.listdir('./'):
             img = img.resize((int(real_width + stroke_width - 2), int(real_width + stroke_width - 2)))
             # img = img.resize((int(real_width + stroke_width - 2), int(real_width + stroke_width - 2)), Image.LANCZOS)
             # 保存缩放后的图片
+            if direct == -1:
+                img = img.transpose(Image.FLIP_LEFT_RIGHT)
             img.save('./' + filename)

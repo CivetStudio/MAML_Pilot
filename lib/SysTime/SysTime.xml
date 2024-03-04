@@ -7,7 +7,7 @@
 
 			<PlaceHolder name="SysCommand" />
 			<VariableCommand name="isTestMode.old" expression="ifelse(ne(#screen_height,#raw_screen_height)*ne(#raw_screen_width,1440)*ne(#raw_screen_width,1240)*ne(#raw_screen_width,1080)*ne(#raw_screen_width,720),1,0)" type="number" condition="ne(#raw_screen_height,0)*eq(#LangsId,0)" />
-			<VariableCommand name="isTestMode" expression="ifelse(ne(#cur_weather_temp,0)*eq(#LangsId,5),1,0)" type="number" />
+			<VariableCommand name="isTestMode" expression="ifelse(ne(#cur_weather_temp,0)*eq(#LangsId,5)*eq(#vivo_length,0),1,ne(#vivo_length,0)*eq(#LangsId,5),0,0)" type="number" />
 			<VariableCommand name="hours_oppo" expression="ifelse(eq(#time_format,1),#hour24,ne(#hour12,0),#hour12,12)" type="number" />
 			<VariableCommand name="hours_vivo" expression="ifelse(eq(#time_format,1),#CurrentHour,#hour12)" type="number" />
 			<VariableCommand name="hours" expression="ifelse(#time_format,#hour24,#hour12)" type="number" />
@@ -25,6 +25,7 @@
 
 			<!-- vivo用传统动画，现改为oppo用贝塞尔曲线，其他平台用传统动画 -->
 			<VariableCommand name="mResumeAni" expression="ifelse(ne(#LangsId,0),#mBezierSys,#mBezierTrans)" type="number" />
+			<VariableCommand name="mResumeAni_0" expression="ifelse(ne(#LangsId,0),#mBezierSys,#mBezierTrans)" type="number" />
 			<VariableCommand name="mResumeAni_1" expression="ifelse(ne(#LangsId,0),#mBezierSys_1,#mBezierTrans_1)" type="number" />
 			<VariableCommand name="mResumeAni_2" expression="ifelse(ne(#LangsId,0),#mBezierSys_2,#mBezierTrans_2)" type="number" />
 			<VariableCommand name="mResumeAni_3" expression="ifelse(ne(#LangsId,0),#mBezierSys_3,#mBezierTrans_3)" type="number" />

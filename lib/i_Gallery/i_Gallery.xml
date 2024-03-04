@@ -11,8 +11,8 @@
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.oppo.gallery3d" class="com.oppo.gallery3d.app.Gallery" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.coloros.gallery3d" class="com.oppo.gallery3d.app.Gallery" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.coloros.gallery3d" class="com.coloros.gallery3d.app.MainActivity" />
-	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.android.gallery3d" class="com.hihonor.gallery.App.GalleryMain" />
-	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.android.gallery3d" class="com.huawei.gallery.App.GalleryMain" alias="Nova机型" />
-	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.huawei.photos" class="com.huawei.gallery.App.GalleryMain" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.android.gallery3d" class="com.hihonor.gallery.app.GalleryMain" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.android.gallery3d" class="com.huawei.gallery.app.GalleryMain" alias="Nova机型" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.huawei.photos" class="com.huawei.gallery.app.GalleryMain" />
 
 </Template>

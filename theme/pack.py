@@ -393,4 +393,4 @@ def main(platform=1, hw=0, oppo=0, vivo=0, honor=0):
 if __name__ == '__main__':
     current_dir = os.path.dirname(sys.argv[0])
     # platform = 1, hw = 0, oppo = 0, vivo = 0, honor = 0
-    main(0, 0, 0, 1, 0)
+    main(1, 1, 0, 0, 0)

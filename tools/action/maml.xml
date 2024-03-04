@@ -1,6 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Lockscreen frameRate="240" screenWidth="1080" version="1" vibrate="false" _dev="civet" _devTime="$_devTime" _splitExt="1" _splitGroup="1" _preload="1" _getSource="true" compiler="true" >
 
+	<Group>
+
+		<!-- Compose* -->
+		<Compose></Compose>
+
+		<!-- Compose.. -->
+		<Compose class=""></Compose>
+
+		<!-- Compose#1 -->
+		<Compose id="1"></Compose>
+
+		<!-- Compose^Tag -->
+		<Compose></Compose>
+		<Tag></Tag>
+
+		<!-- Compose$name -->
+		<Compose1name></Compose1name>
+
+		<!-- Compose[name] -->
+		<Compose name=""></Compose>
+
+		<!-- Compose*2 -->
+		<Compose></Compose>
+		<Compose></Compose>
+
+		<!-- Compose*1 -->
+		<Compose></Compose>
+
+		<!-- Compose*1{<VariableCommand name="1" expression="1" type="number" /> -->
+		<Compose>
+			<VariableCommand name="1" expression="1" type="number" />
+		</Compose>
+
+		<!-- Compose[name="name"]{content} -->
+		<Compose name="name">content</Compose>
+
+	</Group>
+
 	<Var name="a" expression="0" type="number" />
 
 	<Image x="100" y="100" align="center" alignV="center" src="assests/up.png" w="300" h="300" act="up,Compose.a" />

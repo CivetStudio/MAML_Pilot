@@ -434,36 +434,36 @@
 
 			<!-- 年份第一位 -->
 			<Group alpha="ifelse(ge(#InputYearNum,0),255,80)" visibility="ge(CountDigitVal,0+1)" >
-				<Text x="CountSetNumX_0-CountSetNumImg_W*1.5" y="CountSetNumY" align="center" alignV="center" color="#000000" size="#CountNum_Size" format="%d" paras="#mCountNum_0" />
+				<Text x="CountSetNumX_0-CountSetNumImg_W*1.5" y="CountSetNumY" align="center" alignV="center" color="#ffffff" size="#CountNum_Size" format="%d" paras="#mCountNum_0" />
 			</Group>
 			<!-- 年份第二位 -->
 			<Group alpha="ifelse(ge(#InputYearNum,1),255,80)" visibility="ge(CountDigitVal,1+1)" >
-				<Text x="CountSetNumX_0-CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" color="#000000" size="#CountNum_Size" format="%d" paras="#mCountNum_1" />
+				<Text x="CountSetNumX_0-CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" color="#ffffff" size="#CountNum_Size" format="%d" paras="#mCountNum_1" />
 			</Group>
 			<!-- 年份第三位 -->
 			<Group alpha="ifelse(ge(#InputYearNum,2),255,80)" visibility="ge(CountDigitVal,2+1)" >
-				<Text x="CountSetNumX_0+CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" color="#000000" size="#CountNum_Size" format="%d" paras="#mCountNum_2" />
+				<Text x="CountSetNumX_0+CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" color="#ffffff" size="#CountNum_Size" format="%d" paras="#mCountNum_2" />
 			</Group>
 			<!-- 年份第四位 -->
 			<Group alpha="ifelse(ge(#InputYearNum,3),255,80)" visibility="ge(CountDigitVal,3+1)" >
-				<Text x="CountSetNumX_0+CountSetNumImg_W*1.5" y="CountSetNumY" align="center" alignV="center" color="#000000" size="#CountNum_Size" format="%d" paras="#mCountNum_3" />
+				<Text x="CountSetNumX_0+CountSetNumImg_W*1.5" y="CountSetNumY" align="center" alignV="center" color="#ffffff" size="#CountNum_Size" format="%d" paras="#mCountNum_3" />
 			</Group>
 
 			<!-- 月份第一位 -->
 			<Group alpha="ifelse(ge(#InputYearNum,4),255,80)" visibility="ge(CountDigitVal,4+1)" >
-				<Text x="CountSetNumX_1-CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" color="#000000" size="#CountNum_Size" format="%d" paras="#mCountNum_4" />
+				<Text x="CountSetNumX_1-CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" color="#ffffff" size="#CountNum_Size" format="%d" paras="#mCountNum_4" />
 			</Group>
 			<!-- 月份第二位 -->
 			<Group alpha="ifelse(ge(#InputYearNum,5),255,80)" visibility="ge(CountDigitVal,5+1)" >
-				<Text x="CountSetNumX_1+CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" color="#000000" size="#CountNum_Size" format="%d" paras="#mCountNum_5" />
+				<Text x="CountSetNumX_1+CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" color="#ffffff" size="#CountNum_Size" format="%d" paras="#mCountNum_5" />
 			</Group>
 			<!-- 日期第一位 -->
 			<Group alpha="ifelse(ge(#InputYearNum,6),255,80)" visibility="ge(CountDigitVal,6+1)" >
-				<Text x="CountSetNumX_2-CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" color="#000000" size="#CountNum_Size" format="%d" paras="#mCountNum_6" />
+				<Text x="CountSetNumX_2-CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" color="#ffffff" size="#CountNum_Size" format="%d" paras="#mCountNum_6" />
 			</Group>
 			<!-- 日期第二位 -->
 			<Group alpha="ifelse(ge(#InputYearNum,7),255,80)" visibility="ge(CountDigitVal,7+1)" >
-				<Text x="CountSetNumX_2+CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" color="#000000" size="#CountNum_Size" format="%d" paras="#mCountNum_7" />
+				<Text x="CountSetNumX_2+CountSetNumImg_W/2" y="CountSetNumY" align="center" alignV="center" color="#ffffff" size="#CountNum_Size" format="%d" paras="#mCountNum_7" />
 			</Group>
 
 		</Group>

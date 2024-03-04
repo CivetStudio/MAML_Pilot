@@ -19,9 +19,9 @@
 	<Var name="$id_mBattLevelImg.bmp_width" expression="#$id_mBattLevelImg.a.bmp_width+#$id_mBattLevelImg.b.bmp_width+#$id_mBattLevelImg.c.bmp_width+2*($space)" type="number" />
 	<Group x="$x-(#$id_mBattLevelImg.bmp_width+2+($unit_space)+#$id_mBattLevelPct.bmp_width)/2*$align" visibility="$visibility" >
 		<!-- <ImageNumber x="0" y="$y" align="left" alignV="$alignV" src="$src" number="$number" name="$id_mBattLevelImg" space="$space" /> -->
-		<Image x="0" y="$y" align="left" alignV="$alignV" src="$src" srcid="int($number/100%10)" name="$id_mBattLevelImg.a" visibility="ifelse(eq($number,#battery_level)+1,ge($number,100),1)" />
-		<Image x="0+#$id_mBattLevelImg.a.bmp_width+($space)" y="$y" align="left" alignV="$alignV" src="$src" srcid="int($number/10%10)" name="$id_mBattLevelImg.b" visibility="ifelse(eq($number,#battery_level)+1,ge($number,10),1)" />
-		<Image x="0+#$id_mBattLevelImg.a.bmp_width+($space)+#$id_mBattLevelImg.b.bmp_width+($space)" y="$y" align="left" alignV="$alignV" src="$src" srcid="int($number/1%10)" name="$id_mBattLevelImg.c" visibility="ifelse(eq($number,#battery_level)+1,ge($number,1),1)" />
+		<Image x="0" y="$y" align="left" alignV="$alignV" src="$src" srcid="int($number/100%10)" name="$id_mBattLevelImg.a" visibility="ifelse(eq($number,#battery_level)+eq($#LangsId$,5),ge($number,100),1)*(ge($#$id_digit$,3)+eq($#$id_digit$,0))" />
+		<Image x="0+#$id_mBattLevelImg.a.bmp_width+($space)" y="$y" align="left" alignV="$alignV" src="$src" srcid="int($number/10%10)" name="$id_mBattLevelImg.b" visibility="ifelse(eq($number,#battery_level)+eq($#LangsId$,5),ge($number,10),1)*(ge($#$id_digit$,2)+eq($#$id_digit$,0))" />
+		<Image x="0+#$id_mBattLevelImg.a.bmp_width+($space)+#$id_mBattLevelImg.b.bmp_width+($space)" y="$y" align="left" alignV="$alignV" src="$src" srcid="int($number/1%10)" name="$id_mBattLevelImg.c" visibility="ifelse(eq($number,#battery_level)+eq($#LangsId$,5),ge($number,1),1)*(ge($#$id_digit$,1)+eq($#$id_digit$,0))" />
 		<Image x="0+#$id_mBattLevelImg.bmp_width+2+($unit_space)" y="$y" align="left" alignV="$alignV" src="$src_unit" name="$id_mBattLevelPct" />
 	</Group>
 
