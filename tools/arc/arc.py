@@ -16,13 +16,13 @@ import os
 # 使用img.resize()函数将每个PNG图像缩放到指定大小，并使用img.save()函数保存缩放后的PNG图像。
 
 # 输入参数
-arc_num = 20  # 圆环数量
-stroke_color = '#ffa902'  # 描边颜色，输入6位hex值
-stroke_width = 22 * 2  # 描边宽度 w * 2
+arc_num = 100  # 圆环数量
+stroke_color = '#f9cbd0'  # 描边颜色，输入6位hex值
+stroke_width = 14 * 2  # 描边宽度 w * 2
 startAngle = -90  # startAngle 单位为度数，表示圆环的覆盖角度
 direct = -1  # 1：顺时针 -1：逆时针
-real_width = 80  # 圆环宽度
-real_height = 80  # 圆环高度
+real_width = 104  # 圆环宽度
+real_height = 104  # 圆环高度
 filename = 'circle'  # 图片名称
 
 # 内部变量

@@ -12,6 +12,80 @@
 	<!-- <Var name="mBalanceTime" expression="ifelse(eq(#LangsId,0)+eq(#LangsId,5),1/max(1.6*#LangsId,0.5),1)" type="number" /> -->
 	<!-- speed * mBalanceTime -->
 
+	<i_Hidden alias="For Miui" >
+
+		<VariableBinders>
+
+			<ContentProviderBinder name="data" uri="content://keyguard.notification/notifications" columns="icon,title,content,time,info,subtext,key" countName="hasnotifications">
+				<List name="notification_list" />
+			</ContentProviderBinder>
+
+		</VariableBinders>
+
+		<Layer>
+
+			<Var name="mNoticeX" expression="0" type="number" />
+			<Var name="mNoticeY" expression="1500" type="number" />
+			<Var name="mNoticeW" expression="960" type="number" />
+			<Var name="mNoticeH" expression="200" type="number" />
+			<Var name="mNoticeSrc" expression="'notification_src/notice_bg.png'" type="string" />
+			<Var name="mNoticeAlpha" expression="255" type="number" />
+			<Var name="mNoticeSpace" expression="40" type="number" />
+			<Var name="mNoticeSize" expression="2" type="number" />
+			<Var name="mNoticeStrColor" expression="'#ff000000'" type="string" />
+			<Button x="0" y="0" w="1080" h="#screen_height" visibility="gt(#hasnotifications,0)">
+				<Triggers>
+					<Trigger action="up">
+						<VariableCommand name="noticeDown" expression="0" />
+					</Trigger>
+					<Trigger action="cancel">
+						<VariableCommand name="noticeDown" expression="0" />
+					</Trigger>
+				</Triggers>
+			</Button>
+			<Group>
+				<Var name="mNoticeScaleX" type="number" expression="1" />
+				<Var name="mNoticeScaleY" type="number" expression="1" />
+				<List name="notification_list" x="#mNoticeX" y="#mNoticeY" w="#screen_width" scaleX="#mNoticeScaleX" scaleY="#mNoticeScaleY" maxHeight="int(#mNoticeH+#mNoticeSpace)*#mNoticeSize" data="icon:bitmap,title:string,content:string,time:string,info:string,subtext:string,key:int" visibility="#hasnotifications">
+					<Item x="540" y="0" w="#mNoticeW" h="int(#mNoticeH+#mNoticeSpace)" align="center">
+						<Button x="0" y="0" w="#mNoticeW" h="(#mNoticeH+#mNoticeSpace)*#mNoticeScaleY" alignChildren="true">
+							<Normal>
+								<Rectangle fillColor="#ffffff" alpha="255*#mNoticeAlpha/255" w="#mNoticeW" h="#mNoticeH" cornerRadius="49" />
+							</Normal>
+							<Pressed>
+								<Rectangle fillColor="#ffffff" alpha="230*#mNoticeAlpha/255" w="#mNoticeW" h="#mNoticeH" cornerRadius="49" />
+							</Pressed>
+							<Image x="#mNoticeW - 66" y="#mNoticeH/2" align="center" alignV="center" src="notification_src/close.png" />
+							<Image name="icon" x="#mNoticeH/2" y="#mNoticeH/2" w="130" h="130" align="center" alignV="center" />
+							<Text name="title" x="#mNoticeH" y="#mNoticeH/2-28" w="int(#mNoticeW-#mNoticeH-132) - (180-(70*#time_format))" h="48" alignV="center" size="42" color="@mNoticeStrColor" marqueeSpeed="30" />
+							<Text name="content" x="#mNoticeH" y="#mNoticeH/2+30" w="int(#mNoticeW-#mNoticeH-132)" h="42" alignV="center" size="36" color="@mNoticeStrColor" marqueeSpeed="30" alpha="128" />
+							<Text name="time" x="#mNoticeW - 132" y="#mNoticeH/2-28" align="right" alignV="center" size="36" color="@mNoticeStrColor" alpha="128" />
+							<Triggers>
+								<Trigger action="down">
+									<VariableCommand name="noticeDown" expression="1" />
+								</Trigger>
+								<Trigger action="up">
+									<IntentCommand action="com.miui.app.ExtraStatusBarManager.action_remove_keyguard_notification" broadcast="true">
+										<Extra name="com.miui.app.ExtraStatusBarManager.extra_notification_key" type="int" expression="#notification_list.key" />
+										<Extra name="com.miui.app.ExtraStatusBarManager.extra_notification_click" type="int" expression="#touch_begin_x { #mNoticeX + #mNoticeW - 132 * #mNoticeScaleX" />
+									</IntentCommand>
+								</Trigger>
+							</Triggers>
+						</Button>
+					</Item>
+					<AttrDataBinders>
+						<AttrDataBinder target="icon" attr="bitmap" data="icon" />
+						<AttrDataBinder target="title" attr="text" data="title" />
+						<AttrDataBinder target="content" attr="text" data="content" />
+						<AttrDataBinder target="time" attr="text" data="time" />
+					</AttrDataBinders>
+				</List>
+			</Group>
+
+		</Layer>
+
+	</i_Hidden>
+
 	<i_Hidden alias="Pad 锁屏" >
 
 		<!-- * MatePad 10.4 1000x2000 -->
@@ -28,7 +102,8 @@
 		<!-- vivo Pad 2 1968x2800 -->
 
 		<Var name="mVersmode" expression="ifelse(lt(#screen_width,#screen_height),1,0)" type="number" alias="竖屏模式" _glb="true" />
-		<Var name="mPadmode" expression="ifelse(gt(#screen_width,#screen_height),1,0)" type="number" alias="横屏模式" _glb="true" />
+		<Var name="mHorsmode" expression="ifelse(gt(#screen_width,#screen_height),1,0)" type="number" alias="横屏模式" _glb="true" />
+		<Var name="is_1080P" expression="0" type="number" alias="手机模式" _glb="true" />
 
 	</i_Hidden>
 
@@ -60,15 +135,19 @@
 
 		<VariableBinders>
 
-			<ContentProviderBinder name="health1" columns="step" uri="content://deepthinker_data_expositor/health?query_func=step">
-				<Variable name="step" column="step" type="int" />
-			</ContentProviderBinder>
-
 			<ContentProviderBinder name="MiSteps" uri="content://com.mi.health.provider.main/activity/steps/brief" column="steps,goal,distance,energy,strength_duration,summary" countName="hasSteps">
 				<Variable name="MiSteps_steps" type="int" column="steps" />
 			</ContentProviderBinder>
 
 		</VariableBinders>
+
+		<!-- <VariableBinders>
+
+			<ContentProviderBinder name="health1" columns="step" uri="content://deepthinker_data_expositor/health?query_func=step">
+				<Variable name="step" column="step" type="int" />
+			</ContentProviderBinder>
+
+		</VariableBinders> -->
 
 		<Var name="mSteps" expression="ifelse(eq(#LangsId,4),#MiSteps_steps,max(#steps_value,#step))" type="number" />
 
@@ -285,7 +364,7 @@
 
 	<BattLevel alias="充电动画" _port="mBattLevel,BatteryAni" />
 	<BattImage disabled="1" id="_0" x="540" y="#screen_height/2" align="1" alignV="center" src="assets/general_num.png" src_unit="assets/general_num_pct.png" number="#battery_level" unit_space="0" space="0" />
-	<Var name="$id_digit" expression="3" type="number" alias="Default: _digit == 0" />
+	<!-- <Var name="$id_digit" expression="3" type="number" alias="Default: _digit == 0" /> -->
 
 	<!-- <Var name="mResumeSpeed" expression="3.74444444448" type="number" _platform="0" /> -->
 	<!-- <Var name="mResumeSpeed" expression="1.94444444448" type="number" _platform="2" /> -->
@@ -491,8 +570,9 @@
 		<ValueHolder name="UnlockMoveVal" value="300" alias="滑动触发解锁距离" />
 	</Unlock>
 
+	<Var name="mUnlockerY" expression="#unlocker.move_y" type="number" />
 	<Slider name="unlocker" haptic="false" bounceInitSpeed="2000" bounceAcceleration="1000" >
-		<StartPoint x="0" y="0" w="1080" h="#screen_height" easeType="CubicEaseOut" easeTime="800" />
+		<StartPoint x="0" y="0" w="1080" h="#screen_height" varSpeedFlag="SineFun_Out" easeType="CubicEaseOut" easeTime="800" />
 		<EndPoint x="0" y="-#screen_height-300" w="1080" h="#screen_height" >
 			<Path x="0" y="0" tolerance="2000" >
 				<Position x="0" y="0" />
@@ -713,5 +793,7 @@
 	<unTc disabled="3" condition="1" alias="解锁命令" />
 
 	<ForbidHw disabled="3" alias="禁止华为" _port="LangsId" visibility="eq(#LangsId,2)+eq(#LangsId,4)" content="C&#8202;o&#8202;n&#8202;t&#8202;a&#8202;c&#8202;t Q&#8202;Q:&#8202;1&#8202;8&#8202;7&#8202;6&#8202;4&#8202;6&#8202;1&#8202;2&#8202;0&#8202;9" />
+
+	<Image x="0" y="#screen_height" align="left" alignV="bottom" w="#screen_width/2" h="#screen_height/8" src="red.png" alpha="128" visibility="#in_preview_mode" />
 
 </Lockscreen>

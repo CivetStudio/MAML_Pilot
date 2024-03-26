@@ -22,7 +22,7 @@ def splitVar(parse_file, save_file):
         # 10.06 BUG: Array > Group > Var
         if group.parent.name != 'Array':
             for var in group.find_all('Var'):
-                if var.parent.name == "Group" and var.get('name') != 'Progress':
+                if var.parent.name == "Group" and var.get('name') != 'Progress' and var.parent.name != 'Array':
                     var.extract()
                     lockscreen.append(var)
 
@@ -150,7 +150,7 @@ def preLoadVar(save_file):
                 lockscreen.Start.insert_before(var)
 
         for var_animation in lockscreen.find_all('Var'):
-            if var_animation.find("VariableAnimation"):
+            if var_animation.find("VariableAnimation") and var_animation.parent.name != 'Array':
                 var_animation.extract()
                 lockscreen.Start.insert_before(var_animation)
 
@@ -380,7 +380,7 @@ def splitGroup(manifest_xml, manifest_root):
 
         for empty_tags in soup.find_all():
             empty_arr = list(set(empty_tags.contents))
-            if len(empty_arr) == 1 and empty_arr[0] == '\n':
+            if len(empty_arr) == 1 and empty_arr[0] == '\n' and empty_tags.name != 'Image':
                 print("👌Empty: {}".format(str(empty_tags).replace('\n', '')))
                 empty_tags.decompose()
 
@@ -393,7 +393,7 @@ def splitGroup(manifest_xml, manifest_root):
             'amp;gt;', 'gt;').replace('amp;lt;', 'lt;').replace('amp;amp;', 'amp;'))
 
 
-def intentMarket(save_file):
+def intentMarket(save_file, manifest_root='Lockscreen'):
 
     # 代码后期功能补充
     with open(save_file, 'r', encoding='utf-8') as f:
@@ -475,7 +475,8 @@ def intentMarket(save_file):
             if intent.get('uri') != '@uri_theme' and intent.get('package') is not None and not any(
                     substring in str(intent)
                     for substring in ['com.android', 'com.coloros', 'com.oppo', 'com.nearme', 'com.heytap', 'com.oplus',
-                                      'com.miui', 'com.vivo', 'com.bbk', 'com.iqoo', 'com.huawei', 'com.hihonor']
+                                      'com.miui', 'com.vivo', 'com.bbk', 'com.iqoo', 'com.huawei', 'com.hihonor',
+                                      'com.example.android.notepad', 'oppo.multimedia.soundrecorder']
             ):
                 intent['market'] = '1'
                 # intent['market'] = 'true'
@@ -527,22 +528,30 @@ def intentMarket(save_file):
 
     print('AniFrame:')
     for ani_frame in soup.find_all('AniFrame'):
-        ani_frame['time'] = str(ani_frame.get('time')).replace(f'#{resume_speed_var}', str(resume_speed))
-        if ani_frame.get('time') and ani_frame.parent.name == 'VariableAnimation'\
-                and any(op in ani_frame.get('time') for op in "+-*/")\
-                and all(forbidden_char not in ani_frame.get('time') for forbidden_char in "#@"):
-            ani_frame['time'] = abs(int(eval(str(ani_frame.get('time')))))
-            print(f"\t{ani_frame.parent.parent.get('name')}: {ani_frame}")
+        if ani_frame.get('time'):
+            ani_frame['time'] = str(ani_frame.get('time')).replace(f'#{resume_speed_var}', str(resume_speed))
+            if ani_frame.get('time') and ani_frame.parent.name == 'VariableAnimation'\
+                    and any(op in ani_frame.get('time') for op in "+-*/")\
+                    and all(forbidden_char not in ani_frame.get('time') for forbidden_char in "#@"):
+                ani_frame['time'] = abs(int(eval(str(ani_frame.get('time')))))
+                print(f"\t{ani_frame.parent.parent.get('name')}: {ani_frame}")
     print('\t')
 
     for ani_item in soup.find_all('Item'):
-        if ani_item.parent.name == 'VariableAnimation':
+        if ani_item.parent.name == 'VariableAnimation' and ani_item.get('dtime') is None:
             ani_item['time'] = str(ani_item.get('time')).replace(f'#{resume_speed_var}', str(resume_speed))
             if ani_item.get('time')\
                     and any(op in ani_item.get('time') for op in "+-*/")\
                     and all(forbidden_char not in ani_item.get('time') for forbidden_char in "#@"):
                 ani_item['time'] = abs(int(eval(str(ani_item.get('time')))))
                 # print(f"\t{ani_item.parent.parent.get('name')}: {ani_item}")
+
+    for ani_source in soup.find_all():
+        # print(ani_source)
+        ani_source_time = str(ani_source.get('time'))
+        if ani_source.get('time') and manifest_root != 'Widget' and all(forbidden_char not in ani_source_time for forbidden_char in "#@") \
+                and ani_source_time != 'None' and ani_source.get('dtime') is None:
+            ani_source['time'] = abs(int(eval(str(ani_source_time))))
 
     # 带动画的 Image 标签加入 name 属性
     print('Image: ')

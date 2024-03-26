@@ -48,6 +48,8 @@ def convert_to_source(key_file, input_file, output_file, order_mode=1, soup_repl
         import tools.order
         tools.order.orderXML(output_file)
 
+    print('Done, anti-xml() Success!')
+
 
 def replace_string_in_xml(xml_file, old_str, new_str):
 

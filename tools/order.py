@@ -1,3 +1,6 @@
+import pyperclip
+
+
 def orderXML(input_file, output_file=None):
 
     import xml.etree.ElementTree as ET
@@ -107,4 +110,4 @@ def orderXML(input_file, output_file=None):
 
 
 if __name__ == "__main__":
-    orderXML('/Volumes/T7/萌星球/代码需求/吴良金/玄武腾龙/国内版/VIVO/lockscreen/1706426747572/manifest.xml')
+    orderXML(pyperclip.paste())

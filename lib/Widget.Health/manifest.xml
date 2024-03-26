@@ -27,7 +27,7 @@
 		</ContentProviderBinder>
 	</VariableBinders>
 
-	<Var name="title" type="string[]" const="true" expression="''" values="'当前步数：','目标步数：','距离：','消耗卡路里（千卡）：','运动中高强度时长：','运动是否达标：'" />
-	<Var name="content" type="string[]" expression="''" values="@MiSteps_steps , @MiSteps_goal , preciseeval('@MiSteps_distance',2) , @MiSteps_energy , @MiSteps_strength_duration , @MiSteps_summary" />
-
+	<Var name="title" type="string[]" const="true" expression="''" values="'0当前步数：','1目标步数：','2距离（km）：','3消耗卡路里（千卡）：','4运动中高强度时长：','5运动是否达标：0/1'" />
+	<Var name="content" type="string[]" expression="''" values="@MiSteps_steps , @MiSteps_goal , preciseeval('@MiSteps_distance',2) , @MiSteps_energy , @MiSteps_strength_duration_HH_mm , eqs(@MiSteps_summary,'运动达标')" />
+	<Var name="MiSteps_strength_duration_HH_mm" expression="int(@MiSteps_strength_duration/60/10)+int(@MiSteps_strength_duration/60%10)+':'+int(@MiSteps_strength_duration%60/10)+int(@MiSteps_strength_duration%60%10)" type="string" />
 </Template>

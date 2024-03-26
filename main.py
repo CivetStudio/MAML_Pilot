@@ -104,6 +104,9 @@
     </C_Array>
     16:18 已修复为自动识别代码
 02.21 新增 SoundCommand 自动处理：带 condition 属性的 SoundCommand 标签单独处理
+03.15 重构加解密代码 -> dev.Refactor.refactor
+03.20 数据库新增列 anti_json 负责记录 var_alias_dict
+03.21 代码中新增变量 Key 作为解密（AES-256），Key['expression'] = encrypt_text(anti_json) 即 var_alias_dict 的加密版本
 
 // 检测图片是否在代码内：
     1. "pic.png": search directly
@@ -115,14 +118,17 @@
 // 需求：【Mask / Paint】从Group中提取
 // 图片减半、重命名功能
 
+// 若 Var['globalPersist'] == 'true' VariableCommand[name='{Var['name']}'].persist == None
 // 检测format是否为纯数字 / 或format内无%
 // 值内 ## 1# 错误
+// month/
 
 ⚠️历史遗留问题:
       1 四个空格转为/t
       2 &lt; &gt; 应该为&amp;lt &amp;gt
       3 lib文件夹下模块内变量名称混淆
       4 插件属性完整性检测 <i_Theme designId="" condition="" /> designId 为空时 condition 出错
+      5 搜索【问题 #685】
 """
 
 
@@ -140,10 +146,13 @@ import pyperclip
 import subprocess
 from bs4 import BeautifulSoup, Comment
 from lxml import etree as lxml
+
+import dev.Refactor.refactor
 # import wx
 # import requests
 
 from splitTools import splitVar, splitExt, splitBinders, splitGroup, preLoadVar, preLoadExt, intentMarket
+from dev.Refactor.refactor import refactor
 
 maml_main_xml = ''
 win_local = 1
@@ -153,84 +162,6 @@ if 'PYCHARM_HOSTED' in os.environ and sys.platform.startswith('darwin') or win_l
     sys_version = 0
     current_dir = ''
     maml_main_xml = pyperclip.paste().replace('\\', '/').replace('"', '')
-# if mac_local == 1:
-#     # print("Windows or macOS")
-#     sys_version = 1
-#     current_dir = os.path.abspath(sys.argv[0]).replace('\\', '/') \
-#         .replace('"', '').replace('main.exe', '').replace('main.py', '') \
-#         .replace('MacOS/MamlPilot', 'MacOS')
-#     # print(f'sys.argv: {sys.argv}')
-#     if len(sys.argv) == 1:
-#
-#         sys_text = """MAML Pilot——全平台代码加密工具_20240206
-# Designed by 灵貓 / Civet
-#
-# 请将XML文件名称改为【maml.xml】并拖入程序中
-# 程序文件名请勿修改，修改后无法打开！反馈问题请联系QQ：1876461209
-#
-# 功能说明：
-# 1.支持代码变量混淆，从Group组中拆分Var变量、Button按钮
-# 2.代码标签自动排序：Lockscreen > ExternalCommands > VariableBinders > VariableAnimation > Var.threshold > Var > Weather > Calendar > Healthy > VarArray > ... > Group.Button
-# 3.支持MIUI平台的config.xml及var_config.xml中的对应变量转译，只需将文件放于【maml.xml】的同一目录下即可
-# 4.已涵盖全平台中的所有全局变量，不会导致锁屏功能失效问题（已试验10000+次）
-# 5.后续将支持代码插件化功能，类似MIUI主题编辑器中的插件模块
-# """
-#
-#         if sys.platform.startswith('darwin') and mac_local == 0:
-#             # noinspection PyUnusedLocal
-#             class MyFrame(wx.Frame):
-#                 def __init__(self, parent, title):
-#                     super().__init__(parent, title=title, size=(800, 500))
-#                     panel = wx.Panel(self)
-#
-#                     text_ctrl = wx.TextCtrl(panel, style=wx.TE_MULTILINE | wx.TE_READONLY)
-#                     text_ctrl.SetValue(sys_text)
-#
-#                     font = wx.Font(15, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
-#                     text_ctrl.SetFont(font)
-#
-#                     text_ctrl.SetForegroundColour(wx.WHITE)
-#                     text_ctrl.SetBackgroundColour('#2b2b2c')
-#
-#                     sizer = wx.BoxSizer(wx.VERTICAL)
-#                     sizer.Add(text_ctrl, proportion=1, flag=wx.EXPAND)
-#                     panel.SetSizer(sizer)
-#
-#                     self.CenterOnScreen()
-#                     self.Show()
-#                     self.Bind(wx.EVT_CLOSE, self.on_close)  # 绑定 EVT_CLOSE 事件
-#
-#                 def on_close(self, event):  # 修正 on_close 方法的参数
-#                     self.Destroy()
-#
-#
-#             app = wx.App()
-#             frame = MyFrame(None, "MAML Pilot 使用说明")
-#             app.MainLoop()
-#
-#         else:
-#             print(sys_text)
-#             # print('\t')
-#             # print('MAML Pilot——全平台代码加密工具_20230716_V1.3')
-#             # print('Designed by 灵貓 / Civet')
-#             # print('\t')
-#             # print('请将XML文件名称改为【maml.xml】并拖入程序中')
-#             # print('程序文件名请勿修改，修改后无法打开！反馈问题请联系QQ：1876461209')
-#             # print('\t')
-#             # print('功能说明：')
-#             # print('1.支持代码变量混淆，从Group组中拆分Var变量、Button按钮')
-#             # print('2.代码标签自动排序：Lockscreen > ExternalCommands > VariableBinders > VariableAnimation > '
-#             #       'Var.threshold > Var > Weather > Calendar > Healthy > VarArray > ... > Group.Button')
-#             # print('3.支持MIUI平台的config.xml及var_config.xml中的对应变量转译，只需将文件放于【maml.xml】的同一目录下即可')
-#             # print('4.已涵盖全平台中的所有全局变量，不会导致锁屏功能失效问题（已试验2900次）')
-#             # print('5.后续将支持代码插件化功能，类似MIUI主题编辑器中的插件模块')
-#             # print('（本窗口5秒后自动关闭）')
-#
-#         # time.sleep(5)
-#         # sys.exit(1)
-#     if len(sys.argv) > 1:
-#         file_path = sys.argv[1]
-#         maml_main_xml = file_path.replace('\\', '/').replace('"', '')
 
 maml_rule_file = "maml.xml"
 maml_file_name = os.path.basename(maml_main_xml)
@@ -283,7 +214,9 @@ conn.execute('''CREATE TABLE IF NOT EXISTS counter
              source TEXT,
              compress_rate TEXT,
              run_time TEXT,
-             dev_time TEXT);''')
+             dev_time TEXT,
+             anti_json TEXT
+             );''')
 # 读取计数器的值
 cursor = conn.cursor()
 cursor.execute('SELECT id FROM counter ORDER BY id DESC LIMIT 1')
@@ -397,10 +330,9 @@ var_forbid_name = ['Almanac', 'Almanac.baiji', 'Almanac.caishen', 'Almanac.chenA
                    'weather_location', 'weather_low_temp', 'weather_publish_time', 'weather_sunrise', 'weather_sunset',
                    'weather_temperature', 'weather_tmphighs', 'weather_tmplows', 'weather_wind_dir', 'weather_wind_pow',
                    'year_lunar', 'year_lunar1864', 'year_lunar_leap', 'lunar_calendar_enable', 'battery_enable',
-                   'notification_enable', 'preview_mode', 'connectedStatus', 'headsetName', 'headsetBatteryLevel']
+                   'notification_enable', 'preview_mode', 'connectedStatus', 'headsetName', 'headsetBatteryLevel',
+                   'in_preview_mode']
 
-var_alias_all = 1
-var_alias = 0
 var_alias_list = 1
 var_alias_anti = 1
 
@@ -416,18 +348,6 @@ var_config_xml = maml_main_xml.replace(maml_file_name, 'var_config.xml')
 # langs_id = 0
 langs_id = 4 if os.path.exists(config_xml) or os.path.exists(var_config_xml) else 2
 var_persist_attr = "const" if langs_id == 0 or langs_id == 4 else "persist"
-
-# maml.xml > main.xml
-# if os.path.exists('maml.xml'):
-# 	maml_main_xml = 'maml.xml'
-# elif os.path.exists('main.xml'):
-# 	maml_main_xml = 'main.xml'
-# else:
-# 	maml_main_xml = 'maml.xml'
-# 	maml_def_xml = '<?xml version="1.0" encoding="utf-8"?>\n<Lockscreen frameRate="240" screenWidth="1080" version="1" \
-# 	 vibrate="false" _dev="civet" _devTime="$_devTime">\n\t<!-- 欢迎定制锁屏：灵貓 QQ 1876461209 -->\n\t<Su/>\n</Lockscreen>'
-# 	with open(maml_main_xml, 'w', encoding='utf-8') as f0:
-# 		f0.write(str(maml_def_xml))
 
 
 # 获取网络时间戳
@@ -562,7 +482,7 @@ def getLib(lib_file):
 
 
 # 获取库文件主内容并替换Attributes
-def getLibContent(lib_file_main, soup_dom_id=0, soup_dom_input=None):
+def getLibContent(lib_file_main, soup_dom_id=0, soup_dom_input=None, var_alias_all=1):
     tags_lib.reverse()
     tags_str.reverse()
     tags_attr.reverse()
@@ -602,7 +522,14 @@ def getLibContent(lib_file_main, soup_dom_id=0, soup_dom_input=None):
                 lib_soup = str(lib_soup).replace(str(lib_placeholder[_k]), str(lib_placeholder_str2[_k]))
             # <PlaceHolder name="ResumeAniCommand"/>
             # print(str(lib_placeholder[_k]))
-        _f0.write(str(lib_soup))
+        # 手动为 # mCountNum_$ 内的 ##Event* 变量加入后缀
+        # 	<Var name="mCountNum_0" expression="int(#EventYear[$#_id#$]/1000)" />
+        # print(soup_dom_input)
+        if soup_dom_input is None:
+            soup_dom_input_r = ''
+        else:
+            soup_dom_input_r = '_' + soup_dom_input
+        _f0.write(str(lib_soup).replace('[$#_id#$]', soup_dom_input_r))
 
     # print(lib_placeholder)
     # print(lib_placeholder_str2)
@@ -632,444 +559,17 @@ def getLibContent(lib_file_main, soup_dom_id=0, soup_dom_input=None):
 
     # 模块内变量名称混淆
 
-    # # 筛选name及target，并添加后缀（6位随机数）
+    # # 筛选name及target，并添加后缀（4位随机数）
 
-    _soup = BeautifulSoup(open(process_xml, encoding="utf-8"), features="lxml-xml")
+    # print(var_alias_all, lib_file_main)
+    # if not var_alias_all:
+    refactor(process_xml, 2, var_forbid_name, soup_dom_input_r)
 
-    # 找出包含【name=""】
-    for _tag in _soup.find_all(name=True):
-        if _tag.get('name') is not None and _tag.get('name') != '' and _tag.name != "Extra" and not str(
-                _tag.get('name')).startswith("$") and not str(_tag.get('name')).endswith("$"):
-            if _tag.name == 'ValueHolder':
-                # and 'Src' not in str(_tag.get('name'))
-                if _tag.get('type') != 'string':
-                    # 当 type 为 string 时，该属性不加入混淆
-                    var_from_xml.append(_tag.get('name'))
-            # elif tag.name == 'item' and eval(tag.get('default')):
-            # 	var_from_xml.append(tag.get('name'))
-            else:
-                var_from_xml.append(_tag.get('name'))
-
-    # 找出包含【dependency=""】
-    for _tag in _soup.find_all(dependency=True):
-        if _tag.get('dependency') is not None and _tag.get('dependency') != '' and _tag.name != "Extra" and not str(
-                _tag.get('dependency')).startswith("$") and not str(_tag.get('dependency')).endswith("$"):
-            var_from_xml.append(_tag.get('dependency'))
-
-    # 找出包含【indexName=""】
-    for _tag in _soup.find_all(indexName=True):
-        if _tag.get('indexName') is not None and _tag.get('indexName') != '':
-            var_from_xml.append(_tag.get('indexName'))
-
-    # 找出包含【countName=""】
-    for _tag in _soup.find_all(countName=True):
-        if _tag.get('countName') is not None and _tag.get('countName') != '':
-            var_from_xml.append(_tag.get('countName'))
-
-    # 找出包含【target=""】
-    for _tag in _soup.find_all(target=True):
-        if _tag.get('target') is not None:
-            for _i in range(len(var_from_xml)):
-                target_save = str(_tag.get('target').replace('.visibility', '').replace('.animation', ''))
-                if target_save != var_from_xml[_i] and len(target_save) >= 0:
-                    var_from_xml.append(target_save)
-
-    # soup_dom_str = str(soup.prettify(indent_width=1)).replace('    ', '\t')
-
-    # 整理排序 + 去除系统变量
-    var_from_target = list(set(var_from_xml).difference(set(var_forbid_name)))
-
-    # 根据元素长度排序（从长到短）
-    var_from_target.sort(key=lambda x: (len(x), x), reverse=True)
-
-    # print('var_from_target: ', var_from_target, '\n')
-
-    soup_dom_str = str(_soup.prettify(indent_width=1)).replace('    ', '\t')
-
-    # 循环替换变量
-    if var_alias_all == 1:
-
-        # lib 随机后缀算法
-        if var_alias != 1:
-            if soup_dom_id:
-                soup_dom_hex = soup_dom_input
-            else:
-                # soup_dom_hex = 'm' + hex(zlib.crc32(str(lib_file_name).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = randomHex(8).replace('0x', '').lower()
-            # print(lib_file_name, soup_dom_hex)
-        else:
-            soup_dom_hex = ''
-        # print(lib_file_name)
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace(' name="' + str(var_from_target[_i]) + '"',
-                                                ' name="' + soup_dom_concat + soup_dom_hex + '"')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace(' target="' + str(var_from_target[_i]) + '"',
-                                                ' target="' + soup_dom_concat + soup_dom_hex + '"')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace(' dependency="' + str(var_from_target[_i]) + '"',
-                                                ' dependency="' + soup_dom_concat + soup_dom_hex + '"')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace(' indexName="' + str(var_from_target[_i]) + '"',
-                                                ' indexName="' + soup_dom_concat + soup_dom_hex + '"')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace(' countName="' + str(var_from_target[_i]) + '"',
-                                                ' countName="' + soup_dom_concat + soup_dom_hex + '"')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace(' src="' + str(var_from_target[_i]) + '.artwork"',
-                                                ' src="' + soup_dom_concat + soup_dom_hex + '.artwork"')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace(' strPara="\'' + str(var_from_target[_i]) + '\'"',
-                                                ' strPara="\'' + soup_dom_concat + soup_dom_hex + '\'"')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('#' + str(var_from_target[_i]) + '"',
-                                                '#' + soup_dom_concat + soup_dom_hex + '"')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('@' + str(var_from_target[_i]) + '"',
-                                                '@' + soup_dom_concat + soup_dom_hex + '"')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('#' + str(var_from_target[_i]) + ')',
-                                                '#' + soup_dom_concat + soup_dom_hex + ')')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('#' + str(var_from_target[_i]) + '+',
-                                                '#' + soup_dom_concat + soup_dom_hex + '+')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('#' + str(var_from_target[_i]) + '-',
-                                                '#' + soup_dom_concat + soup_dom_hex + '-')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('#' + str(var_from_target[_i]) + '*',
-                                                '#' + soup_dom_concat + soup_dom_hex + '*')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('#' + str(var_from_target[_i]) + '/',
-                                                '#' + soup_dom_concat + soup_dom_hex + '/')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('#' + str(var_from_target[_i]) + '%',
-                                                '#' + soup_dom_concat + soup_dom_hex + '%')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('#' + str(var_from_target[_i]) + '=',
-                                                '#' + soup_dom_concat + soup_dom_hex + '=')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('@' + str(var_from_target[_i]) + '=',
-                                                '@' + soup_dom_concat + soup_dom_hex + '=')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('#' + str(var_from_target[_i]) + '}',
-                                                '#' + soup_dom_concat + soup_dom_hex + '}')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('@' + str(var_from_target[_i]) + '}',
-                                                '@' + soup_dom_concat + soup_dom_hex + '}')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('#' + str(var_from_target[_i]) + '{',
-                                                '#' + soup_dom_concat + soup_dom_hex + '{')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('@' + str(var_from_target[_i]) + '{',
-                                                '@' + soup_dom_concat + soup_dom_hex + '{')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('#' + str(var_from_target[_i]) + '!',
-                                                '#' + soup_dom_concat + soup_dom_hex + '!')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('@' + str(var_from_target[_i]) + '!',
-                                                '@' + soup_dom_concat + soup_dom_hex + '!')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('#' + str(var_from_target[_i]) + '[',
-                                                '#' + soup_dom_concat + soup_dom_hex + '[')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('@' + str(var_from_target[_i]) + '[',
-                                                '@' + soup_dom_concat + soup_dom_hex + '[')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('[#' + str(var_from_target[_i]) + ']',
-                                                '[#' + soup_dom_concat + soup_dom_hex + ']')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('[@' + str(var_from_target[_i]) + ']',
-                                                '[@' + soup_dom_concat + soup_dom_hex + ']')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('#' + str(var_from_target[_i]) + ',',
-                                                '#' + soup_dom_concat + soup_dom_hex + ',')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('#' + str(var_from_target[_i]) + '.',
-                                                '#' + soup_dom_concat + soup_dom_hex + '.')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('#' + str(var_from_target[_i]) + ' ',
-                                                '#' + soup_dom_concat + soup_dom_hex + ' ')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('@' + str(var_from_target[_i]) + ')',
-                                                '@' + soup_dom_concat + soup_dom_hex + ')')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('@' + str(var_from_target[_i]) + '+',
-                                                '@' + soup_dom_concat + soup_dom_hex + '+')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('@' + str(var_from_target[_i]) + ',',
-                                                '@' + soup_dom_concat + soup_dom_hex + ',')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('@' + str(var_from_target[_i]) + '.',
-                                                '@' + soup_dom_concat + soup_dom_hex + '.')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('@' + str(var_from_target[_i]) + ' ',
-                                                '@' + soup_dom_concat + soup_dom_hex + ' ')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('src="' + str(var_from_target[_i]) + '"',
-                                                'src="' + soup_dom_concat + soup_dom_hex + '"')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('"' + str(var_from_target[_i]) + '.animation',
-                                                '"' + soup_dom_concat + soup_dom_hex + '.animation')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('"' + str(var_from_target[_i]) + '.visibility',
-                                                '"' + soup_dom_concat + soup_dom_hex + '.visibility')
-
-    # print('soup_dom_str: ', soup_dom_str, '\n')
-    # 定义正则表达式，匹配形如【$*$】的全局变量
-    soup_pattern = re.compile(r'\$(.*?)\$')
-    soup_dom_str = re.sub(soup_pattern, r'\1', soup_dom_str)
-
-    with open(process_xml, 'w', encoding='utf-8') as _f0:
-        _f0.write(soup_dom_str)
-    # print(soup_dom_str)
-
-    # if var_alias_anti == 1:
-    #
-    #     var_from_target.sort(reverse=False)
-    #     # print('var_from_target: ', var_from_target, '\n')
-    #     alias_str = '<AntiAliasing version="1"></AntiAliasing>'
-    #     _soup = BeautifulSoup(alias_str, features="lxml-xml")
-    #     for alias in _soup.find_all('AntiAliasing'):
-    #         for _j in range(len(var_from_target)):
-    #             alias_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_j]).encode('UTF-8')))[2:].capitalize()
-    #             alias_dom_hex = 'm' if len(alias_dom_concat) == 8 else ''
-    #             alias_str_new = _soup.new_tag('Aliasing', initial=str(var_from_target[_j]), after=str(alias_dom_concat + alias_dom_hex))
-    #             alias.append(alias_str_new)
-    #
-    #     with open(anti_xml, 'w', encoding='utf-8') as _f0:
-    #         _f0.write(str(_soup.prettify(indent_width=1)).replace('    ', '\t'))
-    #
     # else:
-    #     if os.path.exists(anti_xml): os.remove(anti_xml)
+    #     refactor(process_xml, 1, var_forbid_name)
+
+    # 问题 #685: mResumeAni -> ExternalsCommand -> Trigger -> <Command target="mBezierSys.animation" command="play" />
+    # soup_dom_str = str(soup.prettify(indent_width=1)).replace('    ', '\t')
 
     removeLibProps(process_xml, process_xml)
     return
@@ -1214,7 +714,7 @@ def saveXML(save_file):
     if _soup.Lockscreen.get('_getSource') is not None:
         del _soup.Lockscreen['_getSource']
 
-    if manifest_root == 'Lockscreen' and langs_id != 4 or manifest_root == 'Widget':
+    if manifest_root == 'Lockscreen' or langs_id != 4 or manifest_root == 'Widget':
 
         # TextSize处理
         # text_size = []
@@ -1268,8 +768,9 @@ def saveXML(save_file):
             image_px = image.get('pivotX')
             image_py = image.get('pivotY')
             image_r = image.get('rotation')
+            image_s = image.get('scale')
             image_v = image.get('visibility', '1')
-            if image_r == '0':
+            if image_r == '0' and not image_s:
                 del image['rotation']
                 if image_px == f"{image_w}/2" and image_py == f"{image_h}/2":
                     del image['pivotX'], image['pivotY']
@@ -1279,9 +780,12 @@ def saveXML(save_file):
                 _action_tag_id_ = str(_action.split(',')[1])
                 # print(_action_, _action_tag_id_)
 
+                _action_condition = '1'
+                _action_visibility = '1'
+                _action_content = ''
                 for ac in _soup.find_all():
                     if ac.name == _action_tag_id_:
-                        _action_condition = ac.get('condition')
+                        _action_condition = ac.get('condition', '1')
                         _action_visibility = ac.get('visibility', '1')
                         # ac_contents = [str(item).replace('\n', '') for item in ac.contents]
                         ac_contents = [item for item in ac.contents if item != '\n']
@@ -1375,7 +879,7 @@ def saveXML(save_file):
     if var_preload: preLoadVar(success_xml)
     if var_preload: preLoadExt(success_xml)
     if var_split_group: splitGroup(success_xml, manifest_root)
-    intentMarket(success_xml)
+    intentMarket(success_xml, manifest_root)
 
     return
 
@@ -1392,10 +896,11 @@ def removeEmpty(path):
 
 # 加密XML文件
 def getAlias():
-    global config_soup_str, var_config_soup_str
+    global config_soup_str, var_config_soup_str, var_alias_dict
+
+    var_alias_dict = {}
     _var_from_xml = []
 
-    _var_alias_all = 1
     # var_alias = 1
     _success_xml = maml_main_xml.replace(maml_file_name, 'manifest.xml')
     _origin_xml = "source.xml"
@@ -1407,92 +912,9 @@ def getAlias():
 
     # # 筛选name及target，并添加后缀（6位随机数）
 
-    _soup = BeautifulSoup(open(_success_xml, encoding="utf-8"), features="lxml-xml")
-    for _root in _soup.find_all(True, limit=1):
-        for _tag in _root.find_all(True, limit=1):
-            comment = _soup.new_string(" 欢迎定制锁屏：灵貓 QQ 1876461209  /  Welcome to customize the lock screen: Civet QQ 1876461209 ", Comment)
-            _tag.insert_before(comment)
-            comment = _soup.new_string(
-                " 违规抄袭将依据《中华人民共和国民法典》《中华人民共和国民法通则》《中华人民共和国著作权法》《计算机软件保护条例》《软件产品管理办法》《侵权责任法》《中华人民共和国知识产权法》追究法律责任  /  Illegal plagiarism will be investigated for legal liability in accordance with the Civil Code of the People's Republic of China. ",
-                Comment)
-            _tag.insert_before(comment)
-
-    # print('Comment')
-
-    # 找出包含【name=""】
-    for _tag in _soup.find_all(name=True):
-        if _tag.get('name') is not None and _tag.get('name') != '' and _tag.name != "Extra" and not str(
-                _tag.get('name')).startswith("$") and not str(_tag.get('name')).endswith("$"):
-            if _tag.name == 'ValueHolder':
-                if _tag.get('type') != 'string':
-                    _var_from_xml.append(_tag.get('name'))
-            # elif tag.name == 'item' and eval(tag.get('default')):
-            # 	var_from_xml.append(tag.get('name'))
-            else:
-                _var_from_xml.append(_tag.get('name'))
-
-    # print('Name')
-
-    # 找出包含【dependency=""】
-    for _tag in _soup.find_all(dependency=True):
-        if _tag.get('dependency') is not None and _tag.get('dependency') != '' and _tag.name != "Extra" and not str(
-                _tag.get('dependency')).startswith("$") and not str(_tag.get('dependency')).endswith("$"):
-            _var_from_xml.append(_tag.get('dependency'))
-
-    # print('Dependency')
-
-    # 找出包含【indexName=""】
-    for _tag in _soup.find_all(indexName=True):
-        if _tag.get('indexName') is not None and _tag.get('indexName') != '':
-            _var_from_xml.append(_tag.get('indexName'))
-
-    # print('indexName')
-
-    # 找出包含【countName=""】
-    for _tag in _soup.find_all(countName=True):
-        if _tag.get('countName') is not None and _tag.get('countName') != '':
-            _var_from_xml.append(_tag.get('countName'))
-
-    # print('countName')
-
-    # 找出包含【target=""】
-    # for tag in soup.find_all(target=True):
-    # 	if tag.get('target') is not None:
-    # 		for i in range(len(var_from_xml)):
-    # 			target_save = str(tag.get('target').replace('.visibility', '').replace('.animation', ''))
-    # 			if target_save != var_from_xml[i] and len(target_save) >= 0:
-    # 				var_from_xml.append(target_save)
-
-    # print(var_from_xml)
-
-    # soup_dom_str = str(soup.prettify(indent_width=1)).replace('    ', '\t')
-
-    # 整理排序数组 + 去除系统变量
-    var_from_target = list(set(_var_from_xml).difference(set(var_forbid_name)))
-
-    # 根据元素长度排序（从长到短）
-    var_from_target.sort(key=lambda x: (len(x), x), reverse=True)
-
-    # print(var_from_target)
-
-    soup_dom_str = str(_soup.prettify(indent_width=1)).replace('    ', '\t').replace('&amp;#', '&#')
-
-    # 循环替换变量
-    if _var_alias_all == 1:
-
-        # 创建一个空字典并为每个数组的值分配默认值
-        alias_dict = {}
-
-        for var in var_from_target:
-            alias_dom_concat = 'm' + hex(zlib.crc32(str(var).encode('UTF-8')))[2:].capitalize()
-            alias_dom_hex = 'm' if len(alias_dom_concat) == 8 else ''
-            alias_str_new = str(alias_dom_concat + alias_dom_hex)
-            alias_dict[alias_str_new] = var
-
-        if var_alias != 1:
-            soup_dom_hex = randomHex(8).replace('0x', '').lower()
-        else:
-            soup_dom_hex = ''
+    _var_alias_all = 1
+    if _var_alias_all:
+        refactor(_success_xml, 0, var_forbid_name, _success_xml)
 
         # 检测【config.xml】是否存在
         if os.path.exists(config_xml):
@@ -1512,30 +934,18 @@ def getAlias():
             var_config_soup = BeautifulSoup(open(var_config_xml, encoding="utf-8"), features="lxml-xml")
             var_config_soup_str = str(var_config_soup)
 
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            # soup_dom_hex = hex(zlib.crc32(str(var_from_target[i]).encode('UTF-8')))[2:].capitalize()
-            soup_dom_str = soup_dom_str.replace(' name="' + str(var_from_target[_i]) + '"',
-                                                ' name="' + soup_dom_concat + soup_dom_hex + '"')
+        var_alias_dict = dev.Refactor.refactor.get_var_alias_dict(_anti_xml)
+        # print(var_alias_dict)
+
+        for after, initial in var_alias_dict.items():
 
             # 替换【config.xml】内的变量
             if os.path.exists(config_xml):
-                config_soup_str = config_soup_str.replace('id="' + str(var_from_target[_i]) + '"',
-                                                          'id="' + soup_dom_concat + soup_dom_hex + '"')
+                config_soup_str = config_soup_str.replace('id="' + initial + '"', 'id="' + after + '"')
 
             # 替换【var_config.xml】内的变量
             if os.path.exists(var_config_xml):
-                var_config_soup_str = var_config_soup_str.replace('name="' + str(var_from_target[_i]) + '"',
-                                                                  'name="' + soup_dom_concat + soup_dom_hex + '"')
-
-            # 替换【var_config.xml】内的变量
-            if os.path.exists(var_config_xml):
-                var_config_soup_str = var_config_soup_str.replace('repeatVar="' + str(var_from_target[_i]) + '"',
-                                                                  'repeatVar="' + soup_dom_concat + soup_dom_hex + '"')
+                var_config_soup_str = var_config_soup_str.replace('name="' + initial + '"', 'name="' + after + '"').replace('repeatVar="' + initial + '"', 'repeatVar="' + after + '"')
 
         # 保存【config.xml】
         if os.path.exists(config_xml):
@@ -1547,345 +957,8 @@ def getAlias():
             with open(var_config_xml, 'w', encoding='utf-8') as _f0:
                 _f0.write(var_config_soup_str.replace('\n', ''))
 
-        if var_alias == 0:
-            soup_dom_str = soup_dom_str.replace(manifest_root + ' ',
-                                                manifest_root + ' _compiler_id="' + soup_dom_hex + '" ')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace(' target="' + str(var_from_target[_i]) + '"',
-                                                ' target="' + soup_dom_concat + soup_dom_hex + '"')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace(' dependency="' + str(var_from_target[_i]) + '"',
-                                                ' dependency="' + soup_dom_concat + soup_dom_hex + '"')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace(' indexName="' + str(var_from_target[_i]) + '"',
-                                                ' indexName="' + soup_dom_concat + soup_dom_hex + '"')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace(' countName="' + str(var_from_target[_i]) + '"',
-                                                ' countName="' + soup_dom_concat + soup_dom_hex + '"')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace(' src="' + str(var_from_target[_i]) + '.artwork"',
-                                                ' src="' + soup_dom_concat + soup_dom_hex + '.artwork"')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace(' strPara="\'' + str(var_from_target[_i]) + '\'"',
-                                                ' strPara="\'' + soup_dom_concat + soup_dom_hex + '\'"')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('#' + str(var_from_target[_i]) + '"',
-                                                '#' + soup_dom_concat + soup_dom_hex + '"')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('@' + str(var_from_target[_i]) + '"',
-                                                '@' + soup_dom_concat + soup_dom_hex + '"')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('#' + str(var_from_target[_i]) + ')',
-                                                '#' + soup_dom_concat + soup_dom_hex + ')')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('#' + str(var_from_target[_i]) + '+',
-                                                '#' + soup_dom_concat + soup_dom_hex + '+')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('#' + str(var_from_target[_i]) + '-',
-                                                '#' + soup_dom_concat + soup_dom_hex + '-')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('#' + str(var_from_target[_i]) + '*',
-                                                '#' + soup_dom_concat + soup_dom_hex + '*')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('#' + str(var_from_target[_i]) + '/',
-                                                '#' + soup_dom_concat + soup_dom_hex + '/')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('#' + str(var_from_target[_i]) + '%',
-                                                '#' + soup_dom_concat + soup_dom_hex + '%')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('#' + str(var_from_target[_i]) + '=',
-                                                '#' + soup_dom_concat + soup_dom_hex + '=')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('@' + str(var_from_target[_i]) + '=',
-                                                '@' + soup_dom_concat + soup_dom_hex + '=')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('#' + str(var_from_target[_i]) + '}',
-                                                '#' + soup_dom_concat + soup_dom_hex + '}')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('@' + str(var_from_target[_i]) + '}',
-                                                '@' + soup_dom_concat + soup_dom_hex + '}')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('#' + str(var_from_target[_i]) + '{',
-                                                '#' + soup_dom_concat + soup_dom_hex + '{')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('@' + str(var_from_target[_i]) + '{',
-                                                '@' + soup_dom_concat + soup_dom_hex + '{')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('#' + str(var_from_target[_i]) + '!',
-                                                '#' + soup_dom_concat + soup_dom_hex + '!')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('@' + str(var_from_target[_i]) + '!',
-                                                '@' + soup_dom_concat + soup_dom_hex + '!')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('#' + str(var_from_target[_i]) + '[',
-                                                '#' + soup_dom_concat + soup_dom_hex + '[')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('@' + str(var_from_target[_i]) + '[',
-                                                '@' + soup_dom_concat + soup_dom_hex + '[')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('[#' + str(var_from_target[_i]) + ']',
-                                                '[#' + soup_dom_concat + soup_dom_hex + ']')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('[@' + str(var_from_target[_i]) + ']',
-                                                '[@' + soup_dom_concat + soup_dom_hex + ']')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('#' + str(var_from_target[_i]) + ',',
-                                                '#' + soup_dom_concat + soup_dom_hex + ',')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('#' + str(var_from_target[_i]) + '.',
-                                                '#' + soup_dom_concat + soup_dom_hex + '.')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('#' + str(var_from_target[_i]) + ' ',
-                                                '#' + soup_dom_concat + soup_dom_hex + ' ')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('@' + str(var_from_target[_i]) + ')',
-                                                '@' + soup_dom_concat + soup_dom_hex + ')')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('@' + str(var_from_target[_i]) + '+',
-                                                '@' + soup_dom_concat + soup_dom_hex + '+')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('@' + str(var_from_target[_i]) + ',',
-                                                '@' + soup_dom_concat + soup_dom_hex + ',')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('@' + str(var_from_target[_i]) + '.',
-                                                '@' + soup_dom_concat + soup_dom_hex + '.')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('@' + str(var_from_target[_i]) + ' ',
-                                                '@' + soup_dom_concat + soup_dom_hex + ' ')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('src="' + str(var_from_target[_i]) + '"',
-                                                'src="' + soup_dom_concat + soup_dom_hex + '"')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('"' + str(var_from_target[_i]) + '.animation',
-                                                '"' + soup_dom_concat + soup_dom_hex + '.animation')
-
-        for _i in range(len(var_from_target)):
-            if var_alias == 1:
-                soup_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_i]).encode('UTF-8')))[2:].capitalize()
-                soup_dom_hex = 'm' if len(soup_dom_concat) == 8 else ''
-            else:
-                soup_dom_concat = str(var_from_target[_i]) + '_'
-            soup_dom_str = soup_dom_str.replace('"' + str(var_from_target[_i]) + '.visibility',
-                                                '"' + soup_dom_concat + soup_dom_hex + '.visibility')
-
         # 删除无用的变量动画
-        _soup_final = BeautifulSoup(soup_dom_str, features="lxml-xml")
+        _soup_final = BeautifulSoup(open(_success_xml), features="lxml-xml")
         import copy
         _soup_final2 = copy.copy(_soup_final)
         for var_tag in _soup_final2.find_all('Var'):
@@ -1901,21 +974,21 @@ def getAlias():
                 var_name = '#' + str(var_tag.get('name'))
                 var_name_e = str(var_tag.get('name'))
                 # 排除默认动画变量 looping
-                if var_tag.get('name') and var_tag.get('_glb') is None and str(alias_dict[var_name_e]) not in ['looping']:
+                if var_tag.get('name') and var_tag.get('_glb') is None and str(var_alias_dict[var_name_e]) not in ['looping']:
                     var_content = str(var_tag)
 
                     if var_name in var_content and var_name not in _soup_temp:
                         _vars.append(var_name_e)
                     elif var_name in var_content and var_name in _soup_temp:
-                        origin_var_e = alias_dict[var_name_e]
+                        origin_var_e = var_alias_dict[var_name_e]
                         print(f"Exist: {{'{origin_var_e}': '{var_name_e}'}}")
                     elif var_name not in var_content and var_name not in _soup_temp:
                         _vars.append(var_name_e)
 
-        # print(alias_dict)
+        # print(var_alias_dict)
         print('Decompose:')
         for _i in range(len(_vars)):
-            origin_var = alias_dict[_vars[_i]]
+            origin_var = var_alias_dict[_vars[_i]]
             print(f"\t{{'{origin_var}': '{_vars[_i]}'}}")
         print('\t')
 
@@ -1934,6 +1007,8 @@ def getAlias():
 
         # 删除空闲 threshold
         for var in _soup_final.find_all('Var'):
+            if var.parent.name == 'StereoGroup':
+                var.extract()
             if var.get('threshold') is not None:
                 var_contents = list(set(var.Trigger.contents))
                 if var_contents == ['\n']:
@@ -1958,16 +1033,21 @@ def getAlias():
                     _del_tag.decompose()
 
         # 若变量动画 改变帧率控制器 自动获取最大时间
-        if _soup_final.FramerateController:
+        if _soup_final.FramerateController and manifest_root == 'Widget':
             frame_control_time = [0, 100, 101]
             frame_time_collect = []
             for frame_control in _soup_final.find_all():
-                if (frame_control.name == 'Item' or frame_control.name == 'AniFrame') and frame_control.get('time'):
-                    frame_time_collect.append(frame_control.get('time'))
+                if (frame_control.name == 'Item' or frame_control.name == 'AniFrame') and ((frame_control.get('time') and frame_control.get('time').isdigit()) or (frame_control.get('dtime') and frame_control.get('dtime').isdigit())):
+                    if frame_control.get('time'):
+                        frame_time_collect.append(frame_control.get('time'))
+                        print(frame_control['time'])
+                    if frame_control.get('dtime'):
+                        frame_time_collect.append(str(int(frame_control.get('dtime')) * 2))
+                    print(frame_time_collect)
                     frame_time_collect.sort(key=lambda x: (int(x), x), reverse=True)
 
             for frame_control in _soup_final.find_all():
-                if (frame_control.name == 'Item' or frame_control.name == 'AniFrame') and frame_control.get('time'):
+                if (frame_control.name == 'Item' or frame_control.name == 'AniFrame') and ((frame_control.get('time') and frame_control.get('time').isdigit()) or (frame_control.get('dtime') and frame_control.get('dtime').isdigit())):
                     frame_max_time = frame_time_collect[0]
                     frame_control_time[1] = int(frame_max_time)
                     frame_control_time[2] = int(frame_control_time[1] + 1)
@@ -1975,8 +1055,8 @@ def getAlias():
                 if frame_control.name == 'FramerateController':
                     frame_control.contents = list(filter(lambda x: x != '\n', frame_control.contents))
                     control_point_num = len(frame_control.contents)
-                    print(frame_time_collect)
-                    print(frame_control_time)
+            print(frame_time_collect)
+            print(frame_control_time)
 
             if control_point_num == 3:
                 frame_controller = _soup_final.FramerateController
@@ -2073,7 +1153,7 @@ def getAlias():
         if src_exp_mode:
             print('srcExp:')
             for image in _soup_final.find_all():
-                if image.get('src') and 'srcid' in image.attrs:
+                if image.get('src') and 'srcid' in image.attrs and image.get('_src_exp_mode') != '0' and '.9' not in image.get('src'):
                     image_srcid = str(image.get('srcid'))
                     # print(image_srcid)
                     # and '%' not in image_srcid
@@ -2090,6 +1170,15 @@ def getAlias():
                     del image['src']
                     del image['srcid']
             print('\t')
+
+        # 存储Key
+        if manifest_root == 'Lockscreen':
+            key_var = _soup_final.new_tag('Var')
+            key_var['name'] = 'Key'
+            key_var['expression'] = f"'{dev.Refactor.refactor.aes_encode(str(var_alias_dict))}'"
+            # key_var['type'] = 'byteArray'
+            key_var['type'] = 'string'
+            _soup_final.Lockscreen.Var.insert_before(key_var)
 
         soup_dom_str = str(_soup_final.prettify(indent_width=1))\
             .replace('    ', '\t').replace('&amp;#', '&#')\
@@ -2126,41 +1215,14 @@ def getAlias():
         import tools.order
         tools.order.orderXML(_success_xml)
     if var_get_source:
-        import tools.anti
-        tools.anti.convert_to_source(_anti_xml, _success_xml, _source_xml, 1, 0)
+        if 'Key' in soup_dom_str:
+            import tools.anti_new
+            tools.anti_new.convert_to_source(_success_xml, _source_xml, 0)
+        else:
+            import tools.anti
+            tools.anti.convert_to_source(_anti_xml, _success_xml, _source_xml, 1, 0)
 
     # End
-
-    if var_alias_anti == 1:
-
-        var_from_target.sort(reverse=False)
-        # print('var_from_target: ', var_from_target, '\n')
-        alias_str = '<AntiAliasing version="1"></AntiAliasing>'
-        _soup = BeautifulSoup(alias_str, features="lxml-xml")
-        for alias in _soup.find_all('AntiAliasing'):
-            for _j in range(len(var_from_target)):
-                alias_dom_concat = 'm' + hex(zlib.crc32(str(var_from_target[_j]).encode('UTF-8')))[2:].capitalize()
-                alias_dom_hex = 'm' if len(alias_dom_concat) == 8 else ''
-                alias_str_new = _soup.new_tag('Aliasing', initial=str(var_from_target[_j]), after=str(alias_dom_concat + alias_dom_hex))
-                alias.append(alias_str_new)
-
-        with open(_anti_xml, 'w', encoding='utf-8') as _f0:
-            _f0.write(str(_soup.prettify(indent_width=1)).replace('    ', '\t'))
-
-    else:
-        if os.path.exists(_anti_xml): os.remove(_anti_xml)
-
-    if count <= 1 and var_alias_list == 1:
-
-        alias_list = '<DisableAliasingList></DisableAliasingList>'
-        _soup = BeautifulSoup(alias_list, features="lxml-xml")
-        for anti_list in _soup.find_all('DisableAliasingList'):
-            for alias_list in range(len(var_forbid_name)):
-                alias_list_str = _soup.new_tag('DisableAliasing', attrs={'name': str(var_forbid_name[alias_list])})
-                print(alias_list_str)
-                anti_list.append(alias_list_str)
-        with open(_anti_list_xml, 'w', encoding='utf-8') as _f0:
-            _f0.write(str(_soup.prettify(indent_width=1)).replace('    ', '\t'))
 
     return
 
@@ -2176,41 +1238,7 @@ for root in soup.find_all(True, limit=1):
     manifest_sw = int(root.get('screenWidth'))
     manifest_sh = int(root.get('screenHeight', -1))
 
-# globalPersist / _glb变量排除
-# for global_persist in soup.find_all(globalPersist=True, _glb=True):
-#     if global_persist.get('name') is not None:
-#         print(f"globalPersist: {global_persist['name']}")
-#         var_forbid_name.append(str(global_persist['name']))
-
-# globalPersist变量排除
-for global_persist in soup.find_all(globalPersist=True):
-    if global_persist.get('name') is not None:
-        print(f"globalPersist: {global_persist['name']}")
-        var_forbid_name.append(str(global_persist['name']))
-
-# _glb变量排除
-for global_persist in soup.find_all(_glb=True):
-    if global_persist.get('name') is not None:
-        print(f"globalPersist: {global_persist['name']}")
-        var_forbid_name.append(str(global_persist['name']))
-
 # <Import name="mGlobalVar" globalPersist="true" />
-
-# 输出除Lockscreen外的所有标签 
-# re.compile("^(?!.*Lockscreen)^(?!.*Widget)^(?!.*Icon)")
-
-# 将 SysTime 标签前置
-# for _sys in soup.find_all('SysTime'):
-#     # print(_sys.name)
-#     new_sys_time = _sys
-#     _sys.extract()
-#
-# if soup.find_all('SysTime'):
-#     for _r in soup.find_all(True, limit=2):
-#         if _r.name != manifest_root:
-#             _r.insert_before(new_sys_time)
-#             print(soup)
-#             soup = BeautifulSoup(str(soup), 'lxml-xml')
 
 print('Disabled:')
 
@@ -2240,17 +1268,12 @@ for tag in soup.find_all(True):
 
                 # 检测库标签是否有[tag_keys]属性，如有则不给变量加随机值后缀
 
-                tags_port = str(tag.get('_port'))
-                if tags_port == 'None':
-                    tags_port = str(tag.get('_importlib'))
-                    if tags_port == 'None':
-                        tags_port = str(tag.get('_globalport'))
-                        if tags_port == 'None':
-                            tags_port = str(tag.get('_newport'))
-                if tags_port != 'None':
-                    var_alias_all = 0
+                tags_port = tag.get('_port')
+                if tags_port and not tag.name.startswith('i_'):
+                    is_port_mode = 1
                 else:
-                    var_alias_all = 1
+                    is_port_mode = 0
+                # print(is_port_mode, tag.name)
 
                 if len(tags_lib) > 0:
 
@@ -2323,27 +1346,27 @@ for tag in soup.find_all(True):
                                 # print('lib_placeholder_to_string: ', lib_placeholder_to_string)
 
                     # 获取库文件主内容并替换Attributes
+                    lib_dom_id = 0
+                    lib_dom_input = None
                     if lib[i] == 'InputDate' and tag.get('_id') is not None:
                         lib_dom_id = 1
-                        # _port
-                        var_alias_all = 1
-                        lib_dom_input = tag.get('_id')
-                    else:
-                        var_alias_all = 0
-                        lib_dom_id = 0
-                        lib_dom_input = None
+                        is_port_mode = 0
+                        lib_dom_input = tag.get('_id', '')
+                        # print(lib_dom_id, lib_dom_input, is_port_mode)
+                    if lib[i] == 'BattImage':
+                        is_port_mode = 1
 
-                    getLibContent(lib[i], lib_dom_id, lib_dom_input)
+                    getLibContent(lib[i], lib_dom_id, lib_dom_input, is_port_mode)
 
                 # print('l_lib: ',len(lib_slots))
                 # print('l_tags: ',len(tags_slots), '\n')
                 # print('lib_slots: ', lib_slots, '\n')
                 # print('tags_slots: ', tags_slots, '\n')
 
+# time.sleep(1000)
+
 # 重新解析XML
 soup = BeautifulSoup(open(parse_xml, encoding="utf-8"), features="lxml-xml")
-for name_exp in soup.find_all(nameExp=True):
-    print(f"nameExp[{randomHex(8)}]: {str(name_exp)}")
 dev_time = getTimeSys()
 soup_indent = str(soup)
 # print('soup: ', soup)
@@ -2409,27 +1432,18 @@ getAlias()
 
 
 def compressMAML():
-
     # 读取 XML 文件
     with open(maml_main_xml, "rb") as file:
         xml_string = file.read()
-
     # 解析 XML
     _soup = BeautifulSoup(xml_string, "xml")
-
     # 查找并删除带有 disabled 属性且值不为0的标签
     for element in _soup.find_all(attrs={"disabled": lambda x: x and x != "0"}):
         element.extract()
-
     # 获取更新后的 XML 字符串
     updated_xml = str(_soup)
-
     # 计算字符串的大小（KB）
     size_in_kb = len(updated_xml.encode("utf-8")) / 1024
-
-    # 打印删除后的 XML 大小
-    # print(f"删除后的 XML 大小：{size_in_kb:.2f} KB")
-
     return size_in_kb
 
 
@@ -2443,7 +1457,7 @@ def calculateMemory(folder_path=None):
     folder_path = os.path.dirname(folder_path)
 
     total_memory = 0
-    image_compress_ratio = 720 / 1080
+    image_compress_ratio = 720 / 960
     image_compress_mode = 0
 
     print(f'CompressMode: {image_compress_mode}')
@@ -2451,34 +1465,37 @@ def calculateMemory(folder_path=None):
         if len(_files) <= 1000:
             for filename in _files:
                 _file_path = os.path.join(_root, filename)
+                _file_path_abs = _file_path.replace(folder_path_abs, '')
+
                 if filename.startswith("._") or filename == ".DS_Store":
                     try:
                         os.remove(_file_path)
                         print(f'Remove: {filename}')
                     except Exception as _file_e:
-                        print(f"Exception: {_file_e}")
+                        pass
+                        # print(f"Exception: {_file_e}")
 
-                if any(_file_path.endswith(ext) for ext in ['.xml', '.mp3', '.mp4']):
+                if any(_file_path.endswith(ext) for ext in ['.xml', '.mp3', '.mp4']) or \
+                        _file_path_abs.startswith('gitignore'):
                     continue  # 检查文件扩展名是否为.xml .mp3 .mp4 跳过
                 try:
                     image = Image.open(_file_path)
                     width, height = image.size
                     memory_mb = width * height * 4 / (1024 * 1024)
                     # print(_file_path)
-                    # (width >= 1080 and height >= 960) or (width >= 540 and height >= 1200):
 
                     if not any(os.path.basename(_file_path) == ext for ext in ['bg.png', 'statusbar.png']):
                         if memory_mb >= 1:
-                        # if memory_mb >= 3 and width > 720:
+                            # if memory_mb >= 3 and width > 720:
                             print(f"Oversize: {width} x {height}, {_file_path.replace(folder_path_abs, '')}, {memory_mb} MB")
-                            _file_path_abs = _file_path.replace(folder_path_abs, '')
                             # if (os.path.dirname(_file_path).endswith('assets') or os.path.dirname(_file_path).endswith('a') or os.path.dirname(_file_path).endswith('b')) \
                             if (_file_path_abs.startswith('assets') or _file_path_abs.startswith('bz')) and image_compress_mode:
                                 new_width = int(width * image_compress_ratio)
                                 new_height = int(height * image_compress_ratio)
                                 resized_image = image.resize((new_width, new_height))
                                 resized_image.save(_file_path)
-                                print(f"Compressed: {new_width} x {new_height}, {_file_path_abs}, {memory_mb} MB")
+                                new_memory_mb = new_width * new_height * 4 / (1024 * 1024)
+                                print(f"Compressed: {new_width} x {new_height}, {_file_path_abs}, {new_memory_mb} MB")
                                 # image.size = width * image_compress_ratio, height * image_compress_ratio
                                 # image.save(_file_path)
                                 width = new_width
@@ -2506,7 +1523,7 @@ def calculateMemory(folder_path=None):
     total_memory_unit = 1 if strict_mode else 0.88230
     total_memory_heytap = 2 * total_memory / (1024 * 1024)
     total_memory_harmony = (6 + 128 + total_memory_heytap)
-    total_memory_origin = total_memory_unit * (total_memory_harmony - 128 - 6)
+    total_memory_origin = total_memory_unit * (total_memory_harmony + 300 * 0)
     print(f"Memory: {total_memory_origin * 1024 :.0f} KB | 614400 KB")  # 输出总内存占用
     print('\t')
 
@@ -2622,7 +1639,7 @@ local_xml = os.path.abspath(sys.argv[0]).replace('main.py', maml_rule_file)
 
 if 'PYCHARM_HOSTED' in os.environ and maml_main_xml != local_xml and (maml_folder_name == 'advance' or maml_folder_name.startswith('widget')):
     calculateMemory()
-    apply_test = 1
+    apply_test = 0
     ip_address_id = 4 if wifi_in_vgoing else 0
     # 0:K40S  1:K20Pro 2:Hotpot K40S 3:Hotpot K20Pro
     ip_address_arr = ('192.168.31.241', '192.168.31.201', '172.20.10.2', '172.20.10.8', '192.168.0.216')
@@ -2647,8 +1664,8 @@ logging.info(log_message)
 
 # 连接到数据库
 conn = sqlite3.connect(os.path.join(database_path, "counter.db"))
-conn.execute("INSERT INTO counter (count, source, compress_rate, run_time, dev_time) VALUES (?, ?, ?, ?, ?)",
-             (count, maml_main_xml, compress_rate, run_time, dev_time))
+conn.execute("INSERT INTO counter (count, source, compress_rate, run_time, dev_time, anti_json) VALUES (?, ?, ?, ?, ?, ?)",
+             (count, maml_main_xml, compress_rate, run_time, dev_time, str(var_alias_dict)))
 conn.commit()
 # 关闭数据库连接
 conn.close()

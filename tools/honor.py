@@ -68,6 +68,11 @@ def detect_lockscreen_view(process_xml):
 
 def process_lockscreen_var(process_xml):
     soup = BeautifulSoup(open(process_xml), 'lxml-xml')
+    start_tag = soup.new_tag('Start')
+    # print(start_tag)
+    lockscreen = soup.Lockscreen
+    lockscreen.insert(1, start_tag)
+
     for tag in soup.find_all('VariableCommand'):
         # 获取 VariableCommand 属性
         if (tag.parent.name == 'Trigger' and tag.parent.parent.get('threshold')) or \
@@ -80,7 +85,7 @@ def process_lockscreen_var(process_xml):
 
             # 输出同名变量
             for var in soup.find_all('Var'):
-                if var['name'] == var_comp_name and var['expression'] != var_comp_exp:
+                if var['name'] == var_comp_name and var.get('expression') and var['expression'] != var_comp_exp:
                     print(var, var_comp_exp)
 
             # 查询是否有同名的 Var 变量
@@ -100,7 +105,7 @@ def process_lockscreen_var(process_xml):
     for intent in soup.find_all('IntentCommand'):
         package_name = intent.get('package')
         class_name = intent.get('class')
-        if str(package_name).startswith('com.huawei.')\
+        if str(package_name).startswith('com.huawei.') or str(class_name).startswith('com.huawei.')\
                 or (str(package_name) == 'com.android.deskclock' and str(class_name) == 'com.android.deskclock.AlarmsMainActivity')\
                 or (str(package_name) == 'com.android.calendar' and str(class_name) == 'com.android.calendar.AllInOneActivity'):
             intent.extract()
@@ -118,6 +123,13 @@ def process_lockscreen_var(process_xml):
             var['type'] = 'string'
         else:
             var['type'] = 'number'
+
+        # if lockscreen.ExternalCommands:
+        #     lockscreen.ExternalCommands.insert_after(var)
+        # else:
+        #     start_tag.insert_after(var)
+
+    start_tag.decompose()
 
     with open(process_xml, 'w', encoding='utf-8') as f:
         f.write(str(soup.prettify(indent_width=4).replace('    ', '\t').replace('@_description', '@Weather.today.weatherIconDes').replace('ifelse(ne(#LangsId,2),#time+#time_sys,round(#S_TimeLoop))', '#time')))

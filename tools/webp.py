@@ -11,8 +11,8 @@ def convert_images_to_webp(input_folder, output_folder):
     # 遍历输入文件夹中的所有文件和子文件夹
     for root, dirs, files in os.walk(input_folder):
         for filename in files:
-            if filename.endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif')):
-            # if filename.endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif', '.webp')):
+            # if filename.endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif')):
+            if filename.endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif', '.webp')):
                 # 构建输入和输出文件的完整路径
                 input_path = os.path.join(root, filename)
                 relative_path = os.path.relpath(input_path, input_folder)
@@ -25,15 +25,16 @@ def convert_images_to_webp(input_folder, output_folder):
 
                 # 打开图像并保存为 WebP 格式
                 img = Image.open(input_path)
-                img_init = 'img_0.jpg'
-                img_last = 'img_178.jpg'
-                if filename == img_init or filename == img_last:
-                    resize = 0
-                else:
-                    resize = 1
+                # img_init = 'dt1_0.webp'
+                # img_last = 'dt1_22.webp'
+                # if filename == img_init or filename == img_last:
+                #     resize = 0
+                # else:
+                #     resize = 1
+                resize = 1
                 if resize:
                     width, height = img.size
-                    image_compress_ratio = 720 / 1080
+                    image_compress_ratio = 720 / 1080 * 1
                     new_width = int(width * image_compress_ratio)
                     new_height = int(height * image_compress_ratio)
                     img = img.resize((new_width, new_height))
@@ -45,7 +46,7 @@ def convert_images_to_webp(input_folder, output_folder):
                 print(f"Converted {relative_path} to {os.path.basename(output_path)}")
 
                 # 删除原始文件
-                os.remove(input_path)
+                # os.remove(input_path)
                 print(f"Removed original file: {relative_path}")
 
 

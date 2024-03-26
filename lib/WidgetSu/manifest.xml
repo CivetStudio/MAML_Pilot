@@ -17,6 +17,11 @@
 		<Trigger action="init,resume" >
 			<VariableCommand name="w" expression="substr(@folder,7,1)" type="int" />
 			<VariableCommand name="h" expression="substr(@folder,9,1)" type="int" />
+			<VariableCommand name="s.0" type="number" expression="max(#view_width/#__view_width,#view_height/#__view_height)" />
+			<VariableCommand name="s.1" type="number" expression="min(#view_width/#__view_width,#view_height/#__view_height)" />
+			<VariableCommand name="s.2" type="number" expression="#view_width/#__view_width" />
+			<VariableCommand name="s.3" type="number" expression="#view_height/#__view_height" />
+
 			<IfCommand ifCondition="eqs(@isPreviewMode,'true')" >
 				<Consequent>
 					<FrameRateCommand rate="$fps" />
@@ -30,29 +35,84 @@
 				</Alternate>
 			</IfCommand>
 			<AnimationCommand target="Fra" command="play" condition="eqs(@isPreviewMode,'true') != 1" />
-			<!-- <BinderCommand name="getDeviceInfo" command="refresh" /> -->
-			<!-- <BinderCommand name="getMemoryData" command="refresh" /> -->
 		</Trigger>
 		<Trigger action="resume" >
 			<VariableCommand name="p" expression="0" type="number" />
 		</Trigger>
 		<Trigger action="pause" >
 			<VariableCommand name="p" expression="1" type="number" />
+			<VariableCommand name="_onPauseVar" expression="#_onPauseVar+1" type="number" />
 		</Trigger>
 	</ExternalCommands>
 
-	<!-- <Var name="updateMemoryInfo" expression="#second" threshold="5" >
-		<Trigger>
-			<BinderCommand name="getMemoryData" command="refresh" />
-			<ExternCommand command="__clearResource" />
-			<FunctionCommand target="getMemoryLevel" />
-		</Trigger>
-	</Var>
+	<C_Array count="3" indexName="i" reversed="1" >
 
-	<Function name="getMemoryLevel" >
-		<VariableCommand name="__memoryOccupied" expression="#_memoryOccupied" type="number" />
-		<VariableCommand name="__memoryLevel" expression="int(100-#__memoryOccupied/#__memoryTotal*100)" type="number" condition="#__memoryTotal" />
-	</Function> -->
+		<ExternalCommands>
+			<Trigger action="init,resume" >
+				<AnimationCommand target="mResumeAni" targetIndex="#i" command="play(0,0)" />
+				<AnimationCommand target="mResumeAni" targetIndex="#i" command="play" />
+			</Trigger>
+			<Trigger action="pause" >
+				<AnimationCommand target="mResumeAni" targetIndex="#i" command="play(0,0)" />
+			</Trigger>
+		</ExternalCommands>
+
+	</C_Array>
+
+	<Array count="3" indexName="i" >
+		<Var name="mResumeAni" type="number[]" index="#i" size="3" >
+			<VariableAnimation loop="false" initPause="true" >
+				<Item value="0" dtime="0" />
+				<Item value="0" dtime="#i*100" easeType="SineEaseOut" />
+				<Item value="1" dtime="500" />
+			</VariableAnimation>
+		</Var>
+	</Array>
+
+	<!-- <i_Hidden alias="getMemoryInfo" >
+
+		<ExternalCommands>
+			<Trigger action="init,resume" >
+				<BinderCommand name="getDeviceInfo" command="refresh" />
+				<BinderCommand name="getMemoryData" command="refresh" />
+			</Trigger>
+		</ExternalCommands>
+
+		<Var name="updateMemoryInfo" expression="#second" threshold="5">
+			<Trigger>
+				<BinderCommand name="getMemoryData" command="refresh" />
+				<ExternCommand command="__clearResource" />
+				<FunctionCommand target="getMemoryLevel" />
+			</Trigger>
+		</Var>
+
+		<Function name="getMemoryLevel">
+			<VariableCommand name="__memoryOccupied" expression="#_memoryOccupied" type="number" />
+			<VariableCommand name="__memoryLevel" expression="int(100-#__memoryOccupied/#__memoryTotal*100)" type="number" condition="#__memoryTotal" />
+		</Function>
+
+		<VariableBinders>
+
+			<ContentProviderBinder name="getDeviceInfo" uri="content://com.miui.personalassistant.deviceinfo" countName="hasdeviceinfo">
+				<Variable name="_memoryTotal" type="string" column="ram" />
+				<Trigger>
+					<VariableCommand const="true" name="__memoryTotal_Str" expression="strReplaceAll(@_memoryTotal,'GB','')" type="string" />
+					<VariableCommand const="true" name="__memoryTotal" expression="preciseeval(@__memoryTotal_Str,2)*1000000000*0.98979833333" type="number" />
+				</Trigger>
+			</ContentProviderBinder>
+			<ContentProviderBinder name="getMemoryData" uri="content://com.miui.securitycenter.widgetProvider/getMemoryData" countName="hasGetMemoryData">
+
+				<Variable alias="当前占用" name="_memoryOccupied" type="long" column="memoryOccupied" />
+
+				<Variable alias="可清理" name="_memoryCleanable" type="long" column="memoryCleanable" />
+				<Trigger>
+					<FunctionCommand target="getMemoryLevel" />
+				</Trigger>
+			</ContentProviderBinder>
+
+		</VariableBinders>
+
+	</i_Hidden> -->
 
 	<VariableBinders>
 
@@ -65,28 +125,16 @@
 			</Trigger>
 		</BroadcastBinder>
 
-		<!-- <ContentProviderBinder name="getDeviceInfo" uri="content://com.miui.personalassistant.deviceinfo" countName="hasdeviceinfo" >
-			<Variable name="_memoryTotal" type="string" column="ram" />
-			<Trigger>
-				<VariableCommand const="true" name="__memoryTotal_Str" expression="strReplaceAll(@_memoryTotal,'GB','')" type="string" />
-				<VariableCommand const="true" name="__memoryTotal" expression="preciseeval(@__memoryTotal_Str,2)*1000000000*0.98979833333" type="number" />
-			</Trigger>
-		</ContentProviderBinder>
-		<ContentProviderBinder name="getMemoryData" uri="content://com.miui.securitycenter.widgetProvider/getMemoryData" countName="hasGetMemoryData">
-			当前占用
-			<Variable name="_memoryOccupied" type="long" column="memoryOccupied" />
-			可清理
-			<Variable name="_memoryCleanable" type="long" column="memoryCleanable" />
-			<Trigger>
-				<FunctionCommand target="getMemoryLevel" />
-			</Trigger>
-		</ContentProviderBinder> -->
-
 	</VariableBinders>
 
 	<Var name="folder" expression="'widget_$size'" type="string" />
 	<Var name="isPreviewMode" expression="eqs(@isPreviewMode,'true')" type="number" />
+	<Var name="CurrentHour" expression="#hour24" type="number" />
 	<Var name="hours" expression="ifelse(eq(#time_format,1),#hour24,ne(#hour12,0),#hour12,12)" />
+	<Var name="hrs.0" expression="int(#hours/10)" type="number" />
+	<Var name="hrs.1" expression="int(#hours%10)" type="number" />
+	<Var name="min.0" expression="int(#minute/10)" type="number" />
+	<Var name="min.1" expression="int(#minute%10)" type="number" />
 	<Var name="monthStr" values="'日','一','二','三','四','五','六','七','八','九','十','十一','十二'" expression="''" type="string[]" />
 	<Var name="monthStrEn" values="'January','February','March','April','May','June','July','August','September','October','November','December'" expression="''" type="string[]" />
 	<Var name="weekStrEn" values="'Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'" expression="''" type="string[]" />
@@ -100,6 +148,10 @@
 	<Var name="w" expression="substr(@folder,7,1)" type="int" />
 	<Var name="h" expression="substr(@folder,9,1)" type="int" />
 	<Var name="s" type="number[]" values="max(#view_width/#__view_width,#view_height/#__view_height),min(#view_width/#__view_width,#view_height/#__view_height),#view_width/(#__view_width+6*0),#view_height/(#__view_height+6*0)" />
+	<Var name="s.0" type="number" expression="max(#view_width/#__view_width,#view_height/#__view_height)" />
+	<Var name="s.1" type="number" expression="min(#view_width/#__view_width,#view_height/#__view_height)" />
+	<Var name="s.2" type="number" expression="#view_width/#__view_width" />
+	<Var name="s.3" type="number" expression="#view_height/#__view_height" />
 
 	<Function name="Health" >
 		<IntentCommand action="android.intent.action.VIEW" uri="com.mi.health://localhost/d?action=steps&amp;origin=mithemelocksreen" package="com.mi.health" />
@@ -133,6 +185,9 @@
 	</Function>
 	<Function name="Memory" >
 		<IntentCommand action="com.miui.intent.action.CLEAN_MEMORY" broadcast="true" />
+	</Function>
+	<Function name="Security" >
+		<IntentCommand package="com.android.settings" class="com.miui.securitycenter.Main" />
 	</Function>
 	<Function name="SecurityScan" >
 		<IntentCommand action="miui.intent.action.SECURITY_CENTER" package="com.miui.securitycenter" class="com.miui.securityscan.MainActivity">
@@ -209,6 +264,12 @@
 	</Function>
 	<Function name="Recorder" >
 		<IntentCommand package="com.android.soundrecorder" class="com.android.soundrecorder.SoundRecorder" />
+	</Function>
+	<Function name="GameCenter" >
+		<IntentCommand action="android.intent.action.MAIN" package="com.xiaomi.gamecenter" class="com.xiaomi.gamecenter.ui.MainTabActivity" />
+	</Function>
+	<Function name="Music" >
+		<IntentCommand package="com.miui.player" class="com.miui.player.ui.MusicBrowserActivity" />
 	</Function>
 
 </Template>

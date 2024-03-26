@@ -52,7 +52,7 @@ def zip_folder(folder_path, zip_path):
     with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
         for root, dirs, files in os.walk(folder_path):
             for file in files:
-                if any(item in file for item in ['maml.xml', 'source.xml', 'anti.xml']):
+                if any(item == file for item in forbid_items):
                     file_path = os.path.join(root, file)
                     print('\t', file_path, 'Removed👌')
                 else:
@@ -88,7 +88,7 @@ tmp_huawei = temp_folder + '_' + 'huawei'
 tmp_honor = temp_folder + '_' + 'honor'
 tmp_oppo = temp_folder + '_' + 'oppo'
 tmp_vivo = temp_folder + '_' + 'vivo'
-async_load = 'true'
+async_load = 'false'
 
 hw_theme_xml = f"""<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <HWTheme>
@@ -164,6 +164,8 @@ def pack_huawei(path, filename="HUAWEI"):
 
     shutil.move(tmp_huawei, huawei_path)
     clean_cache(huawei_path)
+    platform_id = None
+    update_array(platform_id)
     zip_folder(huawei_path, huawei_zip_path)
 
     if os.path.exists(tmp_huawei):
@@ -195,13 +197,18 @@ def pack_honor(path, filename="HONOR"):
     with open(os.path.join(os.path.abspath(tmp_honor_0), 'theme.xml'), "w") as xml_file:
         xml_file.write(ho_theme_xml)
     copy_folder_contents(path, tmp_honor_1)
-    process_xml(os.path.join(tmp_honor_1, 'manifest.xml'))
+
+    process_xml_honor = 1
+    if process_xml_honor:
+        process_xml(os.path.join(tmp_honor_1, 'manifest.xml'))
 
     honor_path = os.path.abspath(tmp_honor).replace(tmp_honor, 'honor')
     honor_zip_path = os.path.join(os.path.dirname(path), f'{theme_name}_{filename}.zip')
 
     shutil.move(tmp_honor, honor_path)
     clean_cache(honor_path)
+    platform_id = None
+    update_array(platform_id)
     zip_folder(honor_path, honor_zip_path)
 
     if os.path.exists(tmp_honor):
@@ -244,6 +251,8 @@ def pack_oppo(path, filename="OPPO"):
     oppo_lockstyle_path_f = os.path.join(tmp_oppo, 'lockstyle')
 
     clean_cache(tmp_oppo_1)
+    platform_id = 'oppo'
+    update_array(platform_id)
     zip_folder(tmp_oppo_0, oppo_lockstyle_path)
     shutil.move(oppo_lockstyle_path, oppo_lockstyle_path_f)
     shutil.rmtree(tmp_oppo_1)
@@ -292,6 +301,8 @@ def pack_vivo(path, filename="VIVO"):
 
     vivo_lockscreen_path = os.path.join(os.path.dirname(tmp_vivo_1), f'{time_sys}.zip')
     clean_cache(tmp_vivo_1)
+    platform_id = None
+    update_array(platform_id)
     zip_folder(tmp_vivo_1, vivo_lockscreen_path)
     shutil.rmtree(tmp_vivo_1)
     os.mkdir(tmp_vivo_1)
@@ -389,8 +400,25 @@ def main(platform=1, hw=0, oppo=0, vivo=0, honor=0):
         print(f"Error: {e}")
 
 
+def update_array(platform_id):
+    global forbid_items
+
+    is_oversea_mode = 0
+    if is_oversea_mode:
+        forbid_items = ['maml.xml', 'source.xml', 'anti.xml', 'oversea.jpg', 'red.png']
+    else:
+        forbid_items = ['maml.xml', 'source.xml', 'anti.xml', 'red.png']
+
+    if platform_id is None:
+        forbid_items_oppo = ['bg.png', 'bs.jpg']
+        if is_oversea_mode:
+            forbid_items = forbid_items + forbid_items_oppo
+        else:
+            forbid_items = forbid_items + forbid_items_oppo
+
+
 # 执行主程序
 if __name__ == '__main__':
     current_dir = os.path.dirname(sys.argv[0])
     # platform = 1, hw = 0, oppo = 0, vivo = 0, honor = 0
-    main(1, 1, 0, 0, 0)
+    main(0, 1, 0, 1, 1)

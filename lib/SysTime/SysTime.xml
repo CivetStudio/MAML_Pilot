@@ -19,6 +19,7 @@
 			<VariableCommand name="hrs.1" expression="int(#hours-int(#hours/10)*10)" type="number" />
 			<VariableCommand name="min.0" expression="int(#minute/10)" type="number" />
 			<VariableCommand name="min.1" expression="int(#minute-int(#minute/10)*10)" type="number" />
+			<VariableCommand name="_bl" expression="#battery_level" type="number" />
 
 			<!-- 判断是否为夜晚 0:白天 6-18时 1:夜晚 -->
 			<VariableCommand name="WeatherIsNight" expression="not(ge(#CurrentHour,6)*lt(#CurrentHour,18))" />

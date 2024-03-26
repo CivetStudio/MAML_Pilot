@@ -14,7 +14,7 @@ BeautifulSoup.prettify = prettify
 xml_content = """
 <MAML>
     
-    <C_Array count="3" indexName="_i" >
+    <C_Array count="1" indexName="_i" >
         
         <Button x="50" y="100+106*#_i" w="400" h="100" visibility="1">
             <Triggers>
@@ -134,7 +134,13 @@ def c_array(code):
 
             text = array.find_all(lambda tag: tag.name in tag_list)
 
-            for i in range(tags_count):
+            reversed_add_mode = bool(array.get('reversed'))
+            if reversed_add_mode:
+                range_i = range(tags_count-1, -1, -1)
+            else:
+                range_i = range(tags_count)
+
+            for i in range_i:
                 for t in range(len(text)):
                     soup_child_t = BeautifulSoup(str(text[t]), 'lxml-xml')
                     # new_group_t = soup_child_t.new_tag('Group')

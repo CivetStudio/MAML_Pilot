@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Template>
+	<Props>
+		<item name="left_icon_src" type="bitmap" description="左侧小图标" default="defaultScreen_src/left_icon.png"/>
+		<item name="right_icon_src" type="bitmap" description="右侧小图标" default="defaultScreen_src/right_icon.png"/>
+		<item name="bottom_icon_margin" type="number" default="100" description="主屏底部 小图标边距" />
+		<item name="bottomIcon_alpha" type="number" description="主屏底部 小图标透明度" default="178"/>
+		<item name="touchable" type="bool" description="屏幕可滑动" default="true"/>
+		<item name="unlock" type="bool" description="屏幕可解锁" default="true"/>
+		<item name="w" type="number" description="宽度" default="1080"/>
+		<item name="h" type="number" description="高度" default="2400"/>
+		<item name="leftBlack" type="bool" description="负一屏黑色遮罩" default="true"/>
+	</Props>
+	
+	<FramerateController name="framerate_ani" initPause="true" loop="false">
+		<ControlPoint frameRate="60" time="0" />
+		<ControlPoint frameRate="60" time="2000" />
+		<ControlPoint frameRate="30" time="2001" />
+	</FramerateController>
+
+	<Button x="0" y="0" w="1080" h="#screen_height">
+		<Triggers>
+			<Trigger action="down,up,cancel">
+				<AnimationCommand target="framerate_ani" command="play" />
+			</Trigger>
+			<Trigger action="move">
+				<AnimationCommand target="framerate_ani" command="play" condition="#frame_rate{55" />
+			</Trigger>
+		</Triggers>
+	</Button>
+
+	<ExternalCommands>
+		<Trigger action="resume">
+			<!-- 从负一屏或相机界面后界面退出后图标界面复位 -->
+			<VariableCommand name="move_x1" expression="0" />
+			<VariableCommand name="move_x2" expression="0" />
+			<AnimationCommand target="move_go" command="play" />
+			<AnimationCommand target="unlock_back" command="play(0,0)"/>
+		</Trigger>
+		<Trigger action="pause" >
+			<AnimationCommand target="unlock_back" command="play(0,0)"/>
+		</Trigger>
+	</ExternalCommands>
+
+	<Rectangle x="0" y="0" w="1080" h="#screen_height" fillColor="#000000" alpha="#move_x*100/1080" inset="$leftBlack"/>
+	
+	<!-- 快捷功能图标 -->
+	<Group x="#move_x" y="#screen_height-($bottom_icon_margin)" alpha="($bottomIcon_alpha)+#move_y*5">
+		<Image name="left_icon" x="$bottom_icon_margin" y="0" align="center" alignV="center" src="$left_icon_src"  centerX="#left_icon.bmp_width/2" centerY="#left_icon.bmp_height/2" scale="(1-#move_y/300))"/>
+		<Image name="right_icon" x="1080-($bottom_icon_margin)" y="0" align="center" alignV="center" src="$right_icon_src" centerX="#right_icon.bmp_width/2" centerY="#right_icon.bmp_height/2" scale="1/((1-#__pluginWallpaper_move/60)*(1-#move_y/300))"/>
+	</Group>
+	<!-- 右相机页 -->
+	<Rectangle x="1080+#move_x" w="1080" h="#screen_height" fillColor="#000000" visibility="#move_x{0"/>
+	<Image x="1080+#move_x" y="#screen_height+(140*(#screen_height==1920))" alignV="bottom" src="defaultScreen_src/cam_bg_0.png" visibility="#move_x{0" />
+
+	<!-- 左右滑屏按钮 -->
+	<Group visibility="#move_y==0**$#notice_down$==0" inset="$touchable">
+		<!-- 左右移动变量，预留50像素判断是向左右滑动还是上下滑动，当滑动距离超过50时#move_x变量才不为0-->
+		<Var name="move_x" expression="max(min(ifelse(#touch_x}#touch_begin_x,max(#touch_move-50,0),min(#touch_move+50,0))+#move_go,1080),-1080)" />
+		<Var name="move_go">
+			<VariableAnimation initPause="true" loop="false">
+				<Item value="#move_x1" time="0" easeType="QuadEaseOut" />
+				<Item value="#move_x2" time="260"/>
+			</VariableAnimation>
+		</Var>
+		<Button w="1080" h="#screen_height" >
+			<Triggers>
+				<Trigger action="move">
+					<VariableCommand name="touch_move" expression="#touch_x-#touch_begin_x" />
+				</Trigger>
+				<!-- 判断回弹 -->
+				<Trigger action="up,cancel">
+					<VariableCommand name="move_x1" expression="#move_x2+ifelse(#touch_x}#touch_begin_x,max(#touch_move-50,0),min(#touch_move+50,0))"/>
+					<VariableCommand name="move_x2" expression="ifelse(abs(#touch_x-#touch_begin_x)}300,max(min(#move_x2+ifelse(#touch_x}#touch_begin_x,1,-1)*1080,1080),-1080),#move_x2)" />
+					<AnimationCommand target="move_go" command="play" />
+					<VariableCommand name="touch_move" expression="0" />
+				</Trigger>
+				<Trigger action="up,cancel" condition="abs(#touch_x-#touch_begin_x)}300">
+					<!-- 不解锁进入相机界面 -->
+					<IntentCommand action="android.intent.action.MAIN" package="com.android.camera" class="com.android.camera.Camera" condition="#touch_begin_x-#touch_x}300**#move_x{0">
+						<Extra name="ShowCameraWhenLocked" type="boolean" expression="1"/>
+						<Extra name="StartActivityWhenLocked" type="boolean" expression="1"/>
+					</IntentCommand>
+				</Trigger>
+			</Triggers>
+		</Button>
+	</Group>
+	<!-- 解锁 -->
+	<Group visibility="#move_x==0**$#notice_down$==0" inset="$unlock">
+		<!-- 上划位移变量，预留50像素判断是向左右滑动还是向上滑动，当向上滑动距离超过50时#move_y变量才不为0 -->
+		<Var name="move_y" expression="min(#touch_y-#touch_begin_y+50,0)*#unlock_flag+#unlock_back" />
+		<!-- 上划解锁未到解锁区域时返回弹动动效 -->
+		<Var name="unlock_back">
+			<VariableAnimation initPause="true" loop="false">
+				<Item value="0" time="0" />
+				<Item value="min(#touch_y-#touch_begin_y+50,0)" time="100" easeType="CubicEaseOut" />
+				<Item value="0" time="400" />
+				<Item value="min(#touch_y-#touch_begin_y+50,0)" time="500" easeType="CubicEaseOut"/>
+				<Item value="-#screen_height" time="1499" />
+				<Item value="0" time="1500" />
+			</VariableAnimation>
+		</Var>
+		<Button w="1080" h="#screen_height">
+			<Triggers>
+				<Trigger action="down">
+					<VariableCommand name="unlock_flag" expression="1"/>
+				</Trigger>
+				<Trigger action="up,cancel">
+					<VariableCommand name="unlock_flag" expression="0" />
+					<AnimationCommand target="unlock_back" command="play(ifelse((#touch_begin_y-#touch_y){=300,100,500),ifelse((#touch_begin_y-#touch_y){=300,400,1500))" />
+					<ExternCommand command="unlock" condition="ge(#touch_begin_y-#touch_y,300)" />
+				</Trigger>
+			</Triggers>
+		</Button>
+	</Group>
+	<Group x="#move_x" y="#move_y" name="container">
+		<Slots name="负一屏" x="-1080" visibility="#move_x}0" />
+		<Slots name="正一屏" x="0" visibility="#move_x{1080**#move_x}-1080" />
+	</Group>
+</Template>

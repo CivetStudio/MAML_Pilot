@@ -1,13 +1,12 @@
 <ROOT>
 
 	<Image src="assets/assets.png" srcid="round(#mBlockAni)" alpha="0" />
-	<Image src="oversea.jpg" name="mOverseaImg" />
+	<Image src="oversea.jpg" name="mOverseaImg" alpha="128" />
 
 	<Image x="-1" y="-1" w="1" h="1" src="close.png" visibility="eq(#flashlight,0)" />
 	<Image x="-1" y="-1" w="1" h="1" src="open.png" visibility="eq(#flashlight,1)" />
 
 	<Var name="vivo_length" expression="len(@weather_cur_temp)" />
-
 	<!-- {#time}: #speed/max(1.6*#LangsId,0.5) -->
 	<Var name="mBalanceTime" expression="ifelse(eq(#LangsId,0)+eq(#LangsId,5),1/max(1.6*#LangsId,0.770158),1)" type="number" />
 	<!-- speed * mBalanceTime -->
@@ -50,7 +49,7 @@
 	<Var name="notification" expression="1" />
 	<!-- <Var name="hours" expression="ifelse(eq(#LangsId,0),#hours_oppo,#hours_vivo)" /> -->
 	<!-- <Var name="mTextSize_Var" expression="ne(#LangsId,4)*ifelse(eq(#LangsId,2),0,eq(#LangsId,0),0,1)" type="number" /> -->
-	<Var name="mTextSize_Var" expression="ne(#LangsId,4)*ifelse(eq(#LangsId,2),0,eq(#LangsId,0)*ne(#frame_rate,0),0-0.12,eq(#LangsId,5),2,1)" type="number" />
+	<Var name="mTextSize_Var" expression="ne(#LangsId,4)*ifelse(eq(#LangsId,2),0,eq(#LangsId,0)*ne(#frame_rate,0),0-0.12,eq(#LangsId,5),1,1)" type="number" />
 
 	<CountDownTime name="mCountDown" date="12-31" countDownType="loop" unit="day" />
 	<CountDownTime name="mCountDownA" date="theDayAfterTomorrow" countDownType="loop" unit="day" />

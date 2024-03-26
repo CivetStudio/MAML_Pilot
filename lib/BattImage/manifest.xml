@@ -16,13 +16,29 @@
 	</Props>
 
 	<!-- <Var name="mBattImage_align" expression="ifelse(eqs('$align','left'),0,eqs('$align','right'),2,1)" type="number" /> -->
-	<Var name="$id_mBattLevelImg.bmp_width" expression="#$id_mBattLevelImg.a.bmp_width+#$id_mBattLevelImg.b.bmp_width+#$id_mBattLevelImg.c.bmp_width+2*($space)" type="number" />
-	<Group x="$x-(#$id_mBattLevelImg.bmp_width+2+($unit_space)+#$id_mBattLevelPct.bmp_width)/2*$align" visibility="$visibility" >
+	<Var expression="int(#time/5)" threshold="1" >
+		<Trigger>
+			<VariableCommand name="$id_mBattLevelImg.bmp_width" expression="#$id_mBattImage.v0*#$id_mBattLevelImg.a.bmp_width+#$id_mBattImage.v1*#$id_mBattLevelImg.b.bmp_width+#$id_mBattImage.v2*#$id_mBattLevelImg.c.bmp_width+2*($space)" type="number" />
+			<VariableCommand name="$id_vv0" expression="ifelse(ge(#$id_digit,3)+eq(#$id_digit,0),1,0)" type="number" />
+			<VariableCommand name="$id_vv1" expression="ifelse(ge(#$id_digit,2)+eq(#$id_digit,0),1,0)" type="number" />
+			<VariableCommand name="$id_vv2" expression="ifelse(ge(#$id_digit,1)+eq(#$id_digit,0),1,0)" type="number" />
+			<VariableCommand name="$id_mBattImage.v0" expression="ifelse(eq($number,#battery_level)+eq(#LangsId,5)+eq(#$id_hide_zero,1),ge($number,100),1)*#$id_vv0" type="number" />
+			<VariableCommand name="$id_mBattImage.v1" expression="ifelse(eq($number,#battery_level)+eq(#LangsId,5)+eq(#$id_hide_zero,1),ge($number,10),1)*#$id_vv1" type="number" />
+			<VariableCommand name="$id_mBattImage.v2" expression="ifelse(eq($number,#battery_level)+eq(#LangsId,5)+eq(#$id_hide_zero,1),ge($number,0),1)*#$id_vv2" type="number" />
+			<VariableCommand name="$id_mBattImage.i0" expression="int($number/100%10)" type="number" />
+			<VariableCommand name="$id_mBattImage.i1" expression="int($number/10%10)" type="number" />
+			<VariableCommand name="$id_mBattImage.i2" expression="int($number/1%10)" type="number" />
+			<VariableCommand name="$id_mBattImage.x" expression="$x-(#$id_mBattLevelImg.bmp_width+2+($unit_space)+#$id_mBattLevelPct.bmp_width)/2*$align" type="number" />
+
+		</Trigger>
+	</Var>
+
+	<Group visibility="$visibility" >
 		<!-- <ImageNumber x="0" y="$y" align="left" alignV="$alignV" src="$src" number="$number" name="$id_mBattLevelImg" space="$space" /> -->
-		<Image x="0" y="$y" align="left" alignV="$alignV" src="$src" srcid="int($number/100%10)" name="$id_mBattLevelImg.a" visibility="ifelse(eq($number,#battery_level)+eq($#LangsId$,5),ge($number,100),1)*(ge($#$id_digit$,3)+eq($#$id_digit$,0))" />
-		<Image x="0+#$id_mBattLevelImg.a.bmp_width+($space)" y="$y" align="left" alignV="$alignV" src="$src" srcid="int($number/10%10)" name="$id_mBattLevelImg.b" visibility="ifelse(eq($number,#battery_level)+eq($#LangsId$,5),ge($number,10),1)*(ge($#$id_digit$,2)+eq($#$id_digit$,0))" />
-		<Image x="0+#$id_mBattLevelImg.a.bmp_width+($space)+#$id_mBattLevelImg.b.bmp_width+($space)" y="$y" align="left" alignV="$alignV" src="$src" srcid="int($number/1%10)" name="$id_mBattLevelImg.c" visibility="ifelse(eq($number,#battery_level)+eq($#LangsId$,5),ge($number,1),1)*(ge($#$id_digit$,1)+eq($#$id_digit$,0))" />
-		<Image x="0+#$id_mBattLevelImg.bmp_width+2+($unit_space)" y="$y" align="left" alignV="$alignV" src="$src_unit" name="$id_mBattLevelPct" />
+		<Image x="#$id_mBattImage.x" y="$y" align="left" alignV="$alignV" src="$src" srcid="#$id_mBattImage.i0" name="$id_mBattLevelImg.a" visibility="#$id_mBattImage.v0" />
+		<Image x="#$id_mBattImage.x+#$id_mBattImage.v0*#$id_mBattLevelImg.a.bmp_width+($space)" y="$y" align="left" alignV="$alignV" src="$src" srcid="#$id_mBattImage.i1" name="$id_mBattLevelImg.b" visibility="#$id_mBattImage.v1" />
+		<Image x="#$id_mBattImage.x+#$id_mBattImage.v0*#$id_mBattLevelImg.a.bmp_width+($space)+#$id_mBattImage.v1*#$id_mBattLevelImg.b.bmp_width+($space)" y="$y" align="left" alignV="$alignV" src="$src" srcid="#$id_mBattImage.i2" name="$id_mBattLevelImg.c" visibility="#$id_mBattImage.v2" />
+		<Image x="#$id_mBattImage.x+#$id_mBattLevelImg.bmp_width+2+($unit_space)" y="$y" align="left" alignV="$alignV" src="$src_unit" name="$id_mBattLevelPct" />
 	</Group>
 
 	<!-- <BattImage x="740" y="416" align="center" alignV="center" src="assets/general_num.png" src_unit="assets/general_num_pct.png" number="#battery_level" /> -->

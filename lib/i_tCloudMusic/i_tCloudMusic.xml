@@ -7,5 +7,6 @@
     <!-- 网易云音乐 -->
     <IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.netease.cloudmusic" class="com.netease.cloudmusic.activity.LoadingActivity" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.netease.cloudmusic" class="com.netease.cloudmusic.activity.IconChangeDefaultAlias" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.netease.cloudmusic" class="com.netease.cloudmusic.activity.MainActivity" />
 
 </Template>

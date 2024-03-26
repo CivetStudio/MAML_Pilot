@@ -1,24 +1,45 @@
 <ROOT>
 
 	<ExternalCommands>
-		<Trigger action="resume" >
+		<Trigger action="resume">
 			<VariableCommand expression="ifelse(eq(#mDrinkDate,#date),#mDrinkCup,0)" name="mDrinkCount" />
 			<VariableCommand name="mDrinkDate" expression="#date" />
 		</Trigger>
 	</ExternalCommands>
 
-	<Var name="mClearDaily" expression="ifelse(#__maml_version,#minute,#time)" threshold="1" >
+	<Var name="mClearDaily" expression="ifelse(#__maml_version,#minute,#time)" threshold="1">
 		<Trigger>
 			<VariableCommand name="mDrinkCup" expression="0" condition="ne(#date,#mDrinkDate)" />
 			<VariableCommand name="mDrinkCount" expression="0" condition="ne(#date,#mDrinkDate)" />
 		</Trigger>
 	</Var>
 
-	<Var name="mClearDaily2" expression="#date" threshold="1" >
+	<Var name="mClearDaily2" expression="#date" threshold="1">
 		<Trigger>
 			<VariableCommand name="mDrinkCup" expression="0" />
 			<VariableCommand name="mDrinkCount" expression="0" />
 		</Trigger>
 	</Var>
+	<Var name="mClearDaily3" expression="eq($#CurrentHour$,0)*eq(#minute,0)" threshold="1">
+		<Trigger>
+			<VariableCommand condition="eq($#CurrentHour$,0)*eq(#minute,0)" name="mDrinkCup" expression="0" />
+			<VariableCommand condition="eq($#CurrentHour$,0)*eq(#minute,0)" name="mDrinkCount" expression="0" />
+		</Trigger>
+	</Var>
+
+	<!-- #mDrinkCup.#_date || visibility="eq(#date,#_date)" -->
+	<C_Array count="32" indexName="_date">
+
+		<Var name="mDrinkCup.#_date" expression="0" type="number" persist_const="true" _const="true" />
+
+	</C_Array>
+
+	<!-- <C_Array count="32" indexName="_date">
+		<Var name="mUpdateDrinkCup.#_date" expression="ifelse(ne(#date,#_date),#minute+#second,0)" threshold="1">
+			<Trigger>
+				<VariableCommand name="mDrinkCup.#_date" expression="0" type="number" persist="true" />
+			</Trigger>
+		</Var>
+	</C_Array> -->
 
 </ROOT>

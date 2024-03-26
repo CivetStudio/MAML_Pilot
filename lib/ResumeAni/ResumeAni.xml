@@ -29,14 +29,14 @@
 	</ExternalCommands>
 
 	<!-- 开屏动画 -->
-	<Var name="S_TimeLoop" >
+	<Var name="ReS_TimeLoop" >
 		<VariableAnimation>
 			<AniFrame value="1" time="0" />
 			<AniFrame value="864000000" time="864000000" />
 	 	</VariableAnimation>
 	</Var>
 
-	<Var name="realtime_refresh" expression="ifelse(eq(#LangsId,2)+eq(#LangsId,4),#time,#S_TimeLoop+eq(#LangsId,0)*int(#time_sys/300))" threshold="1" >
+	<Var name="realtime_refresh" expression="ifelse(eq(#LangsId,2)+eq(#LangsId,4),#time,#ReS_TimeLoop+eq(#LangsId,0)*int(#time_sys/300))" threshold="1" >
 		<Trigger>
 			<!-- <VariableCommand name="mResumeTimeV" expression="ifelse(eq(#LangsId,0),0.3,eq(#LangsId,5),3,1)" condition="1" /> -->
 			<!-- <VariableCommand name="mResumeTimeV" expression="ifelse(ne(#LangsId,2)*ne(#LangsId,0),#mResumeTimeVF,eq(#LangsId,0),0.3,1)" condition="1" /> -->
@@ -86,6 +86,7 @@
 			<!-- BackEaseOut -->
 			<!-- 开屏动画从#mBezierTrans,#mBezierTrans_1,#mBezierTrans_2,#mBezierTrans_3,#mBezierTrans_4,#mBezierTrans_5依次播放，效果同【放个小空】 -->
 			<VariableCommand name="mBezierTrans" expression="1+#EaseC3*(#mResumeTime-1)*(#mResumeTime-1)*(#mResumeTime-1)+#EaseC1*(#mResumeTime-1)*(#mResumeTime-1)" condition="1" />
+			<VariableCommand name="mBezierTrans_0" expression="1+#EaseC3*(#mResumeTime-1)*(#mResumeTime-1)*(#mResumeTime-1)+#EaseC1*(#mResumeTime-1)*(#mResumeTime-1)" condition="1" />
 			<VariableCommand name="mBezierTrans_1" expression="ge(#mResumeTime.t,0.2)*(1+(#EaseC3-1)*(#mResumeTime_1-1)*(#mResumeTime_1-1)*(#mResumeTime_1-1)+(#EaseC1-1)*(#mResumeTime_1-1)*(#mResumeTime_1-1))" condition="1" />
 			<VariableCommand name="mBezierTrans_2" expression="ge(#mResumeTime.t,0.4)*(1+(#EaseC3-1)*(#mResumeTime_2-1)*(#mResumeTime_2-1)*(#mResumeTime_2-1)+(#EaseC1-1)*(#mResumeTime_2-1)*(#mResumeTime_2-1))" condition="1" />
 			<VariableCommand name="mBezierTrans_3" expression="ge(#mResumeTime.t,0.6)*(1+(#EaseC3-1)*(#mResumeTime_3-1)*(#mResumeTime_3-1)*(#mResumeTime_3-1)+(#EaseC1-1)*(#mResumeTime_3-1)*(#mResumeTime_3-1))" condition="1" />
@@ -127,6 +128,7 @@
 			<VariableCommand name="mResumeAni_6" expression="0" type="number" />
 
 			<VariableCommand name="mBezierTrans" expression="0" type="number" />
+			<VariableCommand name="mBezierTrans_0" expression="0" type="number" />
 			<VariableCommand name="mBezierTrans_1" expression="0" type="number" />
 			<VariableCommand name="mBezierTrans_2" expression="0" type="number" />
 			<VariableCommand name="mBezierTrans_3" expression="0" type="number" />
@@ -175,6 +177,7 @@
 
 	<!-- C3: 2.00158	C1: 1.00158 -->
 	<Var name="_ease.c3" expression="2.00158+#mResumeEaseAdd" type="number" />
+	<Var name="_ease.0" expression="0" type="number" />
 	<Var name="_ease.1" expression="1+(#_ease.c3)*(100/1000-1)*(100/1000-1)*(100/1000-1)+(#_ease.c3-1)*(100/1000-1)*(100/1000-1)" type="number" />
 	<Var name="_ease.2" expression="1+(#_ease.c3)*(200/1000-1)*(200/1000-1)*(200/1000-1)+(#_ease.c3-1)*(200/1000-1)*(200/1000-1)" type="number" />
 	<Var name="_ease.3" expression="1+(#_ease.c3)*(300/1000-1)*(300/1000-1)*(300/1000-1)+(#_ease.c3-1)*(300/1000-1)*(300/1000-1)" type="number" />
@@ -184,8 +187,10 @@
 	<Var name="_ease.7" expression="1+(#_ease.c3)*(700/1000-1)*(700/1000-1)*(700/1000-1)+(#_ease.c3-1)*(700/1000-1)*(700/1000-1)" type="number" />
 	<Var name="_ease.8" expression="1+(#_ease.c3)*(800/1000-1)*(800/1000-1)*(800/1000-1)+(#_ease.c3-1)*(800/1000-1)*(800/1000-1)" type="number" />
 	<Var name="_ease.9" expression="1+(#_ease.c3)*(900/1000-1)*(900/1000-1)*(900/1000-1)+(#_ease.c3-1)*(900/1000-1)*(900/1000-1)" type="number" />
+	<Var name="_ease.10" expression="1" type="number" />
 
 	<Var name="_ease_d.c3" expression="2.70158+#mResumeEaseAdd" type="number" />
+	<Var name="_ease_d.0" expression="0" type="number" />
 	<Var name="_ease_d.1" expression="1+(#_ease_d.c3)*(100/1000-1)*(100/1000-1)*(100/1000-1)+(#_ease_d.c3-1)*(100/1000-1)*(100/1000-1)" type="number" />
 	<Var name="_ease_d.2" expression="1+(#_ease_d.c3)*(200/1000-1)*(200/1000-1)*(200/1000-1)+(#_ease_d.c3-1)*(200/1000-1)*(200/1000-1)" type="number" />
 	<Var name="_ease_d.3" expression="1+(#_ease_d.c3)*(300/1000-1)*(300/1000-1)*(300/1000-1)+(#_ease_d.c3-1)*(300/1000-1)*(300/1000-1)" type="number" />
@@ -195,6 +200,7 @@
 	<Var name="_ease_d.7" expression="1+(#_ease_d.c3)*(700/1000-1)*(700/1000-1)*(700/1000-1)+(#_ease_d.c3-1)*(700/1000-1)*(700/1000-1)" type="number" />
 	<Var name="_ease_d.8" expression="1+(#_ease_d.c3)*(800/1000-1)*(800/1000-1)*(800/1000-1)+(#_ease_d.c3-1)*(800/1000-1)*(800/1000-1)" type="number" />
 	<Var name="_ease_d.9" expression="1+(#_ease_d.c3)*(900/1000-1)*(900/1000-1)*(900/1000-1)+(#_ease_d.c3-1)*(900/1000-1)*(900/1000-1)" type="number" />
+	<Var name="_ease_d.10" expression="1" type="number" />
 
 	<!-- <Var name="_ease.1" expression="0.35212798" type="number" />
 	<Var name="_ease.2" expression="0.61620224" type="number" />

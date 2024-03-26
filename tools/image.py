@@ -129,7 +129,7 @@ if not single_mode:
     h = fixNum(max(max_height))
 
     for k in range(len(preview_url)):
-        # crop_image(preview_url[k], 798, 798, "center")
+        # crop_image(preview_url[k], 112, 112, "center")
         crop_image(preview_url[k], w, h, "center")
 
     print(f"max_width: {max_width}, max_height: {max_height}")
