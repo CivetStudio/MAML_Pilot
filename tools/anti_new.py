@@ -1,6 +1,8 @@
 import os
 import sys
 import re
+import time
+
 import pyperclip
 import shutil
 from lxml import etree as lxml
@@ -18,7 +20,8 @@ def convert_to_source(input_file, output_file, order_mode=1):
 
     # 如果找到匹配的元素，则打印其文本内容
     if key_expression:
-        var_dict = eval(dev.Refactor.refactor.aes_decode(key_expression[0].get('expression')))
+        key_exp = key_expression[0].get('expression')
+        var_dict = eval(dev.Refactor.refactor.aes_decode(eval(key_exp)))
         print("Found Key expression:", key_expression[0].get('expression'))
         print(var_dict)
     else:

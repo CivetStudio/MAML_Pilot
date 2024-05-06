@@ -5,7 +5,7 @@ from lxml import etree as ET
 def orderXML(input_file, output_file=None):
 
     # import xml.etree.ElementTree as ET
-    # import xml.dom.minidom
+    import xml.dom.minidom
 
     # import html
     #
@@ -97,11 +97,12 @@ def orderXML(input_file, output_file=None):
     # print(xml_str_modified)
 
     # 使用xml.dom.minidom进行格式化
-    # formatted_xml = xml.dom.minidom.parseString(xml_str_modified).toprettyxml(indent="	")
+    formatted_xml = xml.dom.minidom.parseString(xml_str_modified).toprettyxml(indent="	")
 
     # 去除额外的空行
-    # cleaned_xml_str = '\n'.join(line for line in formatted_xml.split('\n') if line.strip())\
-    #     .replace('<?xml version="1.0" ?>', '<?xml version="1.0" encoding="utf-8"?>')
+    cleaned_xml_str = '\n'.join(line for line in formatted_xml.split('\n') if line.strip())\
+        .replace('<?xml version="1.0" ?>', '<?xml version="1.0" encoding="utf-8"?>')
+    cleaned_xml_str = xml_str_modified
 
     # 保存到新文件
     if output_file is None:
@@ -111,7 +112,7 @@ def orderXML(input_file, output_file=None):
     # tree.write(output_file, encoding="ASCII", xml_declaration=True)
 
     with open(output_file, 'w', encoding='utf-8') as file:
-        file.write(xml_str_modified)
+        file.write(cleaned_xml_str)
 
 
 if __name__ == "__main__":
