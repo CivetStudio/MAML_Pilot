@@ -42,10 +42,10 @@ def convert_to_source(input_file, output_file, order_mode=1):
 
 def replace_string_in_xml(xml_file, old_str, new_str):
 
-    with open(xml_file, 'r') as file:
+    with open(xml_file, 'r', encoding='utf-8') as file:
         lines = file.readlines()
 
-    with open(xml_file, 'w') as file:
+    with open(xml_file, 'w', encoding='utf-8') as file:
         for line in lines:
             if old_str in line:
                 line = line.replace(old_str, new_str)

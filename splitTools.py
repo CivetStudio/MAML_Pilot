@@ -236,7 +236,7 @@ def splitGroup(manifest_xml, manifest_root):
             for attr_name, attr_value in element.attrs.items():
                 if attr_value == '' or str(attr_value).strip() == '':
                     print(f'⚠️Warning: {element}')
-        time.sleep(1)
+        # time.sleep(1)
         print('\t')
 
         print('Button:')

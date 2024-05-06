@@ -154,15 +154,18 @@ BETA_04.27 新增 解析函数功能：parse_function_beta
 
 import logging
 import os
+import random
 import re
 import sys
 import shutil
 import sqlite3
 import time
+import xml.dom.minidom
 import zlib
 import pyperclip
 import subprocess
 from bs4 import BeautifulSoup, Comment
+from lxml import etree as lxml
 
 import dev.Refactor.refactor
 from dev.Refactor.refactor import aes_decode
@@ -172,17 +175,16 @@ from dev.Refactor.refactor import aes_encode
 
 from splitTools import splitVar, splitExt, splitBinders, splitGroup, preLoadVar, preLoadExt, intentMarket
 from dev.Refactor.refactor import refactor
-import platform
-import warnings
 
-# 禁用特定警告
-warnings.filterwarnings("ignore", category=UserWarning, message=".*MarkupResemblesLocatorWarning.*")
-warnings.simplefilter("ignore", category=UserWarning)
-
-
+# maml_main_xml = ''
+win_local = 1
+mac_local = 0
+# if 'PYCHARM_HOSTED' in os.environ and sys.platform.startswith('darwin') or win_local:
+# print("macOS or PyCharm")
 sys_version = 0
 current_dir = os.getcwd()
-maml_main_xml = str(pyperclip.paste()).replace('\\', '/').replace('"', '')
+maml_main_xml = pyperclip.paste().replace('\\', '/').replace('"', '')
+
 maml_rule_file = "maml.xml"
 maml_file_name = os.path.basename(maml_main_xml)
 maml_folder_name = os.path.dirname(maml_main_xml).split('/')[-1]
@@ -375,49 +377,47 @@ var_persist_attr = "const" if langs_id == 0 or langs_id == 4 else "persist"
 def getTimeSys():
     def get_wifi_ssid():
         try:
-            os_name = platform.system()
-            if os_name == "Windows":
-                wifi_result = subprocess.run(["netsh", "wlan", "show", "interfaces"], capture_output=True, text=True)
-                output = wifi_result.stdout.strip().split("\n")
-                ssid_name = [line.split(":")[1].strip() for line in output if "SSID" in line][0]
-                return ssid_name
-            elif os_name == "Darwin":  # macOS
-                wifi_result = subprocess.run(["/usr/sbin/networksetup", "-getairportnetwork", "en0"],
-                                             capture_output=True,
-                                             text=True)
-                output = wifi_result.stdout.strip()
-                ssid_name = output.split(":")[1].strip()
-                return ssid_name
-            else:
-                print("Unsupported operating system.")
-                return None
+            # 使用 networksetup 命令来获取当前 Wi-Fi SSID
+            wifi_result = subprocess.run(["/usr/sbin/networksetup", "-getairportnetwork", "en0"], capture_output=True,
+                                         text=True)
+            output = wifi_result.stdout.strip()
+            ssid_name = output.split(":")[1].strip()
+            return ssid_name
+            # print(f"Wi-Fi SSID: {ssid_name}")
         except Exception as wifi_e:
             print(f"Wi-Fi Error: {wifi_e}")
 
     global wifi_state
     global wifi_in_vgoing
 
-    wifi_ssid = get_wifi_ssid()
-    wifi_state = wifi_ssid in ["Redmi_71E5", "Civet's iPhone", "Xiaomi_4A3E", "vgoing"]
-    wifi_in_vgoing = wifi_ssid == "vgoing"
+    wifi_state = bool(get_wifi_ssid() == "Redmi_71E5"
+                      or get_wifi_ssid() == "Civet's iPhone"
+                      or get_wifi_ssid() == "Xiaomi_4A3E"
+                      or get_wifi_ssid() == "vgoing")
 
+    wifi_in_vgoing = bool(get_wifi_ssid() == "vgoing")
     # print(wifi_state)
 
     timestamp_ms = int(time.time() * 1000)
     return timestamp_ms
 
 
-def cleanComments(soup):
-    comments = soup.find_all(string=lambda text: isinstance(text, Comment))
-    for comment in comments:
-        comment.extract()
-    return soup
+# 生成随机16进制数字(length:[0,16])
+def randomHex(length):
+    random_result = '0x' + hex(random.randint(0, 16 ** length)).replace('0x', '').upper()
+    if len(random_result) < length:
+        random_result = '0' * (length - len(random_result)) + random_result
+    return random_result
 
 
 # 清理缓存文件
 def cleanCacheBefore():
     if os.path.exists(anti_xml):
         os.remove(anti_xml)
+    # if os.path.exists(success_xml):
+    # 	os.remove(success_xml)
+    if os.path.exists('manifest-src.xml'):
+        os.remove('manifest-src.xml')
 
 
 # 清理缓存文件
@@ -441,43 +441,197 @@ def dirLib(is_lib_folder):
         lib_dir = os.path.join(is_lib_folder, file)
         if os.path.isdir(lib_dir):
             lib.append(file.replace(is_lib_folder, ''))
-    return lib
 
 
-def getLibFile(lib_file):
+# 获取库文件Attributes以及相应默认值
+def getLib(lib_file):
+    global lib_valueholder_num
+    global lib_props_num
+    global lib_slots_list2
+    lib_valueholder_num = 0
+    lib_props_num = 0
+
     if os.path.exists('' + lib_folder_name + '/' + lib_file + '/' + lib_file + '.xml'):
-        lib_file_name = '' + lib_folder_name + '/' + lib_file + '/' + lib_file + '.xml'
-        lib_mode = 0
+        lib_file_name = lib_file + '.xml'
     else:
-        lib_file_name = '' + lib_folder_name + '/' + lib_file + '/' + 'manifest.xml'
-        lib_mode = 1
-    soup = BeautifulSoup(open(lib_file_name, encoding='utf-8'), 'lxml-xml')
-    soup = cleanComments(soup)
-    return soup.prettify(), lib_mode
+        lib_file_name = 'manifest.xml'
+    lib_soup = BeautifulSoup(open('' + lib_folder_name + '/' + lib_file + '/' + lib_file_name, encoding="utf-8"),
+                             features="lxml-xml")
+
+    if lib_soup.Props is not None:
+        lib_valueholder_num = 0
+        lib_props_num += 1
+        for lib_tag in lib_soup.find_all(re.compile("item")):
+            if lib_tag.parent.name == "Props":
+                if lib_tag.get('name') is not None:
+                    lib_soup_attr.append(lib_tag.get('name'))
+                    lib_soup_attr_def.append(lib_tag.get('default'))
+    elif lib_soup.ValueHolder is not None and lib_props_num == 0:
+        lib_valueholder_num = 1
+        for lib_tag in lib_soup.find_all('ValueHolder'):
+            lib_valueholder.append(lib_tag)
+            lib_soup_attr.append(lib_tag.get('name'))
+            lib_soup_attr_def.append('')
+        # if lib_tag.get('type') == 'string':
+        # 	var_alias_all = 0
+        # else:
+        # 	var_alias_all = 1
+        for lib_tag in lib_soup.find_all('NameHolder'):
+            lib_nameholder.append(lib_tag.get('name'))
+
+    # print('Current lib_valueholder_num: ', lib_valueholder_num, lib_file)
+
+    if lib_soup.PlaceHolder is not None:
+        for lib_tag in lib_soup.find_all('PlaceHolder'):
+            lib_placeholder.append(lib_tag)
+            lib_placeholder_attr.append(lib_tag.get('name'))
+        # print('lib_placeholder: ', lib_placeholder, '\n')
+        # print('lib_placeholder_attr: ', lib_placeholder_attr, '\n')
+
+    if lib_soup.Slots is not None:
+        for lib_slot in lib_soup.find_all('Slots'):
+            lib_slot['id'] = randomHex(8)
+            lib_slots_list.append(str(lib_slot.get('slotName')))
+            lib_slots_list2 = list(set(lib_slots_list))
+        # print(lib_slots_list2)
+        lib_slots_num[lib_file] = len(lib_slots_list2)
+        if len(lib_slots_list):
+            lib_slots_list.clear()
+        if len(lib_slots_list2):
+            lib_slots_list2.clear()
+    else:
+        lib_slots_num[lib_file] = 0
+    return
 
 
-def getBsAttrs(soup, value):
-    soup = BeautifulSoup(str(soup[0]), 'lxml-xml')
-    for attr in soup.find_all(True, limit=1):
-        if attr.get(value):
-            result = attr['value']
-    return result
+# 获取库文件主内容并替换Attributes
+def getLibContent(lib_file_main, soup_dom_input=None):
+    tags_lib.reverse()
+    tags_str.reverse()
+    tags_attr.reverse()
+    lib_soup_attr.reverse()
+    lib_soup_attr_def.reverse()
+
+    if os.path.exists('' + lib_folder_name + '/' + lib_file_main + '/' + lib_file_main + '.xml'):
+        lib_file_name = lib_file_main + '.xml'
+    else:
+        lib_file_name = 'manifest.xml'
+    lib_soup = BeautifulSoup(open('' + lib_folder_name + '/' + lib_file_main + '/' + lib_file_name, encoding="utf-8"),
+                             features="lxml-xml")
+
+    for lib_slot in lib_soup.find_all('Slots'):
+        lib_slot['id'] = randomHex(8)
+        lib_slots.append(str(lib_slot))
+    # for lib_slot in lib_soup.find_all('PlaceHolder'):
+    # 	if lib_slot['name'] == lib_placeholder:
+    # 		lib_slot.parent.append(lib_placeholder_str)
+    # 		lib_slot.decompose()
+    with open(lib_slot_xml, 'w', encoding='utf-8') as _f0:
+        if len(tags_slots):
+            for _j in range(len(lib_slots)):
+                if len(tags_slots) < len(lib_slots):
+                    tags_slots.insert(len(tags_slots), "")
+                lib_soup = str(lib_soup).replace(str(lib_slots[_j]), str(tags_slots[_j]))
+        # if len(tags_slots) > len(lib_slots):
+        # 	tags_slots_str = ''
+        # 	for j in range(len(tags_slots)):
+        # 		tags_slots_str = tags_slots_str + str(tags_slots[j])
+        # 	lib_soup = str(lib_soup).replace(str(lib_slots[0]), tags_slots_str)
+        else:
+            for _j in range(len(lib_slots)):
+                lib_soup = str(lib_soup).replace(str(lib_slots[_j]), '')
+        if len(lib_placeholder_str2):
+            for _k in range(len(lib_placeholder)):
+                lib_soup = str(lib_soup).replace(str(lib_placeholder[_k]), str(lib_placeholder_str2[_k]))
+            # <PlaceHolder name="ResumeAniCommand"/>
+            # print(str(lib_placeholder[_k]))
+        # 手动为 # mCountNum_$ 内的 ##Event* 变量加入后缀
+        # 	<Var name="mCountNum_0" expression="int(#EventYear[$#_id#$]/1000)" />
+        # print(soup_dom_input)
+        if soup_dom_input is None:
+            soup_dom_input_r = ''
+        else:
+            soup_dom_input_r = '_' + soup_dom_input
+        _f0.write(str(lib_soup).replace('[$#_id#$]', soup_dom_input_r))
+
+    # print(lib_placeholder)
+    # print(lib_placeholder_str2)
+
+    if lib_valueholder_num == 0:
+        lib_starts_with = '$'
+    else:
+        lib_starts_with = ''
+
+    with open(lib_slot_xml, 'r', encoding='utf-8') as _f:
+        with open(process_xml, 'w', encoding='utf-8') as _f2:
+            for _line in _f:
+                for _i in range(len(lib_soup_attr)):
+                    if lib_valueholder_num == 0:
+                        for _j in range(len(tags_attr)):
+                            # 改动多次 慎重
+                            if tags_attr[_j] is None or tags_attr[_i] is None:
+                                _line = _line.replace(lib_starts_with + lib_soup_attr[_i], lib_soup_attr_def[_i])
+                            else:
+                                _line = _line.replace(lib_starts_with + lib_soup_attr[_i], str(tags_attr[_i]))
+                    else:
+                        # print(lib_soup_attr, tags_attr)
+                        _line = _line.replace(lib_starts_with + lib_soup_attr[_i], tags_attr[_i])
+                    # print(2)
+                _f2.write(_line)
+            # print(line)
+
+    # 模块内变量名称混淆
+
+    # # 筛选name及target，并添加后缀（4位随机数）
+
+    # print(var_alias_all, lib_file_main)
+    # if not var_alias_all:
+    refactor(process_xml, 2, var_forbid_name, soup_dom_input_r)
+
+    # else:
+    #     refactor(process_xml, 1, var_forbid_name)
+
+    # 问题 #685: mResumeAni -> ExternalsCommand -> Trigger -> <Command target="mBezierSys.animation" command="play" />
+    # soup_dom_str = str(soup.prettify()).replace('    ', '\t')
+
+    removeLibProps(process_xml, process_xml)
+    return
+
+
+# 移除库文件中的Props标签
+def removeLibProps(lib_remove_in, lib_remove_out):
+    tree = lxml.parse(lib_remove_in)
+    _root = tree.getroot()
+    if lib_props_num != 0:
+        for Props in _root.findall("Props"):
+            _root.remove(Props)
+    elif lib_valueholder_num != 0:
+        for ValueHolder in _root.findall("ValueHolder"):
+            _root.remove(ValueHolder)
+        for NameHolder in _root.findall("NameHolder"):
+            _root.remove(NameHolder)
+        for PlaceHolder in _root.findall("PlaceHolder"):
+            _root.remove(PlaceHolder)
+    tree = lxml.ElementTree(_root)
+    tree.write(lib_remove_out, encoding="utf-8", xml_declaration=True)
+    tree_str = lxml.tostring(_root, encoding='unicode').replace('<Template>', '').replace('</Template>', '').replace(
+        '<ROOT>', '').replace('</ROOT>', '').replace('\n', '').replace('\t', '')
+    # print(tree_str, lib_remove_in)
+    lib_soup_str.append(tree_str)
+    lib_soup_str.reverse()
+    return
 
 
 # 解析XML文件，重新整理属性，开始之前
-def parseXML(parse_xml):
-    global manifest_root, manifest_sw, manifest_sh, _dev_time
+def parseXML(parse_file_0, parse_file_1):
+    _soup = BeautifulSoup(open(parse_file_0, encoding="utf-8"), features="lxml-xml")
 
-    _soup = BeautifulSoup(open(parse_xml, encoding='utf-8'), 'lxml-xml')
-
-    # 输出根标签
-    for root in _soup.find_all(True, limit=1):
-        manifest_root = str(root.name)
-        manifest_sw = int(root.get('screenWidth'))
-        manifest_sh = int(root.get('screenHeight', -1))
+    # _soup = parse_function_beta(_soup)
 
     # 注释清理
-    _soup = cleanComments(_soup)
+    comments = _soup.find_all(string=lambda text: isinstance(text, Comment))
+    for comment in comments:
+        comment.extract()
 
     # 删除原本的Key
     key_store = 1
@@ -498,41 +652,44 @@ def parseXML(parse_xml):
 
     _dev_time = getTimeSys()
     _soup_indent = str(_soup.prettify()).replace('\n', '').replace('$_devTime', str(_dev_time))
-    _soup = BeautifulSoup(_soup_indent, 'lxml-xml')
 
-    return _soup
+    with open(parse_file_1, 'w', encoding='utf-8') as _f0:
+        _f0.write(_soup_indent)
+    return
 
 
 # 保存XML文件，minidom格式化处理
-def saveXML(soup, save_file):
+def saveXML(save_file):
     global var_split_ext
     global var_split_group
     global var_alias
 
     # minidom格式化
 
-    # if line != '':
-    #     _soup_indent = xml.dom.minidom.parseString(line)
-    #     soup_dom_str = _soup_indent.toprettyxml()
-    # # print('soup_dom_str: ?', soup_dom_str)
-    # else:
-    #     _soup_indent = BeautifulSoup(open(parse_xml, encoding="utf-8"), features="lxml-xml")
-    #     # soup_dom_str = str(soup_indent).replace('&amp;', '&amp;amp;') 稳定，不敢动
-    #     # soup_dom_str = str(soup_indent).replace('&gt;', '&amp;gt;') 稳定，不敢动
-    #     soup_dom_str = str(_soup_indent).replace('&lt;', '&amp;lt;')
-    # # 	soup_dom_str = soup_dom_str.replace('\t \n', '\n').replace('\n\n\t', '\n\t')
+    if line != '':
+        _soup_indent = xml.dom.minidom.parseString(line)
+        soup_dom_str = _soup_indent.toprettyxml()
+    # print('soup_dom_str: ?', soup_dom_str)
+    else:
+        _soup_indent = BeautifulSoup(open(parse_xml, encoding="utf-8"), features="lxml-xml")
+        # soup_dom_str = str(soup_indent).replace('&amp;', '&amp;amp;') 稳定，不敢动
+        # soup_dom_str = str(soup_indent).replace('&gt;', '&amp;gt;') 稳定，不敢动
+        soup_dom_str = str(_soup_indent).replace('&lt;', '&amp;lt;')
+    # 	soup_dom_str = soup_dom_str.replace('\t \n', '\n').replace('\n\n\t', '\n\t')
     print('\t')
     print(f"LangsId: {langs_id}")
     print(f'Root: {manifest_root}')
     print(f'Width: {manifest_sw}')
     print(f'Height: {manifest_sh}')
-
-    soup_dom_str = str(soup.prettify())
     soup_dom_str = soup_dom_str.replace(manifest_root, 'Lockscreen')
     soup_dom_str = soup_dom_str.replace('persist_const', var_persist_attr)
 
-    soup = BeautifulSoup(soup_dom_str, features="lxml-xml")
-    _soup = cleanComments(soup)
+    _soup = BeautifulSoup(soup_dom_str, features="lxml-xml")
+    comments = _soup.find_all(string=lambda _text: isinstance(_text, Comment))
+
+    # 去除注释
+    for comment in comments:
+        comment.extract()
 
     # 根据alias属性来判断是否混淆代码
     if _soup.Lockscreen.get('compiler') == 'false':
@@ -747,9 +904,16 @@ def saveXML(soup, save_file):
             if var_contents == ['\n']:
                 var.decompose()
 
-    soup_dom_str = str(_soup.prettify()).replace('    ', '\t')
+    soup_dom_str = str(_soup.prettify()).replace('    ', '\t') \
+
     with open(save_file, 'w', encoding='utf-8') as _f0:
         _f0.write(soup_dom_str)
+
+    # 包含Var的Group数量(层级)
+    # var_group = []
+    # for group in soup.find_all('Group'):
+    # 	var_group.append(group.find_all('Var'))
+    # var_group_num = len(var_group)
 
     # 在Group里的Var数量
     var_str = []
@@ -1157,8 +1321,8 @@ def getAlias():
             except Exception as _key_e:
                 print('Var is not exists!', _key_e)
 
-        soup_dom_str = str(_soup_final.prettify()) \
-            .replace('    ', '\t').replace('&amp;#', '&#') \
+        soup_dom_str = str(_soup_final.prettify())\
+            .replace('    ', '\t').replace('&amp;#', '&#')\
             .replace('__widget_auto_size__', maml_folder_name.replace('widget_', ''))
 
         # 检测/移除空属性
@@ -1168,7 +1332,7 @@ def getAlias():
                 for attr_name, attr_value in element.attrs.items():
                     if attr_value == '' or str(attr_value).strip() == '':
                         print(f'⚠️Warning: {element}')
-        # time.sleep(1)
+        time.sleep(1)
 
     with open(_success_xml, 'w', encoding='utf-8') as _f0:
         if var_alias:
@@ -1194,109 +1358,161 @@ def getAlias():
 
 
 # 主程序
-lib = dirLib(lib_folder_name)
-soup = parseXML(maml_main_xml)
+dirLib(lib_folder_name)
+parseXML(maml_main_xml, parse_xml)
+soup = BeautifulSoup(open(parse_xml, encoding="utf-8"), features="lxml-xml")
+
+# 输出根标签
+for root in soup.find_all(True, limit=1):
+    manifest_root = str(root.name)
+    manifest_sw = int(root.get('screenWidth'))
+    manifest_sh = int(root.get('screenHeight', -1))
+
+# <Import name="mGlobalVar" globalPersist="true" />
 
 print('Disabled:')
+
 # Main / Start / 开始
 for tag in soup.find_all(True):
+
     # 匹配库文件标签
+
     for i in range(len(lib)):
-        if tag.name == lib[i] and tag.get('card') not in ['Almanac', 'Constellations', 'BigEvent']:
+
+        if tag.name == lib[i] and tag.get('card') != 'Almanac' and tag.get('card') != 'Constellations' and tag.get(
+                'card') != 'BigEvent':
+
             # 检测【disabled】属性是否存在，若存在则删除标签，并重新写入soup
-            if tag.get('disabled') is None:
-                tag.disabled = 0
-            elif tag.get('disabled') == '0':
-                tag.disabled = 0
+
+            if tag.get('disabled') is not None and tag.get('disabled') != '0':
+
+                print(f'\t{tag}')
+                tag.decompose()
+
+                with open(parse_xml, 'w', encoding='utf-8') as f0:
+                    f0.write(str(soup))
+
             else:
-                tag.disabled = int(tag.get('disabled'))
+                tags_lib.append(tag.name)
+                tags_str.append(str(tag))
 
-            if tag.disabled or tag.name == 'i_Hidden':
-                # print(f'\t{tag.name}.extract()')
-                tag.extract()
-            else:
-                _lib_callback_ = getLibFile(tag.name)[0]
-                _lib_soup_ = BeautifulSoup(str(_lib_callback_), 'lxml-xml')
-                _lib_mode_ = getLibFile(tag.name)[1]
-                if tag.get('_id') is None:
-                    _lib_id_ = ''
+                # 检测库标签是否有[tag_keys]属性，如有则不给变量加随机值后缀
+
+                tags_port = tag.get('_port')
+                if tags_port and not tag.name.startswith('i_'):
+                    is_port_mode = 1
                 else:
-                    _lib_id_ = '_' + tag.get('_id')
+                    is_port_mode = 0
+                # print(is_port_mode, tag.name)
 
-                if _lib_mode_ == 0:
-                    _value_holder_ = _lib_soup_.find_all('ValueHolder')
-                    for _value_ in range(len(_value_holder_)):
-                        _holder_name_ = _value_holder_[_value_].get('name')
-                        _holder_value_ = tag.find_all(name='ValueHolder', attrs={'name': _holder_name_})
-                        _holder_value_ = getBsAttrs(_holder_value_, 'value')
-                        _lib_soup_ = str(_lib_soup_).replace(_holder_name_, _holder_value_)
-                    _lib_soup_ = BeautifulSoup(str(_lib_soup_), 'lxml-xml')
-                    for _value_tag_ in _lib_soup_.find_all('ValueHolder'):
-                        _value_tag_.extract()
+                if len(tags_lib) > 0:
 
-                    for _place_holder_ in _lib_soup_.find_all('PlaceHolder'):
-                        if _place_holder_.get('name'):
-                            _place_name_ = _place_holder_.get('name')
-                            for _place_in_ in soup.find_all(_place_name_):
-                                for _p_in_ in range(len(_place_in_.contents) - 1, -1, -1):
-                                    _p_insert_contents_ = _place_in_.contents[_p_in_]
-                                    _p_insert_ = BeautifulSoup(str(_p_insert_contents_), 'lxml-xml')
-                                    # print(_p_insert_)
-                                    _place_holder_.insert_after(_p_insert_)
-                                _place_holder_.extract()
+                    # 获取库文件Attributes以及相应默认值
 
-                    with open(process_xml, 'w', encoding='utf-8') as f:
-                        f.write(str(_lib_soup_))
-                    refactor(process_xml, 2, var_forbid_name, _lib_id_)
-                    _lib_soup_ = BeautifulSoup(open(process_xml, encoding='utf-8'), 'lxml-xml')
+                    lib_soup_attr.clear()
+                    lib_soup_attr_def.clear()
+                    tags_attr.clear()
 
-                    for _in_ in range(len(_lib_soup_.ROOT.contents) - 1, -1, -1):
-                        _insert_contents_ = _lib_soup_.ROOT.contents[_in_]
-                        # print(_insert_contents_)
-                        _insert_ = BeautifulSoup(str(_insert_contents_), 'lxml-xml')
-                        tag.insert_after(_insert_)
-                    tag.extract()
+                    # print(lib[i], 'Here')
+                    getLib(lib[i])
+                    # lib_valueholder_num = len(lib_valueholder)
+                    # print('lib_valueholder: ', lib_valueholder, '\n')
 
-                elif _lib_mode_ == 1:
-                    _props_ = _lib_soup_.find_all('Props')[0].find_all('item')
-                    _props_item_ = {}
-                    for _item_ in _props_:
-                        # print(_item_['name'], _item_['default'])
-                        for key, value in _item_.attrs.items():
-                            _props_item_[_item_['name']] = _item_['default']
-                        _props_item_ = dict(sorted(_props_item_.items(), key=lambda item: len(item[0]), reverse=True))
-                    # print(_props_item_)
+                    # 获取本地Slot标签
+                    if tag.Slot is None:
+                        new_tag_count = 0
+                        while new_tag_count < lib_slots_num[lib[i]]:
+                            new_tag_slot = soup.new_tag('Slot', id=randomHex(8))
+                            new_tag_slot.string = '<!-- ' + 'Slot.id=\"' + new_tag_slot.get('id') + '\" -->'
+                            tag.append(new_tag_slot)
+                            tags_slots.append(new_tag_slot.string)
+                            new_tag_count = new_tag_count + 1
+                    else:
+                        # 将Slot标签内的变量名改为全局变量，避免加后缀
+                        for t in tag.find_all('Slot'):
 
-                    for attr, value in tag.attrs.items():
-                        for item_key, item_value in _props_item_.items():
-                            if str(item_key) == str(attr):
-                                _props_item_[item_key] = str(value)
-                    # print(_props_item_)
+                            for u in t.find_all(name=True):
+                                if u.get('name') is not None:
+                                    u['name'] = '$' + u.get('name') + '$'
 
-                    for key, value in _props_item_.items():
-                        _lib_soup_ = str(_lib_soup_).replace(f'${str(key)}', str(value))
-                    _lib_soup_ = BeautifulSoup(_lib_soup_, 'lxml-xml')
-                    for _props_tag_ in _lib_soup_.find_all('Props'):
-                        _props_tag_.extract()
+                            for u in t.find_all(indexName=True):
+                                if u.get('indexName') is not None:
+                                    u['indexName'] = '$' + u.get('indexName') + '$'
 
-                    with open(process_xml, 'w', encoding='utf-8') as f:
-                        f.write(str(_lib_soup_))
-                    refactor(process_xml, 2, var_forbid_name, _lib_id_)
-                    _lib_soup_ = BeautifulSoup(open(process_xml, encoding='utf-8'), 'lxml-xml')
+                            for u in t.find_all(countName=True):
+                                if u.get('countName') is not None:
+                                    u['countName'] = '$' + u.get('countName') + '$'
 
-                    for _pro_in_ in range(len(_lib_soup_.Template.contents) - 1, -1, -1):
-                        _pro_insert_contents_ = _lib_soup_.Template.contents[_pro_in_]
-                        # print(_pro_insert_contents_)
-                        _pro_insert_ = BeautifulSoup(str(_pro_insert_contents_), 'lxml-xml')
-                        tag.insert_after(_pro_insert_)
-                    tag.extract()
+                            for u in t.find_all(target=True):
+                                if u.get('target') is not None:
+                                    # if '.visibility' in u.get('target'):
+                                    # u['target'] = '$' + str(u.get('target')).replace('.visibility') + '$'
+                                    u['target'] = '$' + u.get('target') + '$'
 
-                else:
-                    print('"_lib_mode_" is Unknown Type! ')
+                        for t in tag.find_all('Slot'):
+                            for k in t.find_all(True):
+                                tags_slots.append(str(k))
+
+                    # 获取本地Attributes
+                    if lib_valueholder_num == 0:
+                        for j in range(len(lib_soup_attr)):
+                            tags_attr.append(tag.get(lib_soup_attr[j]))
+                    else:
+                        for k in tag.find_all('ValueHolder'):
+                            h = k['value']
+                            tags_attr.append(str(h))
+
+                    if len(lib_placeholder_attr):
+                        lib_placeholder_to_string = ''
+                        for p in tag.find_all(True):
+                            for q in range(len(lib_placeholder_attr)):
+                                if p.name == lib_placeholder_attr[q]:
+                                    # for n in range(len(p.contents)):
+                                    for s in range(len(p.contents)):
+                                        lib_placeholder_to_string = lib_placeholder_to_string + str(p.contents[s])
+                                    # print(lib_placeholder_to_string, '\n')
+                                    # lib_placeholder_to_string = p.find_all(True)
+                                    lib_placeholder_str2.append(lib_placeholder_to_string)
+                                # print('lib_placeholder_to_string: ', lib_placeholder_to_string)
+
+                    # 获取库文件主内容并替换Attributes
+                    lib_dom_input = None
+                    if lib[i] == 'InputDate' and tag.get('_id') is not None:
+                        is_port_mode = 0
+                        lib_dom_input = tag.get('_id', '')
+                        # print(lib_dom_id, lib_dom_input, is_port_mode)
+                    if lib[i] == 'BattImage':
+                        is_port_mode = 1
+
+                    getLibContent(lib[i], lib_dom_input)
+
+                # print('l_lib: ',len(lib_slots))
+                # print('l_tags: ',len(tags_slots), '\n')
+                # print('lib_slots: ', lib_slots, '\n')
+                # print('tags_slots: ', tags_slots, '\n')
+
+# time.sleep(1000)
 
 # 重新解析XML
-dev_time = _dev_time
-saveXML(soup, success_xml)
+soup = BeautifulSoup(open(parse_xml, encoding="utf-8"), features="lxml-xml")
+dev_time = getTimeSys()
+soup_indent = str(soup)
+# print('soup: ', soup)
+
+with open(parse_xml, 'w', encoding='utf-8') as f0:
+    f0.write(soup_indent)
+
+with open(parse_xml, 'r', encoding='utf-8') as f:
+    with open(success_xml, 'w', encoding='utf-8') as f2:
+        for line in f:
+            for k in range(len(tags_str)):
+                # 本地替换为库
+                # print(tags_str)
+                # print(lib_soup_str)
+                line = line.replace(str(tags_str[k]), str(lib_soup_str[k]))
+            f2.write(line)
+
+saveXML(success_xml)
 
 # 复制代码库对应图片素材
 
@@ -1340,6 +1556,15 @@ with open(_success_xml, "rb") as file:
     result_xml_string = file.read()
     print(result_xml_string)
 print('<<<<<<')
+
+
+# print('lib: ',lib, '\n')
+# print('tags_lib: ',tags_lib, '\n')
+# print('tags_str: ',tags_str, '\n')
+# print('tags_attr: ',tags_attr, '\n')
+# print('lib_soup_attr: ',lib_soup_attr, '\n')
+# print('lib_soup_attr_def: ',lib_soup_attr_def, '\n')
+# print('lib_soup_str: ',lib_soup_str, '\n')
 
 
 def compressMAML():
@@ -1582,4 +1807,5 @@ conn.execute(
 conn.commit()
 # 关闭数据库连接
 conn.close()
+# time.sleep(2)
 sys.exit(0)

@@ -114,13 +114,13 @@
 			<VariableCommand name="Exam_Leap" expression="eq((#Exam_Year%4),0)*ne((#Exam_Year%100),0)+eq((#Exam_Year%400),0)" persist="true" />
 			<VariableCommand name="Exam_AllDays" expression="(ge(#month,1)*31+(28+#Exam_Leap)*ge(#month,2)+ge(#month,3)*31+ge(#month,4)*30+ge(#month,5)*31+ge(#month,6)*30+ge(#month,7)*31+ge(#month,8)*31+ge(#month,9)*30+ge(#month,10)*31+ge(#month,11)*30+ge(#month,12)*31)+(365*#Exam_Year+int(#Exam_Year/4)+int(#Exam_Year/400)-int(#Exam_Year/100))+#date-1+2" persist="true" />
 
-			<VariableCommand condition="not($#_forGow[$#_id#$]$)" name="Exam_Month" expression="max(min(#EventMonth,12),1)" persist="true" />
-			<VariableCommand condition="not($#_forGow[$#_id#$]$)" name="Exam_Date" expression="max(min(#EventDate,#EventMaxDate),1)" persist="true" />
+			<VariableCommand condition="not($#_forGow$)" name="Exam_Month" expression="max(min(#EventMonth,12),1)" persist="true" />
+			<VariableCommand condition="not($#_forGow$)" name="Exam_Date" expression="max(min(#EventDate,#EventMaxDate),1)" persist="true" />
 			<VariableCommand name="EventYear" expression="#EventYear_0*1000+#EventYear_1*100+#EventYear_2*10+#EventYear_3" persist="true" />
 			<!-- <VariableCommand name="EventYear" expression="max(#EventYear_0*1000+#EventYear_1*100+#EventYear_2*10+#EventYear_3,1900)" persist="true" /> -->
 
-			<VariableCommand condition="not($#_forGow[$#_id#$]$)" name="EventMonth" expression="max(min(#EventMonth_0*10+#EventMonth_1,12),1)" persist="true" />
-			<VariableCommand condition="not($#_forGow[$#_id#$]$)" name="EventDate" expression="max(min(#EventDate_0*10+#EventDate_1,#EventMaxDate),1)" persist="true" />
+			<VariableCommand condition="not($#_forGow$)" name="EventMonth" expression="max(min(#EventMonth_0*10+#EventMonth_1,12),1)" persist="true" />
+			<VariableCommand condition="not($#_forGow$)" name="EventDate" expression="max(min(#EventDate_0*10+#EventDate_1,#EventMaxDate),1)" persist="true" />
 
 			<VariableCommand name="EventMaxDate" expression="ifelse(eq(#Exam_Month,1),31,eq(#Exam_Month,2),28+#Exam_lyz1,eq(#Exam_Month,3),31,eq(#Exam_Month,4),30,eq(#Exam_Month,5),31,eq(#Exam_Month,6),30,eq(#Exam_Month,7),31,eq(#Exam_Month,8),31,eq(#Exam_Month,9),30,eq(#Exam_Month,10),31,eq(#Exam_Month,11),30,eq(#Exam_Month,12),31,31)" persist="true" />
 			<VariableCommand name="Exam_lyz1" expression="eq((#Exam_Year%4),0)*ne((#Exam_Year%100),0)+eq((#Exam_Year%400),0)" const="false" />
@@ -493,21 +493,21 @@
 	</Group>
 
 	<!-- 年份第一位 -->
-	<Var name="mCountNum_0" expression="int(#EventYear[$#_id#$]/1000)" />
+	<Var name="mCountNum_0" expression="int(#EventYear/1000)" />
 	<!-- 年份第二位 -->
-	<Var name="mCountNum_1" expression="int(#EventYear[$#_id#$]/100%10)" />
+	<Var name="mCountNum_1" expression="int(#EventYear/100%10)" />
 	<!-- 年份第三位 -->
-	<Var name="mCountNum_2" expression="int(#EventYear[$#_id#$]/10%10)" />
+	<Var name="mCountNum_2" expression="int(#EventYear/10%10)" />
 	<!-- 年份第四位 -->
-	<Var name="mCountNum_3" expression="int(#EventYear[$#_id#$]%10)" />
+	<Var name="mCountNum_3" expression="int(#EventYear%10)" />
 
 	<!-- 月份第一位 -->
-	<Var name="mCountNum_4" expression="int(#EventMonth[$#_id#$]/10)" />
+	<Var name="mCountNum_4" expression="int(#EventMonth/10)" />
 	<!-- 月份第二位 -->
-	<Var name="mCountNum_5" expression="int(#EventMonth[$#_id#$]%10)" />
+	<Var name="mCountNum_5" expression="int(#EventMonth%10)" />
 	<!-- 日期第一位 -->
-	<Var name="mCountNum_6" expression="int(#EventDate[$#_id#$]/10)" />
+	<Var name="mCountNum_6" expression="int(#EventDate/10)" />
 	<!-- 日期第二位 -->
-	<Var name="mCountNum_7" expression="int(#EventDate[$#_id#$]%10)" />
+	<Var name="mCountNum_7" expression="int(#EventDate%10)" />
 
 </ROOT>

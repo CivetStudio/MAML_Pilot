@@ -2,7 +2,7 @@ import pyperclip
 from lxml import etree as ET
 
 
-def orderXML(input_file, output_file=None):
+def orderXML(input_file, output_file=None, xml_minify=0):
 
     # import xml.etree.ElementTree as ET
     import xml.dom.minidom
@@ -97,12 +97,14 @@ def orderXML(input_file, output_file=None):
     # print(xml_str_modified)
 
     # 使用xml.dom.minidom进行格式化
-    formatted_xml = xml.dom.minidom.parseString(xml_str_modified).toprettyxml(indent="	")
+    formatted_xml = xml.dom.minidom.parseString(xml_str_modified).toprettyxml(indent="\t")
 
-    # 去除额外的空行
-    cleaned_xml_str = '\n'.join(line for line in formatted_xml.split('\n') if line.strip())\
-        .replace('<?xml version="1.0" ?>', '<?xml version="1.0" encoding="utf-8"?>')
-    cleaned_xml_str = xml_str_modified
+    if xml_minify:
+        cleaned_xml_str = xml_str_modified
+    else:
+        # 去除额外的空行
+        cleaned_xml_str = '\n'.join(line for line in formatted_xml.split('\n') if line.strip()) \
+            .replace('<?xml version="1.0" ?>', '<?xml version="1.0" encoding="utf-8"?>')
 
     # 保存到新文件
     if output_file is None:
