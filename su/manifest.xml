@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Lockscreen _dev="civet" _devTime="1713114700431" _pauseIntent="1" compiler="true" frameRate="240" screenWidth="1080" version="1" vibrate="false">
+	<!--欢迎定制锁屏：灵貓 QQ 1876461209  /  Welcome to customize the lock screen: Civet QQ 1876461209-->
+	<!--违规抄袭将依据《中华人民共和国民法典》追究法律责任  /  Illegal plagiarism will be investigated for legal liability in accordance with the Civil Code of the People's Republic of China.-->
+	<ExternalCommands>
+		<Trigger action="resume">
+			<VariableCommand name="m604f9d1e" expression="ifelse(#__thememanager_version,4,#lunarDay,2,ge(#mBfb2a8e1,2),5,eq(#lunarDay,0)*eq(#cur_weather_temp,0)*eq(#__thememanager_version,0),5,eq(#lunarDay,0)*eq(#cur_weather_temp,0)*eq(#__thememanager_version,0)*ne(#m34325dd3,0),5,eq(#lunarDay,0)*eq(#cur_weather_temp,0)*eq(#__thememanager_version,0)*ne(#mCc372fb8,0),5,eq(#lunarDay,0)*eq(#cur_weather_temp,0)*eq(#__thememanager_version,0)*ne(#steps_value,0),5,0)" persist="true"/>
+			<VariableCommand name="mA5980940" expression="ifelse(eq(#mDc03a316.bmp_width,0),1,0)" persist="true" delay="3"/>
+			<VariableCommand name="m2cd1811e" expression="1"/>
+			<VariableCommand name="m1ee50167" expression="#m1ee50167+1" condition="1-#mResumeAni_off"/>
+			<VariableCommand name="mB0e4ecd3" expression="0"/>
+			<VariableCommand name="m7fcb9059" expression="0"/>
+			<VariableCommand name="m45965f69" expression="0"/>
+		</Trigger>
+		<Trigger action="pause">
+			<VariableCommand name="m2cd1811e" expression="1"/>
+			<SoundCommand sound="null.mp3" volume="0" keepCur="false" loop="false"/>
+			<VariableCommand name="m1ee50167" expression="0" condition="1-#mResumeAni_off"/>
+			<VariableCommand name="m5641bab2" type="number" expression="0"/>
+			<VariableCommand name="mD06393b7" type="number" expression="0"/>
+			<VariableCommand name="m496ac20d" type="number" expression="0"/>
+			<VariableCommand name="m3e6df29b" type="number" expression="0"/>
+			<VariableCommand name="mA0096738" type="number" expression="0"/>
+			<VariableCommand name="mD70e57ae" type="number" expression="0"/>
+			<VariableCommand name="m4e070614" type="number" expression="0"/>
+			<VariableCommand name="m364d3f64" type="number" expression="0"/>
+			<VariableCommand name="m9ad3e68d" type="number" expression="0"/>
+			<VariableCommand name="m3dab737m" type="number" expression="0"/>
+			<VariableCommand name="m74dd87a1" type="number" expression="0"/>
+			<VariableCommand name="mEab91202" type="number" expression="0"/>
+			<VariableCommand name="m9dbe2294" type="number" expression="0"/>
+			<VariableCommand name="m4b7732em" type="number" expression="0"/>
+			<VariableCommand name="mB0e4ecd3" expression="0"/>
+			<VariableCommand name="m7fcb9059" expression="0"/>
+			<VariableCommand name="m45965f69" expression="0"/>
+		</Trigger>
+	</ExternalCommands>
+	<VariableBinders>
+		<ContentProviderBinder name="weather1" uri="content://com.oppo.weather.provider.data/attent_city" columns="_id,city_name,city_name_en,city_name_tw" where="current=1" countName="hasWeather" notifyUri="content://com.oppo.weather.provider.data/attent_city">
+			<Variable name="cityid" type="int" column="_id"/>
+			<Variable name="cityname" type="string" column="city_name"/>
+			<Variable name="cityname_en" type="string" column="city_name_en"/>
+			<Variable name="cityname_tw" type="string" column="city_name_tw"/>
+		</ContentProviderBinder>
+		<ContentProviderBinder name="weather2" uri="content://com.oppo.weather.provider.data/weather_info" columns="weather_id,current_weather,current_temp,current_wind_direct,current_wind_power,day_temp,night_temp,day_weather_id,night_weather_id,current_wind_degrees" whereExp="'city_id='+#cityid+' and weather_index=1'" countName="hasWeather" dependency="weather1" notifyUri="content://com.oppo.weather.provider.data/weather_info">
+			<Variable name="cur_weather" type="string" column="current_weather"/>
+			<Variable name="cur_weather_temp" type="int" column="current_temp"/>
+			<Variable name="day_temp" type="int" column="day_temp"/>
+			<Variable name="night_temp" type="int" column="night_temp"/>
+			<Variable name="cur_avg_aqi" type="int" column="avg_aqi"/>
+			<Variable name="cur_weather_power" type="string" column="current_wind_power"/>
+			<Variable name="cur_wind_degrees" type="int" column="current_wind_degrees"/>
+		</ContentProviderBinder>
+	</VariableBinders>
+	<Var name="Key" type="string" expression="'16e36c877ed79ab3b6dc954506495f92b486c52af806359d08b19153fa345da75147d97710004c29ebac121302acb24bd9b2c16e2db890cfbb7d5b30dc7061bc460bf8272ec79da2033c1d02bb54b0e98ce32921622802b8620d4d18f8ff11057fd79adec65daae80de7743ad0e3635d2daf6f04bd0e1fe539beca5027b69703798b737327cf2c9f16347b8842ccf14130124616ffe59772ddeffacaf38338a45c2b522885cf66a0f4cbe784bcfc5deb559ba7b727709efb70e33bfe4bc012d06c1da1680d97955e1b48cd8b62a0deea0caeee7b5c0cae95cc1c684cea157496fe03d7499a2a22d3c391a49ea117355bfecde68587cab203abaa4541b6b25b09b19dbf426bf83ba987c8b61953e78aa1924ae0b2e20de82ffc4c5fa8742cfa62669fc8e6717a46cd922ee101a2cf764d4bb39cfcb530eb41793d509bb22be6820f7f9b088d1f80d3589325d0d48d1035fbdb4c714753f250ae409ed9f556d90fff0f8afc6d3eb847e885fc10cd586efd164305660cac0ca27d6fe5a56d2722f779800a6211d1a704180806d300664fa930f803de0e4b1adc9f76788a208c2b92ddba98fd7e4e27c6375a54c701c0bc5ea580ba5b5df4e3536c2e37dd9e233c879ed69a4132f08ef957dc9496a41f36e0ea2109569a0ce157a8f4f02bb85779a7b7a00b1a053170aed14f7f3fc23f7961e4ff5662690dc9ebb4a03556908c4e5d68905a0ceb80468daf28163f1c8a49fcd93001b06bbb5e1aa1b529e5b41f9629036e8fa8066840f00927305394b0f01e427852f2790c0b64e3a8d5a360a7566e31f361ee8af8c13ca33f827ddb2bd8798af3668a30e4bdf4703f848b42e9c9ecfa28562f91426592dcc9195973d812d7cc718b3a911bcc3136787bf7b3dfd8ce73efc43a1cf68177d8b15efcccbddc00e3b311448eba25cb5c789690b1d036b7d85c90a51179e88d3c43701822bba987d1df5fe8c2d7d4a144033d4d9bf407067158b8d0beb26ea2a1f4170495769adfb7107285a998b5e6da070d18be07da1ac3d914b55d95a9c1c88aba95e23d464cb9f8991e8a1f769835e8f795a536a65452cbb301e84726db76da863cb6c1313a70bfafa2bd92c1c8377b56d0f060ba6f8f05bc4cbc4e491a63da2da2117a6b25ae0c30ece881560b00e89b3d3537cfe362eb61b05ff46952efc077db830e5f7f087f6853503c4ee777d47983800acc4203533be9bac433b4220033ba1d23cf3415695c5928745879e6da323d220c996afd1ffe099653fa7bb9224f2b413ff71413e8f937dfee45a059d324d1260acf0392fdb06a1ba7a2cf519fe7efb0f529fd49b7833e305308a69d54b01fa16e7a548f6162c80a066256ca7efc58a6b6245ad82bf06a7873e57aee472c2d3d5ef192ffae66bbf514afabfc3bd7eb77044b7ee616e5ff35e4712019537a711a0c2924771191d2d29885664eb72cdedc030a9f4258b17ca8537f5e6ce41db1a3f8baa383f999994b2670c2248c5d4ef233e88030a09d5b1c005f5b21391e20f3fa3d85a92e10faccfa96abd20f8e00e7ea1c0161a04c63efb4ad653a19bcc49f0fa71bc910fa16b86c1b2d7c86bb16f1720e2a151efb0a4829dfb619b81613224ed31c2ab07e44dce0a99a3a0cc14191d481c042ea1555b81c76aa1c320345ed7bce30ce48c572ed8d6093d4bf3a6b027d8f04a3cd1b283d2fd4243d3fe2aa85cc5b9625775d822529f400c18e56a00d408a33149357eb67606f04de021c54fbaaecf749820196b00bdaaf7fa0e7f056fa11d7e76ad241e9700e617cbcf75475e5bc94de10cb4e474545905dfb034022f9278c34b717bd850597847d1628a08a79c5e94cf012198c523c233d16f80e570fbdfa4dfcf8165347dded1a5c4d8b88d715c3acfded02958f7c3bdd931a024c35c3eb40bd0793f1c532c0cdbd2278c41a66847469220ec8976d39cc28ff820edc988e4b9b01c1c0ddb174d465feff6011daf30bbf2888c52677d3f657b00a83df6bf9196f3f8de2550b7192f3c4e2dfd3199dfd7c8c8130f45d49df4b705de66842e08bb879084ce6c987728dcf21bf0e3a1d3a651ff0bfb518a3ccc7702dee5efb158589eec7d003c188ee0809c003e2a71cd8eeeb9d23f2f253b5f03bdcb2c2170ad965528357931e90d9db4f420c9d6e288c46b507326b2947653878674766156b6cfaeda9f352474bf0328ce3ccf972a365846b481d155cb5999db39d692a7dc10ba2941ea6141bb6d4d577f2162d95119c09116a1b82c78ed15e7c8fbff0d0aad51968d8a2e3d1b97c4dc87c027ffa1d15c2cba70f465998918873cbfb2e9f166128ac545126c9a077fcfc27e32b84aab658c7596e21e8b9184d7f8786d19fd7dde5d9df6e674e784677412d05dee61de7f21d35cc9d010b12d7722930b9dfe036a27283ef815b9af8641af39fa25b01a4ff189ad9ae64fad3f798ea835fedc86a2bd8f8e324ee797dde035cb93e8a7e09850b6fb7f85d26175388e4c0991b6cbcf12a71be4b2b7297acf9d13d4252aec9181afaf3acdc2f8b903b47cc22ca7eea40d4032148a8aa8d28d2d1a57596d8cbac7709fcf80e91e076cc567252ba56494d557be22566a767aa9d7e5c66f9b83653cf5c520d5c21cd81a1dd742b8b5f0762cf30780aac9d35d9c95f30c6607442310b1e3a4ac1feb9710610e04063210dc27170626deef5397e2be8aa0036f4968849a5774b2fa407fb1d0b3f5ed61ab92b0092d60ce1163cdda087f4f71ee59606fed541df7ce9b6d2fedc8c53b18e3ac9fcea4ec03b3e49bb0d1d8cfb98cdbd30997a80a67639a2d0b1aeb9a9e4b67f40c47794329c042dd0d3f92d65c2f6a5a9e06fb8e152f0f0d21196231545e2d3f07a6f6fd0e27ab42692c8fa239b056a02bd24d43c56f1a5dc438ce9aa52ca20eb92dc66d5f39e97eaeb4c8041fefe8cda1abbc0b7bab27f0cae23e4a2afbf7da61732a1cb83de7fd522852a772c3720ddf7f87aec0f60f9e2d04467fd86990e6e7ee588dcc98c051c7f42c065c45a9fee6a7e35900f33e3b75f3c9ef2e41ff0580601482a94d0aabe3438ac2b766026ccc5926a272d60d265480985b6f1007857e5faa1df35bb66d4f76673b9fb5b55a20af2098d1e2a039bfacaea9a2dbdac3594592e5502376c0d415b37184955e045cb2bec1e57477b0ee18b365ca88c8e4778d183a958c5e2c65ca84149e9d5ea41e4f2c3ab78a5636c2bfdef680732b733a6c1192e2ea50837f1cc0693bcc165c62d6ec7733c0ab8d2cd1e50bcab3d2aab772ff89e4463923aaa59827e5fd3608d372c257c0a3ce025271331d493cd9adde318a939002cd06cb71e27d49ad8ff3bac3a779058123df0e36e462c016b54f96176706008b6d0f34c5d88badc15e061610aa660370c3ed4ca1c3264df4074f89eb3ec5c31034c8853219636549e78c186241ef06babb88182318ba7a857e872841485ac5f1b81dc8ab8a908de10ba497a964d6d694c12a0faa9d0412d1b8fcdb37992e6981eebef8e4f556ef89c9c509300d56a1d52e2deebab14412d46dcdb38d5a70cb0dd7f8febb2baa3d05230d66ed29712559f402e3f96790b9f4a3205e4a94c36cf176a6ad24e77d3b7d5b44fdea993ff9d263f2b988cdd71e495a43659bed67013bb9d15f175062d527fcbbb9a835f2195f06181d53fbdef919b66553a927803bceb7844a4304a9bda1762d35030ec634df0f156336d4c130d49a44a9362a8b22744a7313d7b6986cd2a26f8df43b666a408f5888713630bca9a2c53a1a2190c53293639e3017b7d84b5d0d1985c2acb708b1b630e1e70a6e324c16c2f5e407333e61a03bdd7ee7fa4fdfbf57e96458c3786b5982925b7d5396c717bcecc017913d1b587345327de36acaf95e0b3360e0b305f0989d03420650195038bf1eb047cde165aebc7a91bbef19170c3246e9ab4a7ed621dc11f016fc9f7f6c0c2029f6f5d7886f1934f3798582ab7ccb9f034a7c97b4b1315472847aa67ccccde18edcc5eae538974407834bf654be4fdc2ee08c29b05c66c36891a338957ad623cc43902e0208f5f34da57dddf5225dcf5410cf88fb13d299f87a693da5585324eaf02690842928ccb6082f8a5b285992820a24b866e28706aa210f2c3d8416737b320a8435d2b1deb086f32776dd0472bfc81ae09b7410b8ed530899c6447c51b9a3c64d40f8d4b826d46b5b70c25993e5fb1c8e395b4425d8346633bfa68d8baeda19a320e34b3dabcd65e219458e62118d481d0ce898c3501f38ac6a2962849503917d9a8df005a6de154b863cb1496c895f70d447da2d408d26adf051ab2dae428e6724e82697c4297443d6a0458568a46567692eba7904a9840f35a2e8c5974d766c828fe9d638e4a413b8d993fee028cb9d598a63903b09f233ba4d3540619d0aa0b0d2009b998e090cdfb0c60cdfc1679c08e505efbe67d4d5f70d0f4d81b1ea3d98d8c2e631961d6dd5d3ab3e2f613067aecb980a02f4e406f0549b62272a5fc476808ef4ff35f371a98345c810bf308084e936b2722e615beca108575df406b2474fa564f4c821310d87638847613b981982674a9d7a2a386abecaaac7ce23cd717155766ed5f6ca4d34d9f393d0c58157b82418834e595e950c38bf18348b1b6b694e18cd29409defca48a116f94c815437abb51dd590a0b152a93b7eb646ea9880f465adc78d49aee4c2cf7266e4f884eb3bbd273f19b139e49e229f7e8deb259e4ea5ccd33396bd934214dddd419f1205da0b4d8013f2b3bc86c114634633520863784234cc4e017eb865893e54e07397971d87acc21a8ceee1a540938cbbeabcf0bbb597e229d81ef05be669c5a8c0ef3b2d7f00c240cfc8ed830defc02f5315db29ab4b6d568b79f379db9a84a9c025bcc98a18c62ffec48242dcd997e5fd9ccb2ca21da49082731abc027eca65780f361cba47ebda3a5848407e0ef672f45b29c2bac4cf4eb87a7badb594cb15f9e160a4b4c778f4de3ee6e24d91bd1f0cc54bbed9ee9dab6f4d7585d45981950047ef4bc719ce275c1679bf0cfc1c5f2f9ff9dd0c8e66d4615e5f970062357f0fe3199c6c62e58e5bd90c23e2235b1b4b69d47985f97295e6751aba2102a76859c87cd2168a3a3d538d34f316308ef5a5969f1c7830979b49c67d82035fddcb7611b359063e966f9f2d985c4721a3e5f496f86b3f57e4bcbf2eea869d15d74149aaf162aebcf50096ba646084a1137e316316fc7532b0658f5bae26662fe4530c93d827f27315cf14e957aea4b2eaea7a45262466abd0b532b7e41dda801295047dd60c36d71211b8dd5dc6cde0350efb0097c73615c451b08f2542f7fec0a2ccada22d2448987ae91b8c8e48acfbe5ca37fbe0cdec55915da7da6cc0f25c731e0c0e0db5d9c077bf5592a565765c25840c1e60f2c02abe2f8fcad3c9af00f5200c54273d25ed9bc88a7011fe0f2e714b060f0d4d09a94e40b5ee9ce4ab95654b0048247c8eb3f3cfb8a4f710944305c0fd264ea88a8f9531207042b6ffe5f71510b1d2b6affe9b5986e16824309cefcc1466d2483ec36ed6e410b63ffd8ac39afc94da18e63f25989bed93cd258553d2f557116e503c47eb2d9876c2f6558eadf86a0652e24f83d80a00cea61b4d814f98b6937f7a693e305d963519c7c0b25d52f3a86daccaa03eb7ec35678d7121ab6abfa4c62fc5aaab9984a911b1b2bac9bb9b3b3fa54f9b788d4038d6169b42c50aae9b2b5dfdcf1f53d12f9f0b76fbfccd254571e79eed59bab49429ae370d0f3967d8fddb7577fbfb43ec433a992f31aca59dbb7aa57c6199de061b0da0f53ea10b4f5d035560179dc9e90540a624dfcaea2465f784663fd3b5fa686c99e29f879b6fa6d8c758488d73cfe9215c634ebb2503b6d8f49a32013c5bc37881f23599b8d4042ccdc644afb47d3d7475147d6a90b462a32140de4b515d4004fa2aaa2dce96cb90afaa40542811dbd61a1fe990ddc774f07b62494f4f771864c1ff9ee577f5d67170be392faaa0a317199b3a8b6408971854ca1df6205cefcfa039fa3a31b2f8b08e8240cb0605a8c63edbe4ded9f9be903fb84dbd8d936688f214f7d0310073bc02004dc7f18c3e35e63933d92e20f6dc2d0e866ffda075f35585386613bc3d24ccd62bc77e0d9d3cc4b9171b8d1b8fd40d1c9550be093e823033e57aaf5246868c0ebcde4f7bd1651279d2d26d252e5b27a16f35fea7844ca555ebc12c0244c6e362a5fae29e3340586f3a35e474d286f35a63f4351c968a6fc62a04a5f1ebdc038b0c704230528b28ce6a600f7b40899c1698d816fdae9ec6418c25094682bb67f5a6b1043b5db5e045055de92a97bdf15367aa2f67cd5ba476bd85c04e95857a362b3675944cd6182f9db474986fe2fe3579f27936f74535a38f430d525b27233b44a1761484e7832c11f84257f7cb3f1574848f659ec8b6f650b7ff6a78a8aa09c799edca117842c0668503465656903d6da00900b9fe6d7939315f61ea00d5b70450aee361092d879f6f76c5d7f7239a17d06c17414eb9aead3e9d3a911b6fbb10bf5ea0cfb510d8dafed5b74c63beaffd766f81b9ade6885d8486215c569442d355b951accee4d190ffe330df541d390d9afaaf39445b89752ec7bdb6c3a5aa7114848b72fd31f09124934a8a6f85aa7591313c6a89cbc427ccd5bb1cc0018369a0190d6c91ce1b350f38194cbe004546bc0118c35afad3d4b3cb0979605ac0b6dedf563cdde564bfe6954d95be9240d02ec82ac4e0275efaf09d7c33078b9a959556f03d9013a02320b6e2a1d7b331ba5e262337f7f85f8cec61da5dd7fcbbc05782a4aedd2843cad483912c46ef0a4076fdf36869c7a86beda30d82fc1a8cb5ebf9622ce6f2dd784663a3378f990127b9dd63b06d27762b649ebfe90cdd40674da08be2073ca80246ccc091d57a5d4fa14401790e2f861d8c832256fcca0fc5dea8b6d693eae0f1d8a7aaf0f65c484596f1dfda8997b2ae93878252d208e1b4bf048a313c89c3a43ce3b58d451afcb16784cb4bf4d2335411d568c044fbecaaa065fecd3e28ed324b301b68480d202e08f2db3d2854949d85b05b2aeb992c238b5299bf80cf8797d9993919445a21d409b252dafe5e537c42d063eec12ae58c98680b63ba31914a273432fbbf229297e28e1f61e386c0a9b9bf2fbc2682d0010efe2ced44dc9f659e749cc5153197314b2b2f0c1f2b573a0e5b396d08dbad68b3771a976aaa5758b4749b3e0a6fe37f7c703a9047551aa270e25751d2ab0814d058ef5c028f25d2c13c2552fbf5b8e39a5dcda05fb84d88a7092ad08ae0e9683123148a79867a0662dba2c4183cd74e183e533c4c3ce7f03881f283ddb76012a0fb6de4e2b2e9048f70e45744f26951431562e73e728d9d11cba157939cebacfb60d6b3dbcc3e5277a92d54ae784420271b080047a6526cea5e257e559c535c4b49e2513650c76e2a75b8994c59389d4a3c21fbdfb657365db39a29916b37867a6739ab01165752a2f9d4783e4f4b34a980d2318a934acb73c8ab4dd2ce9'"/>
+	<Var name="mBfb2a8e1" expression="len(@weather_cur_temp)"/>
+	<Var name="m31e6ec6a" type="number" expression="ifelse(eq(#m604f9d1e,0)+eq(#m604f9d1e,5),1/max(1.6*#m604f9d1e,0.770158),1)"/>
+	<Var name="notification" expression="1"/>
+	<Var name="m17dadc97" type="number" expression="ne(#in_preview_mode,1)*ne(#m604f9d1e,4)*ifelse(eq(#m604f9d1e,2),0,eq(#m604f9d1e,0)*ne(#frame_rate,0),0-0.12,eq(#m604f9d1e,5),1,1)"/>
+	<Var name="m53ecb98b" type="number" expression="1080"/>
+	<Var name="mDee4b47e" type="number" expression="2700"/>
+	<Var name="mA08ae4aa" type="number" expression="max(#screen_width/#m53ecb98b,#screen_height/#mDee4b47e)"/>
+	<Var name="mBcfdb35f" expression="0" const="true"/>
+	<Var name="m3e2bc3f7" type="number" expression="ifelse(eq(#battery_state,1)+eq(#battery_state,3),#m71b4fb2c,#battery_level)"/>
+	<Var name="m2c3b5a8f" type="number" expression="0" persist="true" _const="true"/>
+	<Var name="m825b2e08" type="number" expression="2.00158"/>
+	<Var name="mAed2b90d" type="number" expression="0"/>
+	<Var name="mD9d5899b" type="number" expression="0.35212798"/>
+	<Var name="m40dcd821" type="number" expression="0.61620222"/>
+	<Var name="m37dbe8b7" type="number" expression="0.80423226"/>
+	<Var name="mA9bf7d14" type="number" expression="0.92822751"/>
+	<Var name="mDeb84d82" type="number" expression="1.0001975"/>
+	<Var name="m47b11c38" type="number" expression="1.03215166"/>
+	<Var name="m30b62cae" type="number" expression="1.03609952"/>
+	<Var name="mA009313f" type="number" expression="1.02405056"/>
+	<Var name="mD70e01a9" type="number" expression="1.00801421"/>
+	<Var name="m93df4064" type="number" expression="1"/>
+	<Var name="mE94d8ff4" type="number" expression="2.70157997"/>
+	<Var name="mD322b15d" type="number" expression="0"/>
+	<Var name="mA42581cb" type="number" expression="0.40882794"/>
+	<Var name="m3d2cd071" type="number" expression="0.70580222"/>
+	<Var name="m4a2be0e7" type="number" expression="0.90713224"/>
+	<Var name="mD44f7544" type="number" expression="1.02902749"/>
+	<Var name="mA34845d2" type="number" expression="1.08769749"/>
+	<Var name="m3a411468" type="number" expression="1.09935165"/>
+	<Var name="m4d4624fe" type="number" expression="1.08019953"/>
+	<Var name="mDdf9396f" type="number" expression="1.04645055"/>
+	<Var name="mAafe09f9" type="number" expression="1.0143142"/>
+	<Var name="mF8c9e198" type="number" expression="1"/>
+	<Var name="m7cf5eef6" type="number" expression="int(2)"/>
+	<Var name="mB7c3069f" type="number" expression="0"/>
+	<Var name="m42392fb0" type="number" expression="36"/>
+	<Var name="m19d4296e">
+		<VariableAnimation>
+			<AniFrame varSpeedFlag="SineFun_Out" value="0" time="0"/>
+			<AniFrame varSpeedFlag="SineFun_Out" value="360" time="6000"/>
+			<AniFrame varSpeedFlag="SineFun_Out" value="360" time="6600"/>
+		</VariableAnimation>
+	</Var>
+	<Var name="m372b461d">
+		<VariableAnimation>
+			<AniFrame value="0" time="0"/>
+			<AniFrame value="1" time="100"/>
+		</VariableAnimation>
+	</Var>
+	<Var name="m1691a6e5">
+		<VariableAnimation>
+			<AniFrame value="1" time="0"/>
+			<AniFrame value="864000000" time="864000000"/>
+		</VariableAnimation>
+	</Var>
+	<Var name="m71b4fb2c">
+		<VariableAnimation>
+			<AniFrame value="0" time="0"/>
+			<AniFrame value="100" time="800"/>
+			<AniFrame value="100" time="1200"/>
+		</VariableAnimation>
+	</Var>
+	<Var name="m7f0df615">
+		<VariableAnimation>
+			<AniFrame value="1" time="0"/>
+			<AniFrame value="864000000" time="864000000"/>
+		</VariableAnimation>
+	</Var>
+	<Var name="m1f051e5m">
+		<VariableAnimation>
+			<AniFrame value="0" time="0"/>
+			<AniFrame value="0.40882794" time="100"/>
+			<AniFrame value="0.70580222" time="200"/>
+			<AniFrame value="0.90713226" time="300"/>
+			<AniFrame value="1.02902752" time="400"/>
+			<AniFrame value="1.08769749" time="500"/>
+			<AniFrame value="1.09935168" time="600"/>
+			<AniFrame value="1.08019953" time="700"/>
+			<AniFrame value="1.04645056" time="800"/>
+			<AniFrame value="1.0143142" time="900"/>
+			<AniFrame value="1" time="1000"/>
+			<AniFrame value="1" time="1876461209000"/>
+		</VariableAnimation>
+	</Var>
+	<Var name="m12413465">
+		<VariableAnimation>
+			<AniFrame value="0" time="0"/>
+			<AniFrame value="0" time="100"/>
+			<AniFrame value="0.35212798" time="200"/>
+			<AniFrame value="0.61620222" time="300"/>
+			<AniFrame value="0.80423226" time="400"/>
+			<AniFrame value="0.92822751" time="500"/>
+			<AniFrame value="1.0001975" time="600"/>
+			<AniFrame value="1.03215166" time="700"/>
+			<AniFrame value="1.03609952" time="800"/>
+			<AniFrame value="1.02405056" time="900"/>
+			<AniFrame value="1.00801421" time="1000"/>
+			<AniFrame value="1" time="1100"/>
+			<AniFrame value="1" time="1876461209000"/>
+		</VariableAnimation>
+	</Var>
+	<Var name="m8b4865df">
+		<VariableAnimation>
+			<AniFrame value="0" time="0"/>
+			<AniFrame value="0" time="200"/>
+			<AniFrame value="0.35212798" time="300"/>
+			<AniFrame value="0.61620222" time="400"/>
+			<AniFrame value="0.80423226" time="500"/>
+			<AniFrame value="0.92822751" time="600"/>
+			<AniFrame value="1.0001975" time="700"/>
+			<AniFrame value="1.03215166" time="800"/>
+			<AniFrame value="1.03609952" time="900"/>
+			<AniFrame value="1.02405056" time="1000"/>
+			<AniFrame value="1.00801421" time="1100"/>
+			<AniFrame value="1" time="1200"/>
+			<AniFrame value="1" time="1876461209000"/>
+		</VariableAnimation>
+	</Var>
+	<Var name="mFc4f5549">
+		<VariableAnimation>
+			<AniFrame value="0" time="0"/>
+			<AniFrame value="0" time="300"/>
+			<AniFrame value="0.35212798" time="400"/>
+			<AniFrame value="0.61620222" time="500"/>
+			<AniFrame value="0.80423226" time="600"/>
+			<AniFrame value="0.92822751" time="700"/>
+			<AniFrame value="1.0001975" time="800"/>
+			<AniFrame value="1.03215166" time="900"/>
+			<AniFrame value="1.03609952" time="1000"/>
+			<AniFrame value="1.02405056" time="1100"/>
+			<AniFrame value="1.00801421" time="1200"/>
+			<AniFrame value="1" time="1300"/>
+			<AniFrame value="1" time="1876461209000"/>
+		</VariableAnimation>
+	</Var>
+	<Var name="m622bc0ea">
+		<VariableAnimation>
+			<AniFrame value="0" time="0"/>
+			<AniFrame value="0" time="400"/>
+			<AniFrame value="0.35212798" time="500"/>
+			<AniFrame value="0.61620222" time="600"/>
+			<AniFrame value="0.80423226" time="700"/>
+			<AniFrame value="0.92822751" time="800"/>
+			<AniFrame value="1.0001975" time="900"/>
+			<AniFrame value="1.03215166" time="1000"/>
+			<AniFrame value="1.03609952" time="1100"/>
+			<AniFrame value="1.02405056" time="1200"/>
+			<AniFrame value="1.00801421" time="1300"/>
+			<AniFrame value="1" time="1400"/>
+			<AniFrame value="1" time="1876461209000"/>
+		</VariableAnimation>
+	</Var>
+	<Var name="m152cf07c">
+		<VariableAnimation>
+			<AniFrame value="0" time="0"/>
+			<AniFrame value="0" time="500"/>
+			<AniFrame value="0.35212798" time="600"/>
+			<AniFrame value="0.61620222" time="700"/>
+			<AniFrame value="0.80423226" time="800"/>
+			<AniFrame value="0.92822751" time="900"/>
+			<AniFrame value="1.0001975" time="1000"/>
+			<AniFrame value="1.03215166" time="1100"/>
+			<AniFrame value="1.03609952" time="1200"/>
+			<AniFrame value="1.02405056" time="1300"/>
+			<AniFrame value="1.00801421" time="1400"/>
+			<AniFrame value="1" time="1500"/>
+			<AniFrame value="1" time="1876461209000"/>
+		</VariableAnimation>
+	</Var>
+	<Var name="m8c25a1c6">
+		<VariableAnimation>
+			<AniFrame value="0" time="0"/>
+			<AniFrame value="0" time="600"/>
+			<AniFrame value="0.35212798" time="700"/>
+			<AniFrame value="0.61620222" time="800"/>
+			<AniFrame value="0.80423226" time="900"/>
+			<AniFrame value="0.92822751" time="1000"/>
+			<AniFrame value="1.0001975" time="1100"/>
+			<AniFrame value="1.03215166" time="1200"/>
+			<AniFrame value="1.03609952" time="1300"/>
+			<AniFrame value="1.02405056" time="1400"/>
+			<AniFrame value="1.00801421" time="1500"/>
+			<AniFrame value="1" time="1600"/>
+			<AniFrame value="1" time="1876461209000"/>
+		</VariableAnimation>
+	</Var>
+	<Var name="m23105325" expression="ifelse(ne(#m604f9d1e,2),#time+#time_sys,round(#m1691a6e5))" threshold="1">
+		<Trigger>
+			<VariableCommand name="mDe319eef" expression="ifelse(eq(#noticeDown,1),0,le(abs(#touch_x-#touch_begin_x),24)*le(abs(#touch_y-#touch_begin_y),24))"/>
+			<VariableCommand name="m978db9e3" type="number" expression="(#screen_height-2700)"/>
+			<VariableCommand name="m62950843" expression="ifelse(ge(#m1227d76b,6)*lt(#m1227d76b,12),0,ge(#m1227d76b,12)*lt(#m1227d76b,18),1,2)"/>
+			<VariableCommand name="m8afbb489" expression="(#day_of_week-1-1+7)%7"/>
+			<VariableCommand name="m131fe1cd" expression="#day_of_week-1"/>
+			<VariableCommand name="m6418d15b" expression="(#day_of_week-1+1)%7"/>
+			<VariableCommand name="m91a310ea" expression="ifelse( ge(#m1227d76b,1)*lt(#m1227d76b,3),1, ge(#m1227d76b,3)*lt(#m1227d76b,5),2, ge(#m1227d76b,5)*lt(#m1227d76b,7),3, ge(#m1227d76b,7)*lt(#m1227d76b,9),4, ge(#m1227d76b,9)*lt(#m1227d76b,11),5, ge(#m1227d76b,11)*lt(#m1227d76b,13),6, ge(#m1227d76b,13)*lt(#m1227d76b,15),7, ge(#m1227d76b,15)*lt(#m1227d76b,17),8, ge(#m1227d76b,17)*lt(#m1227d76b,19),9, ge(#m1227d76b,19)*lt(#m1227d76b,21),10, ge(#m1227d76b,21)*lt(#m1227d76b,23),11, 0)"/>
+			<VariableCommand name="mD7e16514" type="number" expression="ifelse(ne(#screen_height,#raw_screen_height)*ne(#raw_screen_width,1440)*ne(#raw_screen_width,1240)*ne(#raw_screen_width,1080)*ne(#raw_screen_width,720),1,0)" condition="ne(#raw_screen_height,0)*eq(#m604f9d1e,0)"/>
+			<VariableCommand name="m98ec284b" type="number" expression="ifelse(ne(#cur_weather_temp,0)*eq(#m604f9d1e,5)*eq(#mBfb2a8e1,0),1,ne(#mBfb2a8e1,0)*eq(#m604f9d1e,5),0,0)+#in_preview_mode*0"/>
+			<VariableCommand name="mCf54913e" type="number" expression="ifelse(eq(#time_format,1),#hour24,ne(#hour12,0),#hour12,12)"/>
+			<VariableCommand name="mA7e8b652" type="number" expression="ifelse(eq(#time_format,1),#m1227d76b,#hour12)"/>
+			<VariableCommand name="m8a1abd8d" type="number" expression="ifelse(#time_format,#hour24,#hour12)"/>
+			<VariableCommand name="mF2e3dc2e" type="number" expression="int(#month+1)"/>
+			<VariableCommand name="mAb74c91e" type="number" expression="#date"/>
+			<VariableCommand name="m803157d2" type="number" expression="int(#day_of_week-1)"/>
+			<VariableCommand name="mD53f4c0f" type="number" expression="int(#m8a1abd8d/10)"/>
+			<VariableCommand name="mA2387c99" type="number" expression="int(#m8a1abd8d-int(#m8a1abd8d/10)*10)"/>
+			<VariableCommand name="m8e3923c2" type="number" expression="int(#minute/10)"/>
+			<VariableCommand name="mF93e1354" type="number" expression="int(#minute-int(#minute/10)*10)"/>
+			<VariableCommand name="m8b6e94c9" type="number" expression="#battery_level"/>
+			<VariableCommand name="mD00fe08m" expression="not(ge(#m1227d76b,6)*lt(#m1227d76b,18))"/>
+			<VariableCommand name="m5641bab2" type="number" expression="ifelse(ne(#m604f9d1e,0),#m1f051e5m,#m364d3f64)"/>
+			<VariableCommand name="mA764a321" type="number" expression="ifelse(ne(#m604f9d1e,0),#m1f051e5m,#m364d3f64)"/>
+			<VariableCommand name="mD06393b7" type="number" expression="ifelse(ne(#m604f9d1e,0),#m12413465,#m9ad3e68d)"/>
+			<VariableCommand name="m496ac20d" type="number" expression="ifelse(ne(#m604f9d1e,0),#m8b4865df,#m3dab737m)"/>
+			<VariableCommand name="m3e6df29b" type="number" expression="ifelse(ne(#m604f9d1e,0),#mFc4f5549,#m74dd87a1)"/>
+			<VariableCommand name="mA0096738" type="number" expression="ifelse(ne(#m604f9d1e,0),#m622bc0ea,#mEab91202)"/>
+			<VariableCommand name="mD70e57ae" type="number" expression="ifelse(ne(#m604f9d1e,0),#m152cf07c,#m9dbe2294)"/>
+			<VariableCommand name="m4e070614" type="number" expression="ifelse(ne(#m604f9d1e,0),#m8c25a1c6,#m4b7732em)"/>
+		</Trigger>
+	</Var>
+	<Var name="m44186b66" expression="ifelse(eq(#m604f9d1e,2),round(#m1691a6e5),#time)" threshold="1">
+		<Trigger>
+			<VariableCommand name="m2339d5b1" expression="ifelse(eq(#ampm,1)*eq(#time_format,0),#hour+12,eq(#ampm,0)*eq(#time_format,0)*eq(#hour,12),0,#hour)"/>
+			<VariableCommand name="m543ee527" expression="ifelse(eq(#ampm,1)*eq(#time_format,0)*lt(#hour12,12),#hour12+12,eq(#ampm,0)*eq(#time_format,0)*eq(#hour,12),0,#hour24)"/>
+			<VariableCommand name="mCd37b49d" expression="ifelse(gt(#m2339d5b1,24),23-#m2339d5b1+12,23-#m2339d5b1)"/>
+			<VariableCommand name="mBa30840b" expression="23-#m543ee527"/>
+			<VariableCommand name="m245411a8" expression="ifelse(gt(#m543ee527,24),#mBa30840b+12,#mBa30840b)"/>
+			<VariableCommand name="mBc863114" expression="ifelse(eq(#time_format,2),#mCd37b49d,#m245411a8)"/>
+			<VariableCommand name="m46890c77" expression="ifelse(#_old,23-#hour,#mF7adcea2)"/>
+			<VariableCommand name="m7354d2ba" expression="23-#m9814bf7c"/>
+			<VariableCommand name="mC4e3f515" expression="#hour24"/>
+			<VariableCommand name="m9dcae063" expression="#hour"/>
+			<VariableCommand name="mB539ed58" expression="ifelse(eq(#hour24,#hour12),0,1)"/>
+			<VariableCommand name="m9814bf7c" expression="ifelse(#mB539ed58,#mC4e3f515,#m9dcae063)"/>
+			<VariableCommand name="m84b57b17" expression="59-#m2fd609e6"/>
+			<VariableCommand name="m4009c6dc" expression="59-#minute"/>
+			<VariableCommand name="m706ac361" expression="ifelse(lt((#day_of_week-1),0),#day_of_week-1,7-abs(#day_of_week-1))"/>
+			<VariableCommand name="m520d5730" expression="ifelse(eq(#m706ac361,7),0,#m706ac361)"/>
+			<VariableCommand name="m5015d64e" type="number" expression="ifelse(eq(int((#day_of_week-1)),0),5,eq(int((#day_of_week-1)),6),6,5-int((#day_of_week-1)))"/>
+			<VariableCommand name="mC35b1ac7" type="number" expression="ifelse(eq(int((#day_of_week-1)),0),6,eq(int((#day_of_week-1)),6),0,6-int((#day_of_week-1)))"/>
+			<VariableCommand name="mF019b18a" type="number" expression="int(#day_of_week-1-1+7)%7"/>
+			<VariableCommand name="m498a47c9" type="number" expression="ifelse(lt(#mF019b18a,5),5-#mF019b18a,6-#mF019b18a)"/>
+			<VariableCommand name="m8ebb310a" type="number" expression="#m498a47c9*24-#m1227d76b"/>
+			<VariableCommand name="m4e1a1146" expression="ifelse(eq(int(#month+1),1),31,eq(int(#month+1),2),28+#mA0643319,eq(int(#month+1),3),31,eq(int(#month+1),4),30,eq(int(#month+1),5),31,eq(int(#month+1),6),30,eq(int(#month+1),7),31,eq(int(#month+1),8),31,eq(int(#month+1),9),30,eq(int(#month+1),10),31,eq(int(#month+1),11),30,eq(int(#month+1),12),31,31)"/>
+			<VariableCommand name="m3302b524" expression="#m4e1a1146-#date"/>
+			<VariableCommand name="mA0643319" expression="eq((#year%4),0)*ne((#year%100),0)+eq((#year%400),0)" const="false"/>
+			<VariableCommand name="m55e59421" expression="ifelse(#mB539ed58,23-#m9814bf7c,23-#hour24)"/>
+			<VariableCommand name="m79492fbe" expression="ifelse(eq(#m604f9d1e,0),#m55e59421,eq(#m604f9d1e,2)+eq(#m604f9d1e,2),#m46890c77,eq(#Civet,5)+eq(#m604f9d1e,5),#m7354d2ba,#mBc863114)"/>
+			<VariableCommand name="m1227d76b" expression="23-#m79492fbe"/>
+			<VariableCommand name="mCea1b3f2" expression="ifelse(eq(#m1227d76b,0)*eq(#minute,0),100,100-round((#m1227d76b*60+#minute)/1440*100))"/>
+			<VariableCommand name="m6f1fed07" expression="100-round(ifelse(eq(#day_of_week,1),1,(#day_of_week-1)/7)*100)"/>
+			<VariableCommand name="mBcb1773a" expression="100-round(#date/#m4e1a1146*100)"/>
+			<VariableCommand name="m774b41d5" expression="round(#mB2d54dc7/(365+#mA0643319)*100)"/>
+			<VariableCommand name="m2fd609e6" expression="ifelse(eq(#m604f9d1e,5)*eq(#m12462a57,1),int((#time%60000)/1000),#second)"/>
+			<VariableCommand name="m7b282d7m" expression="#hour12*30+#minute/2"/>
+			<VariableCommand name="m23bf6361" expression="#minute*6"/>
+			<VariableCommand name="mAc022024" expression="#m2fd609e6*6"/>
+			<VariableCommand name="mBf72c59m" expression="#year+1"/>
+			<VariableCommand name="mD84604a9" expression="eq((#year%4),0)*ne((#year%100),0)+eq((#year%400),0)"/>
+			<VariableCommand name="m9ff011b1" expression="(ge(#month,1)*31+(28+#mD84604a9)*ge(#month,2)+ge(#month,3)*31+ge(#month,4)*30+ge(#month,5)*31+ge(#month,6)*30+ge(#month,7)*31+ge(#month,8)*31+ge(#month,9)*30+ge(#month,10)*31+ge(#month,11)*30+ge(#month,12)*31)+(365*#year+int(#year/4)+int(#year/400)-int(#year/100))+#date-1*0+2*0"/>
+			<VariableCommand name="m96135726" expression="(365*#mBf72c59m+int(#mBf72c59m/4)+int(#mBf72c59m/400)-int(#mBf72c59m/100))+2"/>
+			<VariableCommand name="mB2d54dc7" expression="abs(#m96135726-#m9ff011b1)"/>
+			<VariableCommand name="m490fe715" expression="int(#mB2d54dc7/100%10)"/>
+			<VariableCommand name="m3e08d783" expression="int(#mB2d54dc7/10%10)"/>
+			<VariableCommand name="mA7018639" expression="int(#mB2d54dc7%10)"/>
+		</Trigger>
+	</Var>
+	<Var name="mF8cec4fm" expression="ifelse(eq(#m604f9d1e,2)+eq(#m604f9d1e,4),#time,#m7f0df615+eq(#m604f9d1e,0)*int(#time_sys/300))" threshold="1">
+		<Trigger>
+			<VariableCommand name="m14c231a2" expression="1" condition="1"/>
+			<VariableCommand name="m12462a57" expression="eq(#screen_width/#screen_height,1440/2560)*eq(#screen_density,0)" condition="1"/>
+			<VariableCommand name="m396b7994" expression="eq(#screen_width/#screen_height,1440/2560)*eq(#screen_density,480)" condition="1"/>
+			<VariableCommand name="m1bdf0fc3" expression="eq(#screen_width/#screen_height,1440/2560)*ne(#screen_density,0)" condition="1"/>
+			<VariableCommand name="m63bb5b90" expression="eq(#screen_width/#screen_height,1440/3216)" condition="1"/>
+			<VariableCommand name="mD0761e52" expression="ifelse(eq(#screen_height,2160)+eq(#screen_height,2340)+eq(#screen_height,2256)+eq(#screen_height,2376),6,eq(#m12462a57,1),0.188,eq(#m396b7994,1),5,eq(#m1bdf0fc3,1),5,1)" condition="1"/>
+			<VariableCommand name="mB8ca393e" expression="ifelse(eq(#screen_height,2280),6,eq(#m63bb5b90,1),1,1)" condition="1"/>
+			<VariableCommand name="m75710bdd" expression="ifelse(eq(#m604f9d1e,5),3,0.5)" condition="1"/>
+			<VariableCommand name="mF08b8bf2" type="number" expression="min(#mF08b8bf2+0.0444*ifelse(eq(#m604f9d1e,0)+eq(#m604f9d1e,5),2,eq(#m604f9d1e,2),2,1),1)"/>
+			<VariableCommand name="mCc079d6c" expression="ge(#mF08b8bf2,1)*min(#mCc079d6c+#m31e6ec6a*(max(#mResumeSpeed,1)*0.0125),1.0)" condition="1"/>
+			<VariableCommand name="m5a40a9a3" expression="ge(#mF08b8bf2,1)*min(#mCc079d6c+#m31e6ec6a*(max(#mResumeSpeed,1)*0.0125),1.2)" condition="1"/>
+			<VariableCommand name="m6ad2540b" expression="ge(#m5a40a9a3,0.2)*min(#m6ad2540b+#m31e6ec6a*(max(#mResumeSpeed,1)*0.0125),1)" condition="1"/>
+			<VariableCommand name="mF3db05b1" expression="ge(#m5a40a9a3,0.4)*min(#mF3db05b1+#m31e6ec6a*(max(#mResumeSpeed,1)*0.0125),1)" condition="1"/>
+			<VariableCommand name="m84dc3527" expression="ge(#m5a40a9a3,0.6)*min(#m84dc3527+#m31e6ec6a*(max(#mResumeSpeed,1)*0.0125),1)" condition="1"/>
+			<VariableCommand name="m1ab8a084" expression="ge(#m5a40a9a3,0.8)*min(#m1ab8a084+#m31e6ec6a*(max(#mResumeSpeed,1)*0.0125),1)" condition="1"/>
+			<VariableCommand name="m6dbf9012" expression="ge(#m5a40a9a3,1.0)*min(#m6dbf9012+#m31e6ec6a*(max(#mResumeSpeed,1)*0.0125),1)" condition="1"/>
+			<VariableCommand name="mF4b6c1a8" expression="ge(#m5a40a9a3,1.2)*min(#mF4b6c1a8+#m31e6ec6a*(max(#mResumeSpeed,1)*0.0125),1)" condition="1"/>
+			<VariableCommand name="mF462b69f" expression="3.1415926535898"/>
+			<VariableCommand name="mF7197ec4" expression="1.70158+#m2c3b5a8f"/>
+			<VariableCommand name="m6e102f7e" expression="1.525*#mF7197ec4"/>
+			<VariableCommand name="m19171fe8" expression="1+#mF7197ec4"/>
+			<VariableCommand name="m87738a4b" expression="(2*#mF462b69f)/3"/>
+			<VariableCommand name="mF074badd" expression="(2*#mF462b69f)/4.5"/>
+			<VariableCommand name="m42b70089" expression="7.5625"/>
+			<VariableCommand name="mB858e803" expression="2.75"/>
+			<VariableCommand name="m364d3f64" expression="1+#m19171fe8*(#mCc079d6c-1)*(#mCc079d6c-1)*(#mCc079d6c-1)+#mF7197ec4*(#mCc079d6c-1)*(#mCc079d6c-1)" condition="1"/>
+			<VariableCommand name="mEdd4d61b" expression="1+#m19171fe8*(#mCc079d6c-1)*(#mCc079d6c-1)*(#mCc079d6c-1)+#mF7197ec4*(#mCc079d6c-1)*(#mCc079d6c-1)" condition="1"/>
+			<VariableCommand name="m9ad3e68d" expression="ge(#m5a40a9a3,0.2)*(1+(#m19171fe8-1)*(#m6ad2540b-1)*(#m6ad2540b-1)*(#m6ad2540b-1)+(#mF7197ec4-1)*(#m6ad2540b-1)*(#m6ad2540b-1))" condition="1"/>
+			<VariableCommand name="m3dab737m" expression="ge(#m5a40a9a3,0.4)*(1+(#m19171fe8-1)*(#mF3db05b1-1)*(#mF3db05b1-1)*(#mF3db05b1-1)+(#mF7197ec4-1)*(#mF3db05b1-1)*(#mF3db05b1-1))" condition="1"/>
+			<VariableCommand name="m74dd87a1" expression="ge(#m5a40a9a3,0.6)*(1+(#m19171fe8-1)*(#m84dc3527-1)*(#m84dc3527-1)*(#m84dc3527-1)+(#mF7197ec4-1)*(#m84dc3527-1)*(#m84dc3527-1))" condition="1"/>
+			<VariableCommand name="mEab91202" expression="ge(#m5a40a9a3,0.8)*(1+(#m19171fe8-1)*(#m1ab8a084-1)*(#m1ab8a084-1)*(#m1ab8a084-1)+(#mF7197ec4-1)*(#m1ab8a084-1)*(#m1ab8a084-1))" condition="1"/>
+			<VariableCommand name="m9dbe2294" expression="ge(#m5a40a9a3,1.0)*(1+(#m19171fe8-1)*(#m6dbf9012-1)*(#m6dbf9012-1)*(#m6dbf9012-1)+(#mF7197ec4-1)*(#m6dbf9012-1)*(#m6dbf9012-1))" condition="1"/>
+			<VariableCommand name="m4b7732em" expression="ge(#m5a40a9a3,1.2)*(1+(#m19171fe8-1)*(#mF4b6c1a8-1)*(#mF4b6c1a8-1)*(#mF4b6c1a8-1)+(#mF7197ec4-1)*(#mF4b6c1a8-1)*(#mF4b6c1a8-1))" condition="1"/>
+			<VariableCommand name="mB0e4ecd3" expression="min(#mB0e4ecd3+(198/2/2.2/1000/#m14c231a2),1)" persist="true" condition="eq(#m45965f69,1)"/>
+			<VariableCommand name="mB0e4ecd3" expression="max(#mB0e4ecd3-(198/2/2.2/1000/#m14c231a2),0)" persist="true" condition="eq(#m45965f69,0)"/>
+			<VariableCommand name="m7fcb9059" expression="1+#m825b2e08*(#mB0e4ecd3-1)*(#mB0e4ecd3-1)*(#mB0e4ecd3-1)+(#m825b2e08-1)*(#mB0e4ecd3-1)*(#mB0e4ecd3-1)" persist="true"/>
+		</Trigger>
+	</Var>
+	<Var name="m6dcc1cc6" expression="#m1ee50167" threshold="1">
+		<Trigger>
+			<VariableCommand name="mF08b8bf2" expression="0"/>
+			<VariableCommand name="m5641bab2" type="number" expression="0"/>
+			<VariableCommand name="mD06393b7" type="number" expression="0"/>
+			<VariableCommand name="m496ac20d" type="number" expression="0"/>
+			<VariableCommand name="m3e6df29b" type="number" expression="0"/>
+			<VariableCommand name="mA0096738" type="number" expression="0"/>
+			<VariableCommand name="mD70e57ae" type="number" expression="0"/>
+			<VariableCommand name="m4e070614" type="number" expression="0"/>
+			<VariableCommand name="m364d3f64" type="number" expression="0"/>
+			<VariableCommand name="mEdd4d61b" type="number" expression="0"/>
+			<VariableCommand name="m9ad3e68d" type="number" expression="0"/>
+			<VariableCommand name="m3dab737m" type="number" expression="0"/>
+			<VariableCommand name="m74dd87a1" type="number" expression="0"/>
+			<VariableCommand name="mEab91202" type="number" expression="0"/>
+			<VariableCommand name="m9dbe2294" type="number" expression="0"/>
+			<VariableCommand name="m4b7732em" type="number" expression="0"/>
+			<Command target="m1f051e5m.animation" value="stop" _condition="ne(#m604f9d1e,4)"/>
+			<Command target="m1f051e5m.animation" value="play"/>
+			<Command target="m12413465.animation" value="stop" _condition="ne(#m604f9d1e,4)"/>
+			<Command target="m12413465.animation" value="play"/>
+			<Command target="m8b4865df.animation" value="stop" _condition="ne(#m604f9d1e,4)"/>
+			<Command target="m8b4865df.animation" value="play"/>
+			<Command target="mFc4f5549.animation" value="stop" _condition="ne(#m604f9d1e,4)"/>
+			<Command target="mFc4f5549.animation" value="play"/>
+			<Command target="m622bc0ea.animation" value="stop" _condition="ne(#m604f9d1e,4)"/>
+			<Command target="m622bc0ea.animation" value="play"/>
+			<Command target="m152cf07c.animation" value="stop" _condition="ne(#m604f9d1e,4)"/>
+			<Command target="m152cf07c.animation" value="play"/>
+			<Command target="m8c25a1c6.animation" value="stop" _condition="ne(#m604f9d1e,4)"/>
+			<Command target="m8c25a1c6.animation" value="play"/>
+		</Trigger>
+	</Var>
+	<Var name="mC781c132" expression="#time" threshold="1">
+		<Trigger>
+			<VariableCommand name="m599b521b" type="number" expression="ifelse(eq(#m604f9d1e,0),ge(#touch_x,#touch_begin_x),1)"/>
+			<VariableCommand name="mDe6d35ba" type="number" expression="ifelse(eq(0,2),#m599b521b,eq(0,0),ge(#touch_x,#touch_begin_x),1)"/>
+		</Trigger>
+	</Var>
+	<CountDownTime name="m34325dd3" countDownType="loop" date="12-31" unit="day"/>
+	<CountDownTime name="mCc372fb8" countDownType="loop" date="theDayAfterTomorrow" unit="day"/>
+	<CountDownTime name="mF7adcea2" countDownType="loop" date="tomorrow" unit="hour"/>
+	<Image srcExp="'assets/assets_'+int(round(#m19d4296e))+'.png'" alpha="0"/>
+	<Image name="mDc03a316" src="oversea.jpg" alpha="128"/>
+	<Image x="-1" y="-1" w="1" h="1" src="close.png" visibility="eq(#flashlight,0)"/>
+	<Image x="-1" y="-1" w="1" h="1" src="open.png" visibility="eq(#flashlight,1)"/>
+	<Button x="0" y="0" w="#screen_width" h="#screen_height">
+		<Triggers>
+			<Trigger action="down">
+				<VariableCommand name="m2cd1811e" expression="0" condition="ge(#m5641bab2,1)"/>
+				<VariableCommand name="m17020e80" type="number" expression="#m17020e80+1" persist="true"/>
+			</Trigger>
+			<Trigger action="up">
+				<VariableCommand name="m2cd1811e" expression="0" condition="ge(#m5641bab2,1)"/>
+				<VariableCommand name="m17020e80" type="number" expression="#m17020e80+1" persist="true"/>
+				<VariableCommand name="noticeDown" type="number" expression="0"/>
+			</Trigger>
+			<Trigger action="cancel">
+				<VariableCommand name="noticeDown" type="number" expression="0"/>
+			</Trigger>
+			<Trigger action="double">
+				<VariableCommand name="m80bc95a4" expression="#m80bc95a4+1" persist="true"/>
+			</Trigger>
+		</Triggers>
+	</Button>
+	<Wallpaper w="#screen_width" h="#screen_height" src="bs.jpg"/>
+	<Image x="#screen_width/2" y="0" align="center" alignV="top" w="#m53ecb98b*#mA08ae4aa" h="#mDee4b47e*#mA08ae4aa" src="bz.jpg" visibility="eq(#mBcfdb35f,0)" isBackground="false" scaleType="fill"/>
+	<Image x="#screen_width/2" y="#screen_height/2" align="center" alignV="center" w="#m53ecb98b*#mA08ae4aa" h="#mDee4b47e*#mA08ae4aa" src="bz.jpg" visibility="eq(#mBcfdb35f,1)" isBackground="false" scaleType="fill"/>
+	<Image x="#screen_width/2" y="#screen_height" align="center" alignV="bottom" w="#m53ecb98b*#mA08ae4aa" h="#mDee4b47e*#mA08ae4aa" src="bz.jpg" visibility="eq(#mBcfdb35f,2)" isBackground="false" scaleType="fill"/>
+	<Button x="0" y="0" w="#screen_width" h="#screen_height" visibility="1">
+		<Triggers>
+			<Trigger action="up">
+				<VariableCommand name="m183f34e1" expression="int(#m183f34e1+1)%(#m7cf5eef6)" persist="true" condition="ge(abs(#touch_x-#touch_begin_x),180)*(#mDe6d35ba)"/>
+				<VariableCommand name="m1ee50167" expression="#m1ee50167+1" persist="true" condition="ge(abs(#touch_x-#touch_begin_x),180)*(#mDe6d35ba)*(1)"/>
+				<VariableCommand name="mFaef09f1" expression="#mFaef09f1+1" persist="true" condition="ge(abs(#touch_x-#touch_begin_x),180)*(#mDe6d35ba)"/>
+			</Trigger>
+		</Triggers>
+	</Button>
+	<Button x="0" y="0" w="#screen_width" h="#screen_height" visibility="1">
+		<Triggers>
+			<Trigger action="up">
+				<VariableCommand name="m183f34e1" type="number" expression="int(#m183f34e1-1+(#m7cf5eef6))%(#m7cf5eef6)" persist="true" condition="ge(#touch_y-#touch_begin_y,250)"/>
+				<VariableCommand name="m1ee50167" type="number" expression="int(#m1ee50167+1)" persist="false" condition="ge(#touch_y-#touch_begin_y,250)"/>
+			</Trigger>
+		</Triggers>
+	</Button>
+	<SupportPictorialButton w="1080" h="#screen_height" visibility="1">
+		<Triggers>
+			<Trigger action="up">
+				<IntentCommand condition="gt(#touch_begin_x-#touch_x,250)*1" action="com.heytap.pictorial.action.START_PICTURE_MODE" category="android.intent.category.DEFAULT" package="com.heytap.pictorial" class="com.heytap.pictorial.ui.slide.PictorialSlideActivity"/>
+			</Trigger>
+		</Triggers>
+	</SupportPictorialButton>
+	<Button x="0" y="0" w="#screen_width" h="#screen_height" visibility="1*(eq(#noticeDown,0))">
+		<Triggers>
+			<Trigger action="up">
+				<ExternCommand command="unlock" condition="ge(#touch_begin_y-#touch_y,300)*1*eq(0,0)"/>
+				<ExternCommand command="unlock" condition="ge(#touch_y-#touch_begin_y,300)*1*eq(0,1)"/>
+				<ExternCommand command="unlock" condition="ge(#touch_x-#touch_begin_x,300)*1*eq(0,2)"/>
+				<ExternCommand command="unlock" condition="ge(#touch_begin_x-#touch_x,300)*1*eq(0,3)"/>
+			</Trigger>
+		</Triggers>
+	</Button>
+	<Image w="#screen_width" src="statusbar.png" isBackground="false" scaleType="fill"/>
+	<Image x="0" y="#screen_height" align="left" alignV="bottom" w="#screen_width/2" h="#screen_height/8" src="red.png" alpha="128" visibility="#in_preview_mode*eq(#m604f9d1e,0)" isBackground="false" scaleType="fill"/>
+</Lockscreen>

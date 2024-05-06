@@ -1,0 +1,807 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="Lockscreen" type="LockscreenType"/>
+  <xs:complexType name="VarType" mixed="true">
+    <xs:sequence>
+      <xs:element type="VariableAnimationType" name="VariableAnimation" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="name" use="optional"/>
+    <xs:attribute type="xs:string" name="expression" use="optional"/>
+    <xs:attribute type="xs:string" name="type" use="optional"/>
+    <xs:attribute type="xs:string" name="const" use="optional"/>
+    <xs:attribute type="xs:string" name="alias" use="optional"/>
+    <xs:attribute type="xs:string" name="index" use="optional"/>
+    <xs:attribute type="xs:string" name="persist_const" use="optional"/>
+    <xs:attribute type="xs:string" name="_const" use="optional"/>
+  </xs:complexType>
+  <xs:complexType name="CircleShapeType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="radius"/>
+        <xs:attribute type="xs:string" name="xPosition"/>
+        <xs:attribute type="xs:string" name="yPosition"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="FluidsViewType">
+    <xs:sequence>
+      <xs:element type="CircleShapeType" name="CircleShape"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="gravityRatio"/>
+    <xs:attribute type="xs:string" name="viscosity"/>
+    <xs:attribute type="xs:string" name="color"/>
+    <xs:attribute type="xs:string" name="waterAlpha"/>
+    <xs:attribute type="xs:string" name="bgSrc"/>
+    <xs:attribute type="xs:string" name="name"/>
+    <xs:attribute type="xs:string" name="x"/>
+    <xs:attribute type="xs:string" name="y"/>
+    <xs:attribute type="xs:string" name="w"/>
+    <xs:attribute type="xs:string" name="h"/>
+  </xs:complexType>
+  <xs:complexType name="StereoViewType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="StereoGroup" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="fixed"/>
+    <xs:attribute type="xs:string" name="sAngle"/>
+    <xs:attribute type="xs:string" name="can3D"/>
+    <xs:attribute type="xs:string" name="resistance"/>
+    <xs:attribute type="xs:string" name="x"/>
+    <xs:attribute type="xs:string" name="y"/>
+    <xs:attribute type="xs:string" name="w"/>
+    <xs:attribute type="xs:string" name="h"/>
+    <xs:attribute type="xs:string" name="alpha"/>
+    <xs:attribute type="xs:string" name="visibility"/>
+  </xs:complexType>
+  <xs:complexType name="i_HiddenType">
+    <xs:choice maxOccurs="unbounded" minOccurs="0">
+      <xs:element type="VariableBindersType" name="VariableBinders"/>
+      <xs:element type="VarType" name="Var"/>
+      <xs:element type="FluidsViewType" name="FluidsView">
+        <xs:annotation>
+          <xs:documentation> bgSrc="bz.jpg" srcid="#mScreenId"   &lt;CircleShape radius="1.3" xPosition="0.7" yPosition="0.1" /> </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element type="StereoViewType" name="StereoView"/>
+      <xs:element type="ImageType" name="Image"/>
+      <xs:element type="WallpaperType" name="Wallpaper"/>
+    </xs:choice>
+    <xs:attribute type="xs:string" name="alias" use="optional"/>
+  </xs:complexType>
+  <xs:complexType name="VariableType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="name" use="optional"/>
+        <xs:attribute type="xs:string" name="column" use="optional"/>
+        <xs:attribute type="xs:string" name="type" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="ContentProviderBinderType">
+    <xs:sequence>
+      <xs:element type="VariableType" name="Variable"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="name" use="optional"/>
+    <xs:attribute type="xs:string" name="columns" use="optional"/>
+    <xs:attribute type="xs:string" name="uri" use="optional"/>
+    <xs:attribute type="xs:string" name="column" use="optional"/>
+    <xs:attribute type="xs:string" name="countName" use="optional"/>
+  </xs:complexType>
+  <xs:complexType name="VariableBindersType">
+    <xs:sequence>
+      <xs:element type="ContentProviderBinderType" name="ContentProviderBinder" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ImageType" mixed="true">
+    <xs:sequence>
+      <xs:element type="VariableAnimationType" name="VariableAnimation" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="x" use="optional"/>
+    <xs:attribute type="xs:string" name="y" use="optional"/>
+    <xs:attribute type="xs:string" name="align" use="optional"/>
+    <xs:attribute type="xs:string" name="alignV" use="optional"/>
+    <xs:attribute type="xs:string" name="src" use="optional"/>
+    <xs:attribute type="xs:string" name="name" use="optional"/>
+    <xs:attribute type="xs:string" name="w" use="optional"/>
+    <xs:attribute type="xs:string" name="h" use="optional"/>
+    <xs:attribute type="xs:string" name="pivotX" use="optional"/>
+    <xs:attribute type="xs:string" name="pivotY" use="optional"/>
+    <xs:attribute type="xs:string" name="visibility" use="optional"/>
+    <xs:attribute type="xs:string" name="expression" use="optional"/>
+    <xs:attribute type="xs:string" name="type" use="optional"/>
+    <xs:attribute type="xs:string" name="const" use="optional"/>
+    <xs:attribute type="xs:string" name="alias" use="optional"/>
+    <xs:attribute type="xs:string" name="index" use="optional"/>
+    <xs:attribute type="xs:string" name="persist_const" use="optional"/>
+    <xs:attribute type="xs:string" name="_const" use="optional"/>
+  </xs:complexType>
+  <xs:complexType name="WallpaperType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="src" use="optional"/>
+        <xs:attribute type="xs:string" name="w" use="optional"/>
+        <xs:attribute type="xs:string" name="h" use="optional"/>
+        <xs:attribute type="xs:string" name="x" use="optional"/>
+        <xs:attribute type="xs:string" name="y" use="optional"/>
+        <xs:attribute type="xs:string" name="align" use="optional"/>
+        <xs:attribute type="xs:string" name="alignV" use="optional"/>
+        <xs:attribute type="xs:string" name="name" use="optional"/>
+        <xs:attribute type="xs:string" name="pivotX" use="optional"/>
+        <xs:attribute type="xs:string" name="pivotY" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="AniFrameType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="value" use="optional"/>
+        <xs:attribute type="xs:string" name="time" use="optional"/>
+        <xs:attribute type="xs:string" name="easeType" use="optional"/>
+        <xs:attribute type="xs:string" name="varSpeedFlag" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="VariableAnimationType">
+    <xs:sequence>
+      <xs:element type="AniFrameType" name="AniFrame" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="FreeMoveType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="disabled"/>
+        <xs:attribute type="xs:string" name="alias"/>
+        <xs:attribute type="xs:string" name="x"/>
+        <xs:attribute type="xs:string" name="y"/>
+        <xs:attribute type="xs:string" name="w"/>
+        <xs:attribute type="xs:string" name="h"/>
+        <xs:attribute type="xs:string" name="visibility"/>
+        <xs:attribute type="xs:string" name="suffix"/>
+        <xs:attribute type="xs:string" name="double_clear"/>
+        <xs:attribute type="xs:string" name="_port"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="SuType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="alias"/>
+        <xs:attribute type="xs:string" name="_port"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="VariableCommandType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="name" use="optional"/>
+        <xs:attribute type="xs:string" name="expression" use="optional"/>
+        <xs:attribute type="xs:string" name="type" use="optional"/>
+        <xs:attribute type="xs:string" name="persist" use="optional"/>
+        <xs:attribute type="xs:string" name="condition" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="SysCommandType">
+    <xs:sequence>
+      <xs:element type="VariableCommandType" name="VariableCommand" maxOccurs="unbounded" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation> 按钮点击防误触  不同分辨率偏移量  问候语 0/上午6:00-11:59 1/下午12:00-17:59 2/晚上18:00-次日5:59  fo;shichen;0;0;/assets;子时=丑时=寅时=卯时=辰时=巳时=午时=未时=申时=酉时=戌时=亥时 </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="SysTimeType">
+    <xs:sequence>
+      <xs:element type="SysCommandType" name="SysCommand">
+        <xs:annotation>
+          <xs:documentation><![CDATA[ <VariableCommand name="mStrAni_11" expression="ifelse(#_dt,min(max(#_mStrAni,11)-11,1),1)" type="number" />
+			<VariableCommand name="mStrAni_10" expression="ifelse(#_dt,min(max(#_mStrAni,10)-10,1),1)" type="number" />
+			<VariableCommand name="mStrAni_9" expression="ifelse(#_dt,min(max(#_mStrAni,9)-9,1),1)" type="number" />
+			<VariableCommand name="mStrAni_8" expression="ifelse(#_dt,min(max(#_mStrAni,8)-8,1),1)" type="number" />
+			<VariableCommand name="mStrAni_7" expression="ifelse(#_dt,min(max(#_mStrAni,7)-7,1),1)" type="number" />
+			<VariableCommand name="mStrAni_6" expression="ifelse(#_dt,min(max(#_mStrAni,6)-6,1),1)" type="number" />
+			<VariableCommand name="mStrAni_5" expression="ifelse(#_dt,min(max(#_mStrAni,5)-5,1),1)" type="number" />
+			<VariableCommand name="mStrAni_4" expression="ifelse(#_dt,min(max(#_mStrAni,4)-4,1),1)" type="number" />
+			<VariableCommand name="mStrAni_3" expression="ifelse(#_dt,min(max(#_mStrAni,3)-3,1),1)" type="number" />
+			<VariableCommand name="mStrAni_2" expression="ifelse(#_dt,min(max(#_mStrAni,2)-2,1),1)" type="number" />
+			<VariableCommand name="mStrAni_1" expression="ifelse(#_dt,min(max(#_mStrAni,1)-1,1),1)" type="number" />
+			<VariableCommand name="mStrAni_0" expression="ifelse(#_dt,min(#_mStrAni,1),1)" type="number" /> ]]></xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="alias"/>
+    <xs:attribute type="xs:string" name="_port"/>
+  </xs:complexType>
+  <xs:complexType name="TGDZType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="alias"/>
+        <xs:attribute type="xs:string" name="disabled"/>
+        <xs:attribute type="xs:string" name="tg"/>
+        <xs:attribute type="xs:string" name="dz"/>
+        <xs:attribute type="xs:string" name="sx"/>
+        <xs:attribute type="xs:string" name="_port"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="VarsType">
+    <xs:sequence>
+      <xs:element type="VarType" name="Var"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="value" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="ItemsType">
+    <xs:sequence>
+      <xs:element type="ItemType" name="Item" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="VarArrayType">
+    <xs:sequence>
+      <xs:element type="VarsType" name="Vars" minOccurs="0"/>
+      <xs:element type="ItemsType" name="Items" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="type" use="optional"/>
+  </xs:complexType>
+  <xs:complexType name="CountType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="alias"/>
+        <xs:attribute type="xs:string" name="_port"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="BattLevelType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="alias"/>
+        <xs:attribute type="xs:string" name="_port"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="BattImageType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="disalbed"/>
+        <xs:attribute type="xs:string" name="id"/>
+        <xs:attribute type="xs:string" name="x"/>
+        <xs:attribute type="xs:string" name="y"/>
+        <xs:attribute type="xs:string" name="align"/>
+        <xs:attribute type="xs:string" name="alignV"/>
+        <xs:attribute type="xs:string" name="src"/>
+        <xs:attribute type="xs:string" name="src_unit"/>
+        <xs:attribute type="xs:string" name="number"/>
+        <xs:attribute type="xs:string" name="unit_space"/>
+        <xs:attribute type="xs:string" name="space"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="ResumeAniCommandType">
+    <xs:sequence>
+      <xs:element type="VariableCommandType" name="VariableCommand" maxOccurs="unbounded" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation> 88 </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="alias"/>
+  </xs:complexType>
+  <xs:complexType name="ResumeAniType">
+    <xs:sequence>
+      <xs:element type="ResumeAniCommandType" name="ResumeAniCommand">
+        <xs:annotation>
+          <xs:documentation> &lt;VariableCommand name="mExChangeAni" persist="true" expression="min(#mExChangeAni+(88/1.6/2.2/1000/#mResumeTimeV),1)" condition="eq(#mExChangeFlag,1)*ne(#mExChangeAni,1)" />
+			&lt;VariableCommand name="mExChangeAni" persist="true" expression="max(#mExChangeAni-(88/2.2/2.2/1000/#mResumeTimeV),0)" condition="eq(#mExChangeFlag,0)*ne(#mExChangeAni,0)" />
+			&lt;VariableCommand name="mExChangeAni_O" persist="true" expression="ifelse(#mExChangeFlag,-(-(#mExChangeAni-1)*(#mExChangeAni-1)*(#mExChangeAni-1)-1),1-(1-#mExChangeAni)*(1-#mExChangeAni)*(1-#mExChangeAni))" /> </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="alias"/>
+    <xs:attribute type="xs:string" name="_port"/>
+  </xs:complexType>
+  <xs:complexType name="TriggerType">
+    <xs:sequence>
+      <xs:element type="VariableCommandType" name="VariableCommand" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="action" use="optional"/>
+  </xs:complexType>
+  <xs:complexType name="ExternalCommandsType">
+    <xs:sequence>
+      <xs:element type="TriggerType" name="Trigger" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ValueHolderType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="name" use="optional"/>
+        <xs:attribute type="xs:string" name="value" use="optional"/>
+        <xs:attribute type="xs:string" name="alias" use="optional"/>
+        <xs:attribute type="xs:string" name="description" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="ScreenIdType">
+    <xs:sequence>
+      <xs:element type="ValueHolderType" name="ValueHolder" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="alias"/>
+    <xs:attribute type="xs:string" name="_port"/>
+  </xs:complexType>
+  <xs:complexType name="TriggersType">
+    <xs:sequence>
+      <xs:element type="TriggerType" name="Trigger"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ButtonType">
+    <xs:sequence>
+      <xs:element type="TriggersType" name="Triggers"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="x"/>
+    <xs:attribute type="xs:string" name="y"/>
+    <xs:attribute type="xs:string" name="w"/>
+    <xs:attribute type="xs:string" name="h"/>
+    <xs:attribute type="xs:string" name="visibility"/>
+  </xs:complexType>
+  <xs:complexType name="LehuaType">
+    <xs:sequence>
+      <xs:element type="ValueHolderType" name="ValueHolder" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="alias"/>
+  </xs:complexType>
+  <xs:complexType name="UnlockType">
+    <xs:sequence>
+      <xs:element type="ValueHolderType" name="ValueHolder" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="alias"/>
+  </xs:complexType>
+  <xs:complexType name="StartPointType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="x"/>
+        <xs:attribute type="xs:string" name="y"/>
+        <xs:attribute type="xs:string" name="w"/>
+        <xs:attribute type="xs:string" name="h"/>
+        <xs:attribute type="xs:string" name="easeType"/>
+        <xs:attribute type="xs:string" name="easeTime"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="PositionType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="x" use="optional"/>
+        <xs:attribute type="xs:string" name="y" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="PathType">
+    <xs:sequence>
+      <xs:element type="PositionType" name="Position" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="x"/>
+    <xs:attribute type="xs:string" name="y"/>
+    <xs:attribute type="xs:string" name="tolerance"/>
+  </xs:complexType>
+  <xs:complexType name="EndPointType">
+    <xs:sequence>
+      <xs:element type="PathType" name="Path"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="x"/>
+    <xs:attribute type="xs:string" name="y"/>
+    <xs:attribute type="xs:string" name="w"/>
+    <xs:attribute type="xs:string" name="h"/>
+  </xs:complexType>
+  <xs:complexType name="SliderType">
+    <xs:sequence>
+      <xs:element type="StartPointType" name="StartPoint"/>
+      <xs:element type="EndPointType" name="EndPoint"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="name"/>
+    <xs:attribute type="xs:string" name="haptic"/>
+    <xs:attribute type="xs:string" name="bounceInitSpeed"/>
+    <xs:attribute type="xs:string" name="bounceAcceleration"/>
+  </xs:complexType>
+  <xs:complexType name="CalendarType">
+    <xs:sequence>
+      <xs:element type="ValueHolderType" name="ValueHolder" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="disabled"/>
+    <xs:attribute type="xs:string" name="alias"/>
+  </xs:complexType>
+  <xs:complexType name="WeekCalendarType">
+    <xs:sequence>
+      <xs:element type="ValueHolderType" name="ValueHolder" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="disabled"/>
+    <xs:attribute type="xs:string" name="alias"/>
+    <xs:attribute type="xs:string" name="_port"/>
+  </xs:complexType>
+  <xs:complexType name="DrinkCupType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="disabled"/>
+        <xs:attribute type="xs:string" name="alias"/>
+        <xs:attribute type="xs:string" name="_port"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="ShakeCommandType">
+    <xs:sequence>
+      <xs:element type="VariableCommandType" name="VariableCommand"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="alias"/>
+    <xs:attribute type="xs:string" name="_port"/>
+  </xs:complexType>
+  <xs:complexType name="ShakeType">
+    <xs:sequence>
+      <xs:element type="ValueHolderType" name="ValueHolder"/>
+      <xs:element type="ShakeCommandType" name="ShakeCommand"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="disabled"/>
+    <xs:attribute type="xs:string" name="alias"/>
+    <xs:attribute type="xs:string" name="_port"/>
+  </xs:complexType>
+  <xs:complexType name="InputDateVarType">
+    <xs:sequence>
+      <xs:element type="VarType" name="Var" maxOccurs="unbounded" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation> 默认日期：2023/1/1 </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="alias"/>
+    <xs:attribute type="xs:string" name="description"/>
+  </xs:complexType>
+  <xs:complexType name="InputDateType">
+    <xs:sequence>
+      <xs:element type="InputDateVarType" name="InputDateVar"/>
+      <xs:element type="ValueHolderType" name="ValueHolder" maxOccurs="unbounded" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation> 打开倒计时设置面板按钮  倒计时设置面板  倒计时设置面板-下划线数字素材  &lt;ValueHolder name="CountSetNumW" value="30" alias="单个数字图片宽度" />  数字输入按钮  清除+确定并退出 </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="disabled"/>
+    <xs:attribute type="xs:string" name="alias"/>
+    <xs:attribute type="xs:string" name="_port"/>
+  </xs:complexType>
+  <xs:complexType name="SoundType">
+    <xs:sequence>
+      <xs:element type="ValueHolderType" name="ValueHolder" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="disabled" use="optional"/>
+    <xs:attribute type="xs:string" name="alias" use="optional"/>
+    <xs:attribute type="xs:string" name="_port" use="optional"/>
+  </xs:complexType>
+  <xs:complexType name="SoundChargeType">
+    <xs:sequence>
+      <xs:element type="ValueHolderType" name="ValueHolder" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="disabled"/>
+    <xs:attribute type="xs:string" name="alias"/>
+    <xs:attribute type="xs:string" name="_port"/>
+  </xs:complexType>
+  <xs:complexType name="SlotType">
+    <xs:sequence>
+      <xs:element type="VariableCommandType" name="VariableCommand" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="DailyType">
+    <xs:sequence>
+      <xs:element type="SlotType" name="Slot"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="disabled"/>
+    <xs:attribute type="xs:string" name="alias"/>
+    <xs:attribute type="xs:string" name="_port"/>
+  </xs:complexType>
+  <xs:complexType name="ConstelType">
+    <xs:sequence>
+      <xs:element type="ValueHolderType" name="ValueHolder" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element type="VarsType" name="Vars" minOccurs="0"/>
+      <xs:element type="ItemsType" name="Items" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="disabled" use="optional"/>
+    <xs:attribute type="xs:string" name="alias" use="optional"/>
+    <xs:attribute type="xs:string" name="_port" use="optional"/>
+    <xs:attribute type="xs:string" name="type" use="optional"/>
+  </xs:complexType>
+  <xs:complexType name="ConstelsType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="disabled"/>
+        <xs:attribute type="xs:string" name="alias"/>
+        <xs:attribute type="xs:string" name="_importlib"/>
+        <xs:attribute type="xs:string" name="_globalport"/>
+        <xs:attribute type="xs:string" name="_newport"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="StatusbarType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="alias"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="unTcType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="disabled"/>
+        <xs:attribute type="xs:string" name="condition"/>
+        <xs:attribute type="xs:string" name="alias"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="ForbidHwType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="disabled"/>
+        <xs:attribute type="xs:string" name="alias"/>
+        <xs:attribute type="xs:string" name="_port"/>
+        <xs:attribute type="xs:string" name="visibility"/>
+        <xs:attribute type="xs:string" name="content"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="LockscreenType">
+    <xs:choice maxOccurs="unbounded" minOccurs="0">
+      <xs:element type="i_HiddenType" name="i_Hidden" maxOccurs="unbounded" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation><![CDATA[ <几何图形 x="300" y="400" color="#ffffff" w="500" h="600" />  欢迎定制锁屏：灵貓 QQ 1876461209  违规抄袭将依据《中华人民共和国民法典》《中华人民共和国民法通则》《中华人民共和国著作权法》《计算机软件保护条例》《软件产品管理办法》《侵权责任法》《中华人民共和国知识产权法》追究法律责任  <Layer visibility="1" >
+		<ForbidHw alias="禁止华为" _port="LangsId" visibility="eq(#LangsId,4)" content="C&#8202;o&#8202;n&#8202;t&#8202;a&#8202;c&#8202;t Q&#8202;Q:&#8202;1&#8202;8&#8202;7&#8202;6&#8202;4&#8202;6&#8202;1&#8202;2&#8202;0&#8202;9" />
+	</Layer>  del /f "_port=*"  del /f "alias=*"  del /f "description=*"  <Import name="mGlobalVar" globalPersist="true" /> ]]></xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element type="VarType" name="Var" maxOccurs="unbounded" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation> 壁纸对齐方式 0:顶部对齐 1:居中对齐 2:居底对齐 </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element type="WallpaperType" name="Wallpaper">
+        <xs:annotation>
+          <xs:documentation> 壁纸区域 修改bz.jpg </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element type="ImageType" name="Image" maxOccurs="unbounded" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation> Root </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element type="FreeMoveType" name="FreeMove"/>
+      <xs:element type="SuType" name="Su"/>
+      <xs:element type="SysTimeType" name="SysTime"/>
+      <xs:element type="TGDZType" name="TGDZ"/>
+      <xs:element type="VarArrayType" name="VarArray" maxOccurs="unbounded" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation><![CDATA[ <Var name="_replayAnimation" expression="#mScreenId_Var" threshold="1" >
+		<Trigger>
+			<Command target="_mStrAni.animation" value="stop" />
+			<Command target="_mStrAni.animation" value="play" />
+		</Trigger>
+	</Var>
+
+	<Var name="_mStrAni" >
+		<VariableAnimation >
+			<AniFrame value="0" time="0" />
+			<AniFrame value="12" time="3500" />
+			<AniFrame value="12" time="5500" />
+		</VariableAnimation>
+	</Var> ]]></xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element type="CountType" name="Count">
+        <xs:annotation>
+          <xs:documentation><![CDATA[ Var  <TextSize alias="系统字体" _port="mTextSize_" >
+		<SampleText x="0" y="0-#mTextSize_" color="#ffffff" size="1" textExp="'该变量是在使用系统文字时需加入的，由于系统字体上下对齐有偏差，而进行的二次修正'" />
+		<ValueHolder name="TextSizeVal_0" value="100" />
+		<ValueHolder name="TextSizeVal_1" value="90" />
+		<ValueHolder name="TextSizeVal_2" value="80" />
+		<ValueHolder name="TextSizeVal_3" value="70" />
+		<ValueHolder name="TextSizeVal_4" value="60" />
+		<ValueHolder name="TextSizeVal_5" value="50" />
+	</TextSize>  <TextSize alias="系统字体" _port="mTextSize_" value="100,90,80,70,60,50" /> ]]></xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element type="BattLevelType" name="BattLevel"/>
+      <xs:element type="BattImageType" name="BattImage"/>
+      <xs:element type="ResumeAniType" name="ResumeAni"/>
+      <xs:element type="ExternalCommandsType" name="ExternalCommands"/>
+      <xs:element type="ScreenIdType" name="ScreenId"/>
+      <xs:element type="ButtonType" name="Button"/>
+      <xs:element type="LehuaType" name="Lehua">
+        <xs:annotation>
+          <xs:documentation><![CDATA[ <Button x="" y="" w="" h="" alias="系统" >
+		<Triggers>
+			<Trigger action="up" >
+
+				<Tips alias="已内置 condition='#tc' 防误触变量"  />
+
+				<i_AppStore/>
+				<i_Battery_H/>
+				<i_Battery_M/>
+				<i_Browser/>
+				<i_Calculator/>
+				<i_Calendar/>
+				<i_Camera _unlock="1" />
+				<i_Cleaner/>
+				<i_Clock/>
+				<i_Compass/>
+				<i_Contacts/>
+				<i_Dial/>
+				<i_Email/>
+				<i_Files/>
+				<i_Flash _unlock="1" _port="flashlightValue" />
+				<i_Flash_M _port="lightSwitch" />
+				<i_Gallery/>
+				<i_GameCenter/>
+				<i_Health/>
+				<i_Mms/>
+				<i_Music/>
+				<i_Notes/>
+				<i_Onekeylock_H/>
+				<i_Recorder/>
+				<i_Scanner_M/>
+				<i_Search/>
+				<i_Settings/>
+				<i_ShopMall/>
+				<i_Theme/>
+				<i_Video/>
+				<i_Wallet/>
+				<i_Weather/>
+
+			</Trigger>
+		</Triggers>
+	</Button>
+	<Button x="" y="" w="" h="" alias="第三方" >
+		<Triggers>
+			<Trigger action="up" >
+
+				<Tips alias="已内置 condition='#tc' 防误触变量"  />
+
+				<i_tWechat/>
+				<i_tWechatScan/>
+				<i_tWechatPay/>
+				<i_tWechatSns/>
+				<i_tWechatMyQR/>
+				<i_tWechatHealthCode/>
+				<i_tQQ/>
+				<i_tAlipay/>
+				<i_tAlipayScan/>
+				<i_tAlipayPay/>
+				<i_tAlipayHealthCode/>
+				<i_tAlipayBusCode/>
+
+				<i_tEleme/>
+				<i_tBeautyCam/>
+				<i_tMeituan/>
+				<i_tMeituanTakeOut/>
+				<i_tDianping/>
+
+				<i_tTaobao/>
+				<i_tTmall/>
+				<i_tJd/>
+				<i_tPdd/>
+				<i_tVipshop/>
+				<i_tCainiao/>
+				<i_tIdleFish/>
+
+				<i_tToutiao/>
+				<i_tCoolapk/>
+				<i_tWeibo/>
+				<i_tBaidu/>
+				<i_tBaiduTieba/>
+				<i_tBaiduNetdisk/>
+
+				<i_tZhihu/>
+				<i_tWifiLocating/>
+				<i_tQQPim/>
+				<i_tTencentNews/>
+				<i_tNeteaseNews/>
+
+				<i_tDingding/>
+				<i_tFeishu/>
+				<i_tXhs/>
+				<i_tMtxx/>
+				<i_tQQMail/>
+				<i_tWps/>
+				<i_tWuba/>
+				<i_tAutohome/>
+
+				<i_tDouyin/>
+				<i_tKuaishou/>
+				<i_tWeishi/>
+				<i_tYouku/>
+				<i_tQiyi/>
+				<i_tQQLive/>
+				<i_tBili/>
+				<i_tBilibili/>
+				<i_tXiguaVideo/>
+
+				<i_tUC/>
+				<i_tQQBrowser/>
+				<i_tQuark/>
+
+				<i_tGaode/>
+				<i_tBaiduMap/>
+				<i_tTencentMap/>
+				<i_tQunar/>
+				<i_tDidi/>
+
+				<i_tCloudMusic/>
+				<i_tQQMusic/>
+				<i_tKugou/>
+				<i_tKuwo/>
+				<i_tXiami/>
+				<i_tQishui/>
+				<i_tXimalaya/>
+				<i_tMigu/>
+
+				<i_tPubg alias="和平精英" />
+				<i_tTmgp alias="王者荣耀" />
+				<i_tLol alias="英雄联盟" />
+				<i_tYuanshen alias="原神" />
+				<i_tGuangyu alias="光遇" />
+
+			</Trigger>
+		</Triggers>
+	</Button> ]]></xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element type="UnlockType" name="Unlock"/>
+      <xs:element type="SliderType" name="Slider"/>
+      <xs:element type="CalendarType" name="Calendar">
+        <xs:annotation>
+          <xs:documentation> Extra Function </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element type="WeekCalendarType" name="WeekCalendar"/>
+      <xs:element type="DrinkCupType" name="DrinkCup">
+        <xs:annotation>
+          <xs:documentation> &lt;WeekCalendar x="" y="" w="" h="" today_bg="" /> </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element type="ShakeType" name="Shake"/>
+      <xs:element type="InputDateType" name="InputDate"/>
+      <xs:element type="SoundType" name="Sound" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element type="SoundChargeType" name="SoundCharge"/>
+      <xs:element type="DailyType" name="Daily">
+        <xs:annotation>
+          <xs:documentation> 04.13 Clear->Slot  PlaceHolder多行传值 / Slot传单值  PlaceHolder在每个lib只能有一个 </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element type="ConstelType" name="Constel">
+        <xs:annotation>
+          <xs:documentation> &lt;Daily alias="亮屏次数" _port="__count" />  fo;constel_str;0;0;/assets;白羊座=金牛座=双子座=巨蟹座=狮子座=处女座=天秤座=天蝎座=射手座=摩羯座=水瓶座=双鱼座  0白羊座 1金牛座 2双子座 3巨蟹座 4狮子座 5处女座 6天秤座 7天蝎座 8射手座 9摩羯座 10水瓶座 11双鱼座  </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element type="ConstelsType" name="Constels"/>
+      <xs:element type="StatusbarType" name="Statusbar">
+        <xs:annotation>
+          <xs:documentation> &lt;LongPress alias="长按触发 || 不可用" x="0" y="0" w="#screen_width" h="#screen_height" visibility="1" long_press_time="800" >
+		&lt;Slot>
+
+		&lt;/Slot>
+	&lt;/LongPress> </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element type="unTcType" name="unTc"/>
+      <xs:element type="ForbidHwType" name="ForbidHw"/>
+    </xs:choice>
+    <xs:attribute type="xs:string" name="frameRate"/>
+    <xs:attribute type="xs:string" name="screenWidth"/>
+    <xs:attribute type="xs:string" name="version"/>
+    <xs:attribute type="xs:string" name="vibrate"/>
+    <xs:attribute type="xs:string" name="_dev"/>
+    <xs:attribute type="xs:string" name="_devTime"/>
+    <xs:attribute type="xs:string" name="_splitExt"/>
+    <xs:attribute type="xs:string" name="_splitGroup"/>
+    <xs:attribute type="xs:string" name="_preload"/>
+    <xs:attribute type="xs:string" name="_getSource"/>
+    <xs:attribute type="xs:string" name="compiler"/>
+  </xs:complexType>
+</xs:schema>
