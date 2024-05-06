@@ -4,6 +4,7 @@
 /.idea/
 /__pycache__/
 .idea/MAML Pilot.iml
+.DS_Store
 
 Icon
 main.log
@@ -11,7 +12,6 @@ anti.xml
 antiAliasing.xml
 
 /dev/json_icons/
-.DS_Store
 
 /theme/sample/
 /su/
