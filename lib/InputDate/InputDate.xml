@@ -84,11 +84,32 @@
 
 	</ExternalCommands>
 
-	<!-- 自动循环法 -->
-	<Var name="_y1f4" expression="#time" threshold="1" >
+	<Var name="_y1f6c2d_" expression="#time" threshold="1">
 		<Trigger>
 
-			<VariableCommand name="Exam_Year" expression="#year" persist="true" />
+			<VariableCommand name="y1_c2d" expression="#EventYear" />
+			<VariableCommand name="lya_c2d" expression="eq((#year%4),0)*ne((#year%100),0)+eq((#year%400),0)" const="false" />
+			<VariableCommand name="da_c2d" expression="(ge(#month,1)*31+(28+#lya_c2d)*ge(#month,2)+ge(#month,3)*31+ge(#month,4)*30+ge(#month,5)*31+ge(#month,6)*30+ge(#month,7)*31+ge(#month,8)*31+ge(#month,9)*30+ge(#month,10)*31+ge(#month,11)*30+ge(#month,12)*31)+(365*#year+int(#year/4)+int(#year/400)-int(#year/100))+#date-1+2" const="false" />
+			<VariableCommand name="m1_c2d" expression="#EventMonth" />
+			<VariableCommand name="d1_c2d" expression="#EventDate" />
+			<VariableCommand name="h1_c2d" expression="23" />
+			<VariableCommand name="f1_c2d" expression="59" />
+			<VariableCommand name="lyz1_c2d" expression="eq((#y1_c2d%4),0)*ne((#y1_c2d%100),0)+eq((#y1_c2d%400),0)" />
+			<VariableCommand name="dz1_c2d" expression="(gt(#m1_c2d,1)*31+(28+#lyz1_c2d)*gt(#m1_c2d,2)+gt(#m1_c2d,3)*31+gt(#m1_c2d,4)*30+gt(#m1_c2d,5)*31+gt(#m1_c2d,6)*30+gt(#m1_c2d,7)*31+gt(#m1_c2d,8)*31+gt(#m1_c2d,9)*30+gt(#m1_c2d,10)*31+gt(#m1_c2d,11)*30+gt(#m1_c2d,12)*31)+(365*#y1_c2d+int(#y1_c2d/4)+int(#y1_c2d/400)-int(#y1_c2d/100))+#d1_c2d-1+2" />
+			<VariableCommand name="vvv1_c2d" expression="ge(#dz1_c2d*1440,#da_c2d*1440)" />
+
+			<VariableCommand name="Exam_CountDays_C_0" expression="(#dz1_c2d-#da_c2d)" />
+			<!-- +ifelse(eq(#LangsId,2),0,-1) -->
+			<VariableCommand name="Exam_CountDays_C" expression="max(#Exam_CountDays_C_0,0)" />
+
+		</Trigger>
+	</Var>
+
+	<!-- 自动循环法 -->
+	<Var name="_y1f4_" expression="#time" threshold="1" >
+		<Trigger>
+
+			<VariableCommand name="Exam_Year" expression="ifelse(#isAndey,max(#EventYear,#year),#year)" persist="true" />
 
 			<VariableCommand name="Exam_Leap" expression="eq((#Exam_Year%4),0)*ne((#Exam_Year%100),0)+eq((#Exam_Year%400),0)" persist="true" />
 			<VariableCommand name="Exam_AllDays" expression="(ge(#month,1)*31+(28+#Exam_Leap)*ge(#month,2)+ge(#month,3)*31+ge(#month,4)*30+ge(#month,5)*31+ge(#month,6)*30+ge(#month,7)*31+ge(#month,8)*31+ge(#month,9)*30+ge(#month,10)*31+ge(#month,11)*30+ge(#month,12)*31)+(365*#Exam_Year+int(#Exam_Year/4)+int(#Exam_Year/400)-int(#Exam_Year/100))+#date-1+2" persist="true" />
@@ -108,7 +129,8 @@
 
 			<VariableCommand name="Exam_CountDays_In" expression="#Exam_NowDays-#Exam_AllDays+1" persist="true" />
 			<VariableCommand name="Exam_CountDays_A" expression="ifelse(lt(#Exam_CountDays_In,0),#Exam_CountDays_In+(365+#Exam_Leap)*max(1,abs(round(#Exam_CountDays_In/(365+#Exam_Leap)))),eq(#Exam_CountDays_In,0),0,#Exam_CountDays_In)" persist="true" />
-			<VariableCommand name="Exam_CountDays" expression="ifelse(ge(#LangsId,5),max(#Exam_CountDays_A-1,0),#Exam_CountDays_A)" persist="true" />
+			<VariableCommand name="Exam_CountDays_B" expression="ifelse(ge(#LangsId,5),max(#Exam_CountDays_A-1,0),#Exam_CountDays_A)" persist="true" />
+			<VariableCommand name="Exam_CountDays" expression="ifelse(#isAndey,#Exam_CountDays_C,#Exam_CountDays_B)" persist="true" />
 
 			<VariableCommand name="CountBgNum_0" expression="int(#Exam_CountDays/100%10)" persist="true" />
 			<VariableCommand name="CountBgNum_1" expression="int(#Exam_CountDays/10%10)" persist="true" />

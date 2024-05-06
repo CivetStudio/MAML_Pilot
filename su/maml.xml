@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Lockscreen frameRate="240" screenWidth="1080" version="1" vibrate="false" _dev="civet" _devTime="$_devTime" _splitExt="1" _splitGroup="1" _preload="1" _getSource="0" compiler="true" >
+<Lockscreen frameRate="240" screenWidth="1080" version="1" vibrate="false" _dev="civet" _devTime="$_devTime" _splitExt="1" _splitGroup="1" _preload="1" _getSource="0" _pauseIntent="1" compiler="true" >
 
 	<!-- 欢迎定制锁屏：灵貓 QQ 1876461209 -->
 
@@ -12,7 +12,73 @@
 	<!-- <Var name="mBalanceTime" expression="ifelse(eq(#LangsId,0)+eq(#LangsId,5),1/max(1.6*#LangsId,0.5),1)" type="number" /> -->
 	<!-- speed * mBalanceTime -->
 
+	<Su alias="超级用户" _port="LangsId(0,2,4,5),mOversea,mInitVar" />
+
+	<!-- <Var name="_oplusAthena" expression="int(#time/1000/5)" threshold="1" >
+		<Trigger>
+			<IntentCommand broadcast="true" action="oplus.intent.action.REQUEST_SMART_DEEP_CLEAR" />
+			<IntentCommand broadcast="true" action="oplus.intent.action.REQUEST_SMART_LIGHT_CLEAR" />
+		</Trigger>
+	</Var> -->
+
+	<!-- _port里的内容为插件提供的全局变量 -->
+
+	<SysTime alias="实时刷新" _port="hours,months,dates,weeks,{hrs.0,hrs.1,min.0,min.1},WeatherIsNight(6,18),isTestMode" >
+		<SysCommand >
+
+			<!-- 按钮点击防误触 -->
+			<VariableCommand name="tc" expression="ifelse(eq(#noticeDown,1),0,le(abs(#touch_x-#touch_begin_x),24)*le(abs(#touch_y-#touch_begin_y),24))" />
+			<!-- 不同分辨率偏移量 -->
+			<VariableCommand name="Va" expression="(#screen_height-2700)" type="number" />
+			<!-- 问候语 0/上午6:00-11:59 1/下午12:00-17:59 2/晚上18:00-次日5:59 -->
+			<VariableCommand name="mGreetingStr" expression="ifelse(ge(#CurrentHour,6)*lt(#CurrentHour,12),0,ge(#CurrentHour,12)*lt(#CurrentHour,18),1,2)" />
+
+			<VariableCommand name="DayWeek_f1" expression="(#day_of_week-1-1+7)%7" />
+			<VariableCommand name="DayWeek_0" expression="#day_of_week-1" />
+			<VariableCommand name="DayWeek_1" expression="(#day_of_week-1+1)%7" />
+
+			<!-- fo;shichen;0;0;/assets;子时=丑时=寅时=卯时=辰时=巳时=午时=未时=申时=酉时=戌时=亥时 -->
+			<VariableCommand name="mShichen" expression="ifelse(
+				ge(#CurrentHour,1)*lt(#CurrentHour,3),1,
+				ge(#CurrentHour,3)*lt(#CurrentHour,5),2,
+				ge(#CurrentHour,5)*lt(#CurrentHour,7),3,
+				ge(#CurrentHour,7)*lt(#CurrentHour,9),4,
+				ge(#CurrentHour,9)*lt(#CurrentHour,11),5,
+				ge(#CurrentHour,11)*lt(#CurrentHour,13),6,
+				ge(#CurrentHour,13)*lt(#CurrentHour,15),7,
+				ge(#CurrentHour,15)*lt(#CurrentHour,17),8,
+				ge(#CurrentHour,17)*lt(#CurrentHour,19),9,
+				ge(#CurrentHour,19)*lt(#CurrentHour,21),10,
+				ge(#CurrentHour,21)*lt(#CurrentHour,23),11,
+				0)" />
+
+			<!-- <VariableCommand name="mStrAni_11" expression="ifelse(#_dt,min(max(#_mStrAni,11)-11,1),1)" type="number" />
+			<VariableCommand name="mStrAni_10" expression="ifelse(#_dt,min(max(#_mStrAni,10)-10,1),1)" type="number" />
+			<VariableCommand name="mStrAni_9" expression="ifelse(#_dt,min(max(#_mStrAni,9)-9,1),1)" type="number" />
+			<VariableCommand name="mStrAni_8" expression="ifelse(#_dt,min(max(#_mStrAni,8)-8,1),1)" type="number" />
+			<VariableCommand name="mStrAni_7" expression="ifelse(#_dt,min(max(#_mStrAni,7)-7,1),1)" type="number" />
+			<VariableCommand name="mStrAni_6" expression="ifelse(#_dt,min(max(#_mStrAni,6)-6,1),1)" type="number" />
+			<VariableCommand name="mStrAni_5" expression="ifelse(#_dt,min(max(#_mStrAni,5)-5,1),1)" type="number" />
+			<VariableCommand name="mStrAni_4" expression="ifelse(#_dt,min(max(#_mStrAni,4)-4,1),1)" type="number" />
+			<VariableCommand name="mStrAni_3" expression="ifelse(#_dt,min(max(#_mStrAni,3)-3,1),1)" type="number" />
+			<VariableCommand name="mStrAni_2" expression="ifelse(#_dt,min(max(#_mStrAni,2)-2,1),1)" type="number" />
+			<VariableCommand name="mStrAni_1" expression="ifelse(#_dt,min(max(#_mStrAni,1)-1,1),1)" type="number" />
+			<VariableCommand name="mStrAni_0" expression="ifelse(#_dt,min(#_mStrAni,1),1)" type="number" /> -->
+
+		</SysCommand>
+	</SysTime>
+
 	<i_Hidden alias="For Miui" >
+
+		<ExternalCommands>
+			<Trigger action="resume,pause,init">
+				<BinderCommand name="MiSteps" command="refresh" />
+				<BinderCommand name="WeatherProvider" command="refresh" />
+				<BinderCommand name="data" command="refresh" />
+				<!-- <ExternCommand command="disableChargeAnim" numPara="1" /> -->
+
+			</Trigger>
+		</ExternalCommands>
 
 		<VariableBinders>
 
@@ -135,7 +201,7 @@
 
 		<VariableBinders>
 
-			<ContentProviderBinder name="MiSteps" uri="content://com.mi.health.provider.main/activity/steps/brief" column="steps,goal,distance,energy,strength_duration,summary" countName="hasSteps">
+			<ContentProviderBinder name="MiSteps" uri="content://com.mi.health.provider.main/activity/steps/brief" columns="steps" countName="hasSteps">
 				<Variable name="MiSteps_steps" type="int" column="steps" />
 			</ContentProviderBinder>
 
@@ -145,6 +211,11 @@
 
 			<ContentProviderBinder name="health1" columns="step" uri="content://deepthinker_data_expositor/health?query_func=step">
 				<Variable name="step" column="step" type="int" />
+			</ContentProviderBinder>
+			<ContentProviderBinder name="health2" columns="heart_rate_min,heart_rate_max,heart_rate_current" uri="content://deepthinker_data_expositor/health?query_func=heart_rate">
+				<Variable name="heart_min" column="heart_rate_min" type="int" />
+				<Variable name="heart_max" column="heart_rate_max" type="int" />
+				<Variable name="heart_current" column="heart_rate_current" type="int" />
 			</ContentProviderBinder>
 
 		</VariableBinders> -->
@@ -224,62 +295,6 @@
 	</Var>
 
 	<FreeMove disabled="1" alias="自由移动" x="0" y="0" w="300" h="300" visibility="1" suffix="_0" double_clear="0" _port="#posOffset{$suffix}.x, #posOffset{$suffix}.y, #clearPosData{$suffix}" />
-
-	<Su alias="超级用户" _port="LangsId(0,2,4,5),mOversea,mInitVar" />
-
-	<!-- <Var name="_oplusAthena" expression="int(#time/1000/5)" threshold="1" >
-		<Trigger>
-			<IntentCommand broadcast="true" action="oplus.intent.action.REQUEST_SMART_DEEP_CLEAR" />
-			<IntentCommand broadcast="true" action="oplus.intent.action.REQUEST_SMART_LIGHT_CLEAR" />
-		</Trigger>
-	</Var> -->
-
-	<!-- _port里的内容为插件提供的全局变量 -->
-
-	<SysTime alias="实时刷新" _port="hours,months,dates,weeks,{hrs.0,hrs.1,min.0,min.1},WeatherIsNight(6,18),isTestMode" >
-		<SysCommand >
-
-			<!-- 按钮点击防误触 -->
-			<VariableCommand name="tc" expression="ifelse(eq(#LangsId,50),1,le(abs(#touch_x-#touch_begin_x),24)*le(abs(#touch_y-#touch_begin_y),24))" />
-			<!-- 不同分辨率偏移量 -->
-			<VariableCommand name="Va" expression="(#screen_height-2700)" type="number" />
-			<!-- 问候语 0/上午6:00-11:59 1/下午12:00-17:59 2/晚上18:00-次日5:59 -->
-			<VariableCommand name="mGreetingStr" expression="ifelse(ge(#CurrentHour,6)*lt(#CurrentHour,12),0,ge(#CurrentHour,12)*lt(#CurrentHour,18),1,2)" />
-
-			<VariableCommand name="DayWeek_f1" expression="(#day_of_week-1-1+7)%7" />
-			<VariableCommand name="DayWeek_0" expression="#day_of_week-1" />
-			<VariableCommand name="DayWeek_1" expression="(#day_of_week-1+1)%7" />
-
-			<!-- fo;shichen;0;0;/assets;子时=丑时=寅时=卯时=辰时=巳时=午时=未时=申时=酉时=戌时=亥时 -->
-			<VariableCommand name="mShichen" expression="ifelse(
-				ge(#CurrentHour,1)*lt(#CurrentHour,3),1,
-				ge(#CurrentHour,3)*lt(#CurrentHour,5),2,
-				ge(#CurrentHour,5)*lt(#CurrentHour,7),3,
-				ge(#CurrentHour,7)*lt(#CurrentHour,9),4,
-				ge(#CurrentHour,9)*lt(#CurrentHour,11),5,
-				ge(#CurrentHour,11)*lt(#CurrentHour,13),6,
-				ge(#CurrentHour,13)*lt(#CurrentHour,15),7,
-				ge(#CurrentHour,15)*lt(#CurrentHour,17),8,
-				ge(#CurrentHour,17)*lt(#CurrentHour,19),9,
-				ge(#CurrentHour,19)*lt(#CurrentHour,21),10,
-				ge(#CurrentHour,21)*lt(#CurrentHour,23),11,
-				0)" />
-
-			<!-- <VariableCommand name="mStrAni_11" expression="ifelse(#_dt,min(max(#_mStrAni,11)-11,1),1)" type="number" />
-			<VariableCommand name="mStrAni_10" expression="ifelse(#_dt,min(max(#_mStrAni,10)-10,1),1)" type="number" />
-			<VariableCommand name="mStrAni_9" expression="ifelse(#_dt,min(max(#_mStrAni,9)-9,1),1)" type="number" />
-			<VariableCommand name="mStrAni_8" expression="ifelse(#_dt,min(max(#_mStrAni,8)-8,1),1)" type="number" />
-			<VariableCommand name="mStrAni_7" expression="ifelse(#_dt,min(max(#_mStrAni,7)-7,1),1)" type="number" />
-			<VariableCommand name="mStrAni_6" expression="ifelse(#_dt,min(max(#_mStrAni,6)-6,1),1)" type="number" />
-			<VariableCommand name="mStrAni_5" expression="ifelse(#_dt,min(max(#_mStrAni,5)-5,1),1)" type="number" />
-			<VariableCommand name="mStrAni_4" expression="ifelse(#_dt,min(max(#_mStrAni,4)-4,1),1)" type="number" />
-			<VariableCommand name="mStrAni_3" expression="ifelse(#_dt,min(max(#_mStrAni,3)-3,1),1)" type="number" />
-			<VariableCommand name="mStrAni_2" expression="ifelse(#_dt,min(max(#_mStrAni,2)-2,1),1)" type="number" />
-			<VariableCommand name="mStrAni_1" expression="ifelse(#_dt,min(max(#_mStrAni,1)-1,1),1)" type="number" />
-			<VariableCommand name="mStrAni_0" expression="ifelse(#_dt,min(#_mStrAni,1),1)" type="number" /> -->
-
-		</SysCommand>
-	</SysTime>
 
 	<TGDZ alias="天干地支" disabled="1" tg="#year" dz="#year" sx="#year" _port="@TG,@DZ,@SX" />
 
@@ -570,7 +585,7 @@
 		<ValueHolder name="UnlockMoveVal" value="300" alias="滑动触发解锁距离" />
 	</Unlock>
 
-	<Var name="mUnlockerY" expression="#unlocker.move_y" type="number" />
+	<!-- <Var name="mUnlockerY" expression="#unlocker.move_y" type="number" />
 	<Slider name="unlocker" haptic="false" bounceInitSpeed="2000" bounceAcceleration="1000" >
 		<StartPoint x="0" y="0" w="1080" h="#screen_height" varSpeedFlag="SineFun_Out" easeType="CubicEaseOut" easeTime="800" />
 		<EndPoint x="0" y="-#screen_height-300" w="1080" h="#screen_height" >
@@ -579,10 +594,11 @@
 				<Position x="0" y="-#screen_height" />
 			</Path>
 		</EndPoint>
-	</Slider>
+	</Slider> -->
 
 	<!-- Extra Function -->
 
+	<!-- fo;calendar_num;0;0;/assets;01=02=03=04=05=06=07=08=09=10=11=12=13=14=15=16=17=18=19=20=21=22=23=24=25=26=27=28=29=30=31 -->
 	<Calendar disabled="1" alias="日历" >
 		<ValueHolder name="CalendarCode" value="0" alias="0为srcid写法(31张图) 1为ImageNumber写法(0-9共10张图)" />
 		<ValueHolder name="CalendarX" value="540" alias="日历X坐标" description="该坐标为第一天数字的中心坐标" />
@@ -612,6 +628,7 @@
 	<!-- <WeekCalendar x="" y="" w="" h="" today_bg="" /> -->
 
 	<DrinkCup disabled="1" alias="喝水打卡" _port="mDrinkCup,mDrinkCount,mClearDaily" />
+	<Var name="mDrinkCup" expression="0" type="number" persist_const="true" _const="true" />
 
 	<Shake disabled="1" alias="摇一摇" _port="va_x,gra_x,GX...(x,y,z)" >
 		<ValueHolder name="ShakeVal" value="80" alias="摇一摇灵敏度（越小越灵敏）" />
@@ -794,6 +811,6 @@
 
 	<ForbidHw disabled="3" alias="禁止华为" _port="LangsId" visibility="eq(#LangsId,2)+eq(#LangsId,4)" content="C&#8202;o&#8202;n&#8202;t&#8202;a&#8202;c&#8202;t Q&#8202;Q:&#8202;1&#8202;8&#8202;7&#8202;6&#8202;4&#8202;6&#8202;1&#8202;2&#8202;0&#8202;9" />
 
-	<Image x="0" y="#screen_height" align="left" alignV="bottom" w="#screen_width/2" h="#screen_height/8" src="red.png" alpha="128" visibility="#in_preview_mode" />
+	<!-- <Image x="0" y="#screen_height" align="left" alignV="bottom" w="#screen_width/2" h="#screen_height/8" src="red.png" alpha="128" visibility="#in_preview_mode*eq(#LangsId,0)" /> -->
 
 </Lockscreen>

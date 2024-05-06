@@ -12,6 +12,7 @@
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.coloros.browser" class="com.android.browser.BrowserActivity" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.heytap.browser" class="com.android.browser.BrowserActivity" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.hihonor.browser" class="com.hihonor.browser.Main2" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.hihonor.baidu.browser" class="com.baidu.searchbox.SplashActivity" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.huawei.browser" class="com.huawei.browser.Main2" />
 
 </Template>

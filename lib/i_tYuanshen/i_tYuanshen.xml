@@ -5,9 +5,9 @@
 	</Props>
 
     <!-- 原神 -->
+    <IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.miHoYo.GenshinImpact" class="com.miHoYo.GetMobileInfo.MainActivity" />
+    <IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.miHoYo.cloudgames.ys" class="com.mihoyo.cloudgame.ui.SplashActivity" />
     <IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.miHoYo.ys.bilibili" class="com.miHoYo.GetMobileInfo.MainActivity" />
     <IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.miHoYo.Yuanshen" class="com.miHoYo.GetMobileInfo.MainActivity" />
-    <IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.miHoYo.cloudgames.ys" class="com.mihoyo.cloudgame.ui.SplashActivity" />
-    <IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.miHoYo.GenshinImpact" class="com.miHoYo.GetMobileInfo.MainActivity" />
 
 </Template>

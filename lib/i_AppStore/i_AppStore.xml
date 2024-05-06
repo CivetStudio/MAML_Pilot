@@ -10,6 +10,7 @@
 	<!-- alias="mCivetCode_5" -->
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.heytap.market" class="com.heytap.market.activity.MainActivity" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.oppo.market" class="com.oppo.market.activity.MainActivity" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.hihonor.appmarket" class="com.hihonor.appmarket.module.splash.Splash" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.huawei.appmarket" class="com.huawei.appmarket.MainActivity" />
-	
+
 </Template>

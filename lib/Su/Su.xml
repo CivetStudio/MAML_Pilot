@@ -49,7 +49,7 @@
 	<Var name="notification" expression="1" />
 	<!-- <Var name="hours" expression="ifelse(eq(#LangsId,0),#hours_oppo,#hours_vivo)" /> -->
 	<!-- <Var name="mTextSize_Var" expression="ne(#LangsId,4)*ifelse(eq(#LangsId,2),0,eq(#LangsId,0),0,1)" type="number" /> -->
-	<Var name="mTextSize_Var" expression="ne(#LangsId,4)*ifelse(eq(#LangsId,2),0,eq(#LangsId,0)*ne(#frame_rate,0),0-0.12,eq(#LangsId,5),1,1)" type="number" />
+	<Var name="mTextSize_Var" expression="ne(#in_preview_mode,1)*ne(#LangsId,4)*ifelse(eq(#LangsId,2),0,eq(#LangsId,0)*ne(#frame_rate,0),0-0.12,eq(#LangsId,5),1,1)" type="number" />
 
 	<CountDownTime name="mCountDown" date="12-31" countDownType="loop" unit="day" />
 	<CountDownTime name="mCountDownA" date="theDayAfterTomorrow" countDownType="loop" unit="day" />
@@ -88,7 +88,7 @@
 			<Variable name="cityname_en" column="city_name_en" type="string" />
 			<Variable name="cityname_tw" column="city_name_tw" type="string" />
 		</ContentProviderBinder>
-		<ContentProviderBinder name="weather2" columns="weather_id,current_weather,current_temp,current_wind_direct,current_wind_power,day_temp,night_temp,day_weather_id,night_weather_id" countName="hasWeather" uri="content://com.oppo.weather.provider.data/weather_info" notifyUri="content://com.oppo.weather.provider.data/weather_info" whereExp="'city_id='+#cityid+' and weather_index=1'" dependency="weather1" >
+		<ContentProviderBinder name="weather2" columns="weather_id,current_weather,current_temp,current_wind_direct,current_wind_power,day_temp,night_temp,day_weather_id,night_weather_id,current_wind_degrees" countName="hasWeather" uri="content://com.oppo.weather.provider.data/weather_info" notifyUri="content://com.oppo.weather.provider.data/weather_info" whereExp="'city_id='+#cityid+' and weather_index=1'" dependency="weather1" >
 			<!-- 当前天气string类型 -->
 			<Variable name="cur_weather" column="current_weather" type="string" />
 			<!-- 当前温度 -->
@@ -99,6 +99,14 @@
 			<Variable name="night_temp" column="night_temp" type="int" />
 			<!-- AQI均值 -->
 			<Variable name="cur_avg_aqi" column="avg_aqi" type="int" />
+
+			<!--当前风向string类型-->
+			<Variable name="cur_weather_power" column="current_wind_power" type="string" />
+
+			<!-- 部分低版本系统风向数据不对，显示为数字，疑似为风速km/h -->
+			<!-- 风向 int型，替代方案 -->
+			<Variable name="cur_wind_degrees" column="current_wind_degrees" type="int" />
+
 		</ContentProviderBinder>
 
 	</VariableBinders>

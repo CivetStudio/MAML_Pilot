@@ -77,7 +77,7 @@
 // 2024
 01.05 删除无用【VarArray】标签
     VarArray: {@/#}{name}
-01.08 自动修复不带【name】属性的【threshold】/【*Animation】标签
+01.08 splitTools.py 自动修复不带【name】属性的【threshold】/【*Animation】标签
 01.17 重新整理【splitGroup】函数下的属性eval问题（避免#mResumeAni_值被加入按钮）
     简化按钮内属性表达式 simplify_expression()
     // BUG：未考虑到min max函数包含在内的情况（/Users/wangshilong/Downloads/萌星球/蔡晶/五福临门/国内版/OPPO/lockscreen/advance/maml.xml）
@@ -102,11 +102,33 @@
     <C_Array count="4" indexName="index">
         <VariableCommand name="test_#index" expression="#index" type="number" />
     </C_Array>
-    16:18 已修复为自动识别代码
+    16:18 已修复为自动识别代码，支持解析 {$pattern$} 为 eval($pattern$)
+    TODO: C_Array 解析 Group 标签时多次复制
 02.21 新增 SoundCommand 自动处理：带 condition 属性的 SoundCommand 标签单独处理
 03.15 重构加解密代码 -> dev.Refactor.refactor
 03.20 数据库新增列 anti_json 负责记录 var_alias_dict
 03.21 代码中新增变量 Key 作为解密（AES-256），Key['expression'] = encrypt_text(anti_json) 即 var_alias_dict 的加密版本
+04.02 新增 globalPersist 自动删除规则：
+    若 Var['globalPersist'] == 'true':
+        del VariableCommand[name='{Var['name']}'].get('persist')
+04.08 新增 C_Array 标签支持数组变量: (建议于 C_Array 标签内调用，否则可能误删小米)
+    type="number[]" 数字类型数组
+    type="string[]" 文本类型数组
+    使用时 Var 需加上 _c="1"，与 MIUI 分辨
+BEAT_04.13 新增 属性解析 eval 功能：（与 C_Array 的解析方式一致，支持常数变量解析）
+    # eval {eval_content} eg: "{0+1}" => "1"
+    from tools.arrayc import eval_soup
+    complex from refactor.py
+    04.14 新增 eval_all_mode：若预览器需要改变量的值，不需要开启，主要用于刷新代码内所有常数
+BETA_04.27 新增 解析函数功能：parse_function_beta
+    当 count 参数缺失时：当作 Slot 使用，可省略 params 参数
+    否则： count 与 params 为必填项，且 count 与 params 内的数量必须一致
+    # 用法示例：
+    <Fun name="Demo1" count="3" >
+		<VariableCommand name="{param1}" expression="{param2}" type="number" />
+		<VariableCommand name="{param3}" expression="{param4}" type="number" />
+	</Fun>
+	<FunCom target="Demo1" params="{'param1': 'test_0', 'param2': '2', 'param3': 'test_1', 'param4': '4'}" />
 
 // 检测图片是否在代码内：
     1. "pic.png": search directly
@@ -118,7 +140,6 @@
 // 需求：【Mask / Paint】从Group中提取
 // 图片减半、重命名功能
 
-// 若 Var['globalPersist'] == 'true' VariableCommand[name='{Var['name']}'].persist == None
 // 检测format是否为纯数字 / 或format内无%
 // 值内 ## 1# 错误
 // month/
@@ -148,6 +169,8 @@ from bs4 import BeautifulSoup, Comment
 from lxml import etree as lxml
 
 import dev.Refactor.refactor
+from dev.Refactor.refactor import aes_decode
+from dev.Refactor.refactor import aes_encode
 # import wx
 # import requests
 
@@ -160,7 +183,7 @@ mac_local = 0
 if 'PYCHARM_HOSTED' in os.environ and sys.platform.startswith('darwin') or win_local:
     # print("macOS or PyCharm")
     sys_version = 0
-    current_dir = ''
+    current_dir = os.getcwd()
     maml_main_xml = pyperclip.paste().replace('\\', '/').replace('"', '')
 
 maml_rule_file = "maml.xml"
@@ -312,7 +335,7 @@ var_forbid_name = ['Almanac', 'Almanac.baiji', 'Almanac.caishen', 'Almanac.chenA
                    'mCivetCode_008', 'mCivetCode_009', 'mCivetCode_010', 'mGlobalVar', 'mGlobalVar_2H', 'media_genres',
                    'media_like_status', 'media_loading_status', 'media_mode_status', 'media_play_status',
                    'media_subtitle', 'media_title', 'microPhone_state', 'microPhone_volume', 'microphone_state',
-                   'minute', 'month', 'month_lunar', 'month_lunar_leap', 'musicPlayDuration', 'musicPlaySecond',
+                   'minute', 'month', 'month1', 'month_lunar', 'month_lunar_leap', 'musicPlayDuration', 'musicPlaySecond',
                    'musicTotalDuration', 'musicTotalSecond', 'music_active', 'music_album_cover', 'music_control',
                    'music_display', 'music_next', 'music_pause', 'music_play', 'music_prev', 'next_alarm_time',
                    'night_temp', 'night_weather_type', 'noticeDown', 'notification', 'ownerinfo', 'point_count',
@@ -627,13 +650,33 @@ def removeLibProps(lib_remove_in, lib_remove_out):
 #     lib_soup_str.reverse()
 #     return
 
-# 解析XML文件，重新整理属性
+# 解析XML文件，重新整理属性，开始之前
 def parseXML(parse_file_0, parse_file_1):
     _soup = BeautifulSoup(open(parse_file_0, encoding="utf-8"), features="lxml-xml")
 
+    # _soup = parse_function_beta(_soup)
+
+    # 注释清理
     comments = _soup.find_all(string=lambda text: isinstance(text, Comment))
     for comment in comments:
         comment.extract()
+
+    # 删除原本的Key
+    key_store = 1
+    if key_store:
+        keygen = _soup.find('Var', {'name': 'Key'})
+        if keygen:
+            keygen_string = keygen['expression']
+
+            var_dict = eval(aes_decode(keygen_string))
+            print(f"Deleted Origin Key ({len(var_dict)}, {len(keygen_string)}):\n {var_dict}")
+            keygen.extract()
+
+    # 删除 globalPersist 变量的 persist 属性
+    for _p in _soup.find_all('Var', {'globalPersist': 'true'}):
+        for _v in _soup.find_all('VariableCommand', {'name': _p.get('name')}):
+            if _v.get('persist'):
+                del _v['persist']
 
     _dev_time = getTimeSys()
     _soup_indent = str(_soup.prettify(indent_width=1)).replace('\n', '').replace('$_devTime', str(_dev_time))
@@ -716,6 +759,45 @@ def saveXML(save_file):
 
     if manifest_root == 'Lockscreen' or langs_id != 4 or manifest_root == 'Widget':
 
+        # Parse Function Beta
+        def parse_function_beta(fun_soup):
+            for FunCom in fun_soup.find_all('FunCom'):
+                FunName = FunCom.get('target')
+                FunParams = FunCom.get('params', "{'': ''}")
+                if FunName:
+                    if FunParams:
+                        FunParams = eval(FunParams)
+                    # print(FunCom, FunParams, len(FunParams))
+                    FoundFun = False
+                    for FunTag in fun_soup.find_all('Fun', {'name': FunName}):
+                        FunParamsCount = FunTag.get('count', '0')
+                        if int(FunParamsCount) != len(FunParams) and int(FunParamsCount) != 0:
+                            print('Check Params Count! \n')
+                            sys.exit(1)
+                        else:
+                            for key, value in FunParams.items():
+                                FunTag = str(FunTag).replace(f'{{{key}}}', value)
+                                # print(FunTag)
+                                FunTag = BeautifulSoup(str(FunTag), 'lxml-xml')
+                            FunContent = ''
+                            for F in range(len(FunTag.Fun.contents)):
+                                FunContent = str(FunTag.Fun.contents[F])
+                                FunContent = BeautifulSoup(f'{FunContent}', 'lxml-xml')
+                                FunCom.insert_before(FunContent)
+                            FunCom.extract()
+                            FoundFun = True
+                    if not FoundFun:
+                        print("Check FunTag! \n")
+                        sys.exit(1)
+                else:
+                    print("Check FunCom Tag! \n")
+                    sys.exit(1)
+            for FunTag in fun_soup.find_all('Fun'):
+                FunTag.extract()
+            return fun_soup
+
+        _soup = parse_function_beta(_soup)
+
         # TextSize处理
         # text_size = []
         for text in _soup.find_all('TextSize'):
@@ -776,15 +858,26 @@ def saveXML(save_file):
                     del image['pivotX'], image['pivotY']
             if image.get('act'):
                 _action = image.get('act')
-                _action_ = str(_action.split(',')[0])
-                _action_tag_id_ = str(_action.split(',')[1])
+                _action_list_ = _action.split(',')
+                if len(_action_list_) == 1:
+                    _action_ = 'up'
+                    _action_tag_id_ = str(_action_list_[0])
+                elif len(_action_list_) == 2:
+                    _action_ = str(_action_list_[0])
+                    _action_tag_id_ = str(_action_list_[1])
+                else:
+                    _action_ = None
+                    _action_tag_id_ = None
+                # _action_ = str(_action.split(',')[0])
+                # _action_tag_id_ = str(_action.split(',')[1])
                 # print(_action_, _action_tag_id_)
+                # time.sleep(10)
 
                 _action_condition = '1'
                 _action_visibility = '1'
                 _action_content = ''
                 for ac in _soup.find_all():
-                    if ac.name == _action_tag_id_:
+                    if ac.name == _action_tag_id_ or (ac.name == 'Compose' and ac.get('class') == _action_tag_id_):
                         _action_condition = ac.get('condition', '1')
                         _action_visibility = ac.get('visibility', '1')
                         # ac_contents = [str(item).replace('\n', '') for item in ac.contents]
@@ -802,7 +895,7 @@ def saveXML(save_file):
                 _action_triggers = _soup.new_tag('Triggers')
                 _action_trigger = _soup.new_tag('Trigger')
                 _action_trigger['action'] = _action_
-                if _action_condition:
+                if _action_condition and _action_condition != '1':
                     _action_trigger['condition'] = _action_condition
                 _action_button.append(_action_triggers)
                 _action_button.Triggers.append(_action_trigger)
@@ -881,7 +974,7 @@ def saveXML(save_file):
     if var_split_group: splitGroup(success_xml, manifest_root)
     intentMarket(success_xml, manifest_root)
 
-    return
+    return 'TEST'
 
 
 # 对指定目录进行递归遍历，判空删除
@@ -902,6 +995,7 @@ def getAlias():
     _var_from_xml = []
 
     # var_alias = 1
+    global _success_xml
     _success_xml = maml_main_xml.replace(maml_file_name, 'manifest.xml')
     _origin_xml = "source.xml"
     _anti_xml = "anti.xml"
@@ -958,7 +1052,7 @@ def getAlias():
                 _f0.write(var_config_soup_str.replace('\n', ''))
 
         # 删除无用的变量动画
-        _soup_final = BeautifulSoup(open(_success_xml), features="lxml-xml")
+        _soup_final = BeautifulSoup(open(_success_xml, 'rb'), features="lxml-xml")
         import copy
         _soup_final2 = copy.copy(_soup_final)
         for var_tag in _soup_final2.find_all('Var'):
@@ -1037,7 +1131,7 @@ def getAlias():
             frame_control_time = [0, 100, 101]
             frame_time_collect = []
             for frame_control in _soup_final.find_all():
-                if (frame_control.name == 'Item' or frame_control.name == 'AniFrame') and ((frame_control.get('time') and frame_control.get('time').isdigit()) or (frame_control.get('dtime') and frame_control.get('dtime').isdigit())):
+                if frame_control.get('_e') != '1' and (frame_control.name == 'Item' or frame_control.name == 'AniFrame') and ((frame_control.get('time') and frame_control.get('time').isdigit()) or (frame_control.get('dtime') and frame_control.get('dtime').isdigit())):
                     if frame_control.get('time'):
                         frame_time_collect.append(frame_control.get('time'))
                         print(frame_control['time'])
@@ -1047,7 +1141,7 @@ def getAlias():
                     frame_time_collect.sort(key=lambda x: (int(x), x), reverse=True)
 
             for frame_control in _soup_final.find_all():
-                if (frame_control.name == 'Item' or frame_control.name == 'AniFrame') and ((frame_control.get('time') and frame_control.get('time').isdigit()) or (frame_control.get('dtime') and frame_control.get('dtime').isdigit())):
+                if frame_control.get('_e') != '1' and (frame_control.name == 'Item' or frame_control.name == 'AniFrame') and ((frame_control.get('time') and frame_control.get('time').isdigit()) or (frame_control.get('dtime') and frame_control.get('dtime').isdigit())):
                     frame_max_time = frame_time_collect[0]
                     frame_control_time[1] = int(frame_max_time)
                     frame_control_time[2] = int(frame_control_time[1] + 1)
@@ -1107,8 +1201,65 @@ def getAlias():
         # time.sleep(10000)
         print('\t')
 
+        # eval {eval_content} eg: "{0+1}" => "1"
+        # Beta Test
+        # print('Eval Debug:')
+        # from tools.arrayc import eval_soup, eval_safe, eval_decimal
+        #
+        # def do_eval_action(_soup_final):
+        #     _soup_ = eval_soup(_soup_final, 0)
+        #     _soup_final = _soup_[0]
+        #     var_dict = _soup_[1]
+        #
+        #     # if any(char in var_dict for char in ['{', '}', '#']):
+        #     #     do_eval_action(_soup_final)
+        #
+        #     # 根据键的长度对字典进行排序
+        #     print('Eval Var: ')
+        #     sorted_dict = dict(sorted(var_dict.items(), key=lambda x: len(var_alias_dict[str(x[0])[1:]])))
+        #
+        #     # 打印排序后的值
+        #     sorted_content = '\t '
+        #     for key, value in sorted_dict.items():
+        #         sorted_content = f'{sorted_content}{key}: ({var_alias_dict[str(key)[1:]]}) => {str(value)}\n\t '
+        #     print(sorted_content)
+        #
+        #     return _soup_final
+        #
+        # _soup_final = do_eval_action(_soup_final)
+
+        # 若预览器需要改变量的值，不需要开启 eval_all_mode
+        # eval_all_mode = 0
+        # if eval_all_mode:
+        #     for key, value in var_dict.items():
+        #         if str(key)[1:] not in var_forbid_name:
+        #             print('\t', str(var_alias_dict[str(key[1:])]), value)
+        #             _soup_final = BeautifulSoup(str(_soup_final).replace(key, value), 'lxml-xml')
+
+        # 处理按钮负值
+        # if eval_all_mode:
+        #     for eval_tag in _soup_final.find_all():
+        #         for attr, value in eval_tag.attrs.items():
+        #             if str(value).startswith('-'):
+        #                 value = '0' + str(value)
+        #                 eval_tag[attr] = value
+        #                 print(value)
+        #             else:
+        #                 eval_tag[attr] = eval_decimal(value)
+
+        print('\t')
+
+        # eval 之后删除无用变量数组 Var[]
+        # for var in _soup_final.find_all('Var'):
+        #     var_type = var.get('type')
+        #     if str(var_type).startswith('number[]') and f'#{var_type}' not in str(_soup_final) or \
+        #             str(var_type).startswith('string[]') and f'@{var_type}' not in str(_soup_final):
+        #         var.decompose()
+        #     else:
+        #         pass
+
         # 保存前的最后一步: 定义一个函数用于将中文和特殊字符转换为 Unicode 字符串
-        unicode_mode = 1
+        unicode_mode = 0
         if unicode_mode:
             def convert_to_unicode(match):
                 return '&#' + str(ord(match.group(0))) + ';'
@@ -1172,13 +1323,19 @@ def getAlias():
             print('\t')
 
         # 存储Key
-        if manifest_root == 'Lockscreen':
+        key_store = 1
+        if manifest_root == 'Lockscreen' and key_store:
+            # 找到了满足条件的标签
+            # 执行你的代码
             key_var = _soup_final.new_tag('Var')
             key_var['name'] = 'Key'
-            key_var['expression'] = f"'{dev.Refactor.refactor.aes_encode(str(var_alias_dict))}'"
+            key_var['expression'] = f"'{aes_encode(str(var_alias_dict).strip())}'"
             # key_var['type'] = 'byteArray'
             key_var['type'] = 'string'
-            _soup_final.Lockscreen.Var.insert_before(key_var)
+            try:
+                _soup_final.Lockscreen.Var.insert_before(key_var)
+            except Exception as key_e:
+                print('Var is not exists!')
 
         soup_dom_str = str(_soup_final.prettify(indent_width=1))\
             .replace('    ', '\t').replace('&amp;#', '&#')\
@@ -1242,7 +1399,7 @@ for root in soup.find_all(True, limit=1):
 
 print('Disabled:')
 
-# Main / Start
+# Main / Start / 开始
 for tag in soup.find_all(True):
 
     # 匹配库文件标签
@@ -1422,6 +1579,13 @@ removeEmpty(os.path.join(os.getcwd(), assets_folder_name))
 cleanCache()
 getAlias()
 
+print(_success_xml)
+print('>>>>>>')
+with open(_success_xml, "rb") as file:
+    result_xml_string = file.read()
+    print(result_xml_string)
+print('<<<<<<')
+
 # print('lib: ',lib, '\n')
 # print('tags_lib: ',tags_lib, '\n')
 # print('tags_str: ',tags_str, '\n')
@@ -1457,7 +1621,8 @@ def calculateMemory(folder_path=None):
     folder_path = os.path.dirname(folder_path)
 
     total_memory = 0
-    image_compress_ratio = 720 / 960
+    image_compress_ratio = 720 / 1080
+    image_compress_ratio = 960 / 1080
     image_compress_mode = 0
 
     print(f'CompressMode: {image_compress_mode}')

@@ -10,6 +10,8 @@
 	<IntentCommand condition="($condition)*ne(#LangsId,0)" action="android.intent.action.MAIN" package="com.android.contacts" class="com.android.contacts.activities.DialtactsActivity" />
 	<!-- OPPO -->
 	<IntentCommand condition="($condition)*eq(#LangsId,0)" action="android.intent.action.MAIN" package="com.android.contacts" class="com.android.contacts.PeopleActivityAlias" />
+	<IntentCommand condition="($condition)*ne(#LangsId,0)" action="android.intent.action.MAIN" package="com.hihonor.contacts" class="com.android.contacts.activities.DialtactsActivity" alias="mOversea" />
+	<IntentCommand condition="($condition)*ne(#LangsId,0)" action="android.intent.action.MAIN" package="com.hihonor.contacts" class="com.android.contacts.activities.PeopleActivity" />
 	<IntentCommand condition="($condition)*ne(#LangsId,0)" action="android.intent.action.MAIN" package="com.android.contacts" class="com.android.contacts.activities.PeopleActivity" />
 
 </Template>

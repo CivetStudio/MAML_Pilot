@@ -11,6 +11,7 @@
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.coloros.filemanager" class="com.coloros.filemanager.Main" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.coloros.filemanager" class="com.coloros.filemanager.filerefactor.ui.main.MainActivity" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.coloros.filemanager" class="com.oplus.filemanager.main.ui.MainActivity" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.hihonor.filemanager" class="com.hihonor.honorcloud.filemanager.FileManager" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.hihonor.hidisk" class="com.hihonor.hidisk.filemanager.FileManager" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.huawei.hidisk" class="com.huawei.hidisk.filemanager.FileManager" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.huawei.filemanager" class="com.huawei.hidisk.filemanager.FileManager" />

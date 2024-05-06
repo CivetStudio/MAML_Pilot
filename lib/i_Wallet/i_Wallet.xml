@@ -10,6 +10,7 @@
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.vivo.wallet" class="com.vivo.wallet.StartPageActivity" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.coloros.wallet" class="com.nearme.wallet.SplashActivity" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.finshell.wallet" class="com.nearme.wallet.SplashActivity" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.hihonor.wallet" class="com.hihonor.wallet.WalletHomeActivity" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.huawei.wallet" class="com.huawei.wallet.view.MainActivity" />
 
 </Template>

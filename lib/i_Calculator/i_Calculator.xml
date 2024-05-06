@@ -9,6 +9,7 @@
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" category="android.intent.category.APP_CALCULATOR" package="com.android.bbkcalculator" class="com.android.bbkcalculator.Calculator" />
 	<!-- alias="mCivetCode_5" -->
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.coloros.calculator" class="com.android.calculator2.Calculator" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.hihonor.calculator" class="com.hihonor.calculator.Calculator" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.android.calculator2" class="com.android.calculator2.Calculator" />
 
 </Template>

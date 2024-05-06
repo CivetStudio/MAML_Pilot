@@ -13,6 +13,7 @@
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.coloros.note" class="com.nearme.note.view.AllNoteActivity" />
 	<!-- C13可选  -->
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.coloros.note" class="com.nearme.note.main.MainActivity" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.hihonor.notepad" class="com.hihonor.notes.NotePadActivity" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.example.android.notepad" class="com.example.android.notepad.NotePadActivity" />
 
 </Template>

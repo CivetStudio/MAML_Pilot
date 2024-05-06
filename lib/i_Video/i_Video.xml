@@ -12,6 +12,7 @@
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.coloros.yoli" class="com.coloros.yoli.maintab.ui.SplashActivity" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.coloros.yoli" class="com.coloros.yoli.icon_org" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.heytap.yoli" class="com.heytap.yoli.icon_org" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.hihonor.youku.video" class="com.youku.v2.HomePageEntry" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.huawei.himovie" class="com.huawei.himovie.ui.login.SplashScreenActivity" />
 
 </Template>

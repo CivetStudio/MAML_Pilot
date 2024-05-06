@@ -7,10 +7,6 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from datetime import datetime
 
-#
-# maml_main_xml = os.path.dirname(pyperclip.paste().replace('\\', '/').replace('"', ''))
-# maml_file_name = os.path.basename(maml_main_xml)
-
 maml_main_xml = pyperclip.paste().replace('\\', '/').replace('"', '')
 maml_rule_file = "maml.xml"
 maml_file_name = os.path.basename(maml_main_xml)
@@ -24,7 +20,6 @@ print('\t')
 execute_times = 0
 current_script_path = os.path.abspath(__file__)
 parent_folder_path = os.path.dirname(current_script_path)
-# main_script_path = os.path.join(parent_folder_path, 'main.py')
 main_script_path = os.path.join(parent_folder_path, 'main.py')
 print(f'Source: {maml_main_xml}')
 print(f'Script: {main_script_path}\n')
@@ -49,7 +44,7 @@ def execute_script():
     try:
         # 使用 print 输出
         # print(f"Start: {get_logging_time()}"), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
-        result = subprocess.run(['python3', script_path], check=True)
+        result = subprocess.run(['./venv/bin/python3', script_path], check=True)
         print(f"{execute_times} | {get_logging_time()}: {result}")
         print('\t')
 

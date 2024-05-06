@@ -11,11 +11,18 @@
 	<Button x="0" y="0" w="#screen_width" h="#screen_height" visibility="ScreenId_Visibility" >
 		<Triggers>
 			<Trigger action="up" >
-				<VariableCommand name="mScreenId" expression="int(#mScreenId+1)%(#mScreenId.Num)" persist="true" condition="ge(abs(#touch_x-#touch_begin_x),ScreenId_D)*ifelse(eq(ScreenId_S,0),ge(#touch_x,#touch_begin_x),1)" />
-				<VariableCommand name="mScreenId_Var" expression="#mScreenId_Var+1" persist="true" condition="ge(abs(#touch_x-#touch_begin_x),ScreenId_D)*ifelse(eq(ScreenId_S,0),ge(#touch_x,#touch_begin_x),1)*(ScreenId_R)" />
-				<VariableCommand name="mScreenId_Var_Move" expression="#mScreenId_Var_Move+1" persist="true" condition="ge(abs(#touch_x-#touch_begin_x),ScreenId_D)*ifelse(eq(ScreenId_S,0),ge(#touch_x,#touch_begin_x),1)" />
+				<VariableCommand name="mScreenId" expression="int(#mScreenId+1)%(#mScreenId.Num)" persist="true" condition="ge(abs(#touch_x-#touch_begin_x),ScreenId_D)*(#mScreenId.S)" />
+				<VariableCommand name="mScreenId_Var" expression="#mScreenId_Var+1" persist="true" condition="ge(abs(#touch_x-#touch_begin_x),ScreenId_D)*(#mScreenId.S)*(ScreenId_R)" />
+				<VariableCommand name="mScreenId_Var_Move" expression="#mScreenId_Var_Move+1" persist="true" condition="ge(abs(#touch_x-#touch_begin_x),ScreenId_D)*(#mScreenId.S)" />
 			</Trigger>
 		</Triggers>
 	</Button>
-	
+
+	<Var expression="#time" threshold="1" >
+		<Trigger>
+			<VariableCommand name="mScreenId.S_Auto" expression="ifelse(eq(#LangsId,0),ge(#touch_x,#touch_begin_x),1)" type="number" />
+			<VariableCommand name="mScreenId.S" expression="ifelse(eq(ScreenId_S,2),#mScreenId.S_Auto,eq(ScreenId_S,0),ge(#touch_x,#touch_begin_x),1)" type="number" />
+		</Trigger>
+	</Var>
+
 </ROOT>

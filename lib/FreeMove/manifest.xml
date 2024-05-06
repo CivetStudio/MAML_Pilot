@@ -16,7 +16,7 @@
 
 	<Var name="posOffset$suffix.x" expression="max(min(#touchOffset$suffix.x+ifelse(#touchDown$suffix,#touch_x-#touchDown$suffix.x,0),$dx_max),$dx_min)" />
 	<Var name="posOffset$suffix.y" expression="max(min(#touchOffset$suffix.y+ifelse(#touchDown$suffix,#touch_y-#touchDown$suffix.y,0),$dy_max),$dy_min)" />
-	<!-- <Var name="posOffset$suffix.button" expression="0" type="number" /> -->
+	<!-- <Var name="posOffset$suffix_button" expression="0" type="number" /> -->
 
 	<Var name="__clearPosData" expression="#clearPosData$suffix" threshold="1" >
 		<Trigger>
@@ -28,7 +28,13 @@
 		</Trigger>
 	</Var>
 
-	<Button x="$x+#posOffset$suffix.x*#posOffset$suffix.button" y="$y+#posOffset$suffix.y*#posOffset$suffix.button" w="$w" h="$h" visibility="$visibility" >
+	<Var name="touchDown$suffix" expression="0" persist_const="true" _const="true" />
+	<Var name="touchDown$suffix.x" expression="0" persist_const="true" _const="true" />
+	<Var name="touchDown$suffix.y" expression="0" persist_const="true" _const="true" />
+	<Var name="touchOffset$suffix.x" expression="0" persist_const="true" _const="true" />
+	<Var name="touchOffset$suffix.y" expression="0" persist_const="true" _const="true" />
+
+	<Button x="$x+#posOffset$suffix.x*#posOffset$suffix_button" y="$y+#posOffset$suffix.y*#posOffset$suffix_button" w="$w" h="$h" visibility="$visibility" >
 		<Triggers>
 			<Trigger action="down">
 				<VariableCommand name="touchDown$suffix" expression="1" />

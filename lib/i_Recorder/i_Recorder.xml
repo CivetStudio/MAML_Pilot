@@ -10,6 +10,7 @@
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="oppo.multimedia.soundrecorder" class="oppo.multimedia.soundrecorder.filebrowser.BrowseFile" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.coloros.soundrecorder" class="oppo.multimedia.soundrecorder.filebrowser.BrowseFile" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.coloros.soundrecorder" class="oplus.multimedia.soundrecorder.filebrowser.BrowseFile" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.hihonor.soundrecorder" class="com.android.soundrecorder.RecordListActivity" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.android.soundrecorder" class="com.android.soundrecorder.SoundRecorder" />
 
 </Template>

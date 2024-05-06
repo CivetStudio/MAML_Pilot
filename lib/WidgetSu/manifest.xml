@@ -171,12 +171,14 @@
 	<Function name="PowerMain" >
 		<IntentCommand action="android.intent.action.MAIN" package="com.miui.securitycenter" class="com.miui.powercenter.PowerMainActivity" />
 		<IntentCommand action="miui.intent.action.POWER_MANAGER" package="com.miui.securitycenter" class="com.miui.powercenter.PowerMainActivity" />
+		<IntentCommand action="miui.intent.action.POWER_MANAGER" />
 
 		<!-- <IntentCommand action="android.intent.action.MAIN" package="com.miui.securitymanager" class="com.miui.powercenter.PowerMainActivity" /> -->
 		<!-- <IntentCommand action="miui.intent.action.POWER_MANAGER" package="com.miui.securitymanager" class="com.miui.powercenter.PowerMainActivity" /> -->
 	</Function>
 	<Function name="Battery" >
 		<IntentCommand action="miui.intent.action.POWER_BATTERY" package="com.miui.securitycenter" />
+		<IntentCommand action="miui.intent.action.POWER_BATTERY" />
 		<!-- <IntentCommand action="miui.intent.action.POWER_BATTERY" package="com.miui.securitymanager" /> -->
 	</Function>
 	<Function name="Clean" >
@@ -188,6 +190,7 @@
 	</Function>
 	<Function name="Security" >
 		<IntentCommand package="com.android.settings" class="com.miui.securitycenter.Main" />
+		<IntentCommand action="miui.intent.action.SECURITY_CENTER" />
 	</Function>
 	<Function name="SecurityScan" >
 		<IntentCommand action="miui.intent.action.SECURITY_CENTER" package="com.miui.securitycenter" class="com.miui.securityscan.MainActivity">
@@ -201,11 +204,13 @@
 	</Function>
 	<Function name="Optimize" >
 		<IntentCommand action="miui.intent.action.OPTIMIZE_MANAGE" package="com.miui.securitycenter" class="com.miui.optimizemanage.OptimizemanageMainActivity" />
+		<IntentCommand action="miui.intent.action.OPTIMIZE_MANAGE"  />
 		<!-- <IntentCommand action="miui.intent.action.OPTIMIZE_MANAGE" package="com.miui.securitymanager" class="com.miui.optimizemanage.OptimizemanageMainActivity" /> -->
 	</Function>
 	<Function name="Storage" >
 		<IntentCommand action="android.intent.action.MAIN" package="com.miui.securitycenter" class="com.miui.optimizecenter.storage.StorageActivity" />
 		<IntentCommand action="com.miui.securitycenter.action.STORAGE_MANAGE" package="com.miui.securitycenter" class="com.miui.optimizecenter.storage.StorageActivity" />
+		<IntentCommand action="com.miui.securitycenter.action.STORAGE_MANAGE" />
 
 		<!-- <IntentCommand action="android.intent.action.MAIN" package="com.miui.securitymanager" class="com.miui.optimizecenter.storage.StorageActivity" /> -->
 		<!-- <IntentCommand action="com.miui.securitycenter.action.STORAGE_MANAGE" package="com.miui.securitymanager" class="com.miui.optimizecenter.storage.StorageActivity" /> -->
@@ -222,6 +227,7 @@
 	</Function>
 	<Function name="Network" >
 		<IntentCommand action="miui.intent.action.NETWORKASSISTANT_ENTRANCE" package="com.miui.securitycenter" />
+		<IntentCommand action="miui.intent.action.NETWORKASSISTANT_ENTRANCE" />
 		<!-- <IntentCommand action="miui.intent.action.NETWORKASSISTANT_ENTRANCE" package="com.miui.securitymanager" /> -->
 	</Function>
 	<Function name="Bluetooth" >

@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Lockscreen version="1" frameRate="1000" screenWidth="1080" vibrate="false">
+
+	<Var expression="int(#time/5)" threshold="1">
+		<Trigger>
+			<VariableCommand name="kbd_level.bmp_width" expression="#kbd_img.v0*#kbd_level.a.bmp_width+#kbd_img.v1*#kbd_level.b.bmp_width+#kbd_img.v2*#kbd_level.c.bmp_width+#kbd_img.v3*#kbd_level.d.bmp_width+2*(#kbd_space)" type="number"/>
+			<VariableCommand name="kbd_img.v0" expression="ge(#kbd_number,1000)" type="number"/>
+			<VariableCommand name="kbd_img.v1" expression="ge(#kbd_number,100)" type="number"/>
+			<VariableCommand name="kbd_img.v2" expression="ge(#kbd_number,10)" type="number"/>
+			<VariableCommand name="kbd_img.v3" expression="ge(#kbd_number,0)" type="number"/>
+			<VariableCommand name="kbd_img.i0" expression="int(#kbd_number/1000%10)" type="number"/>
+			<VariableCommand name="kbd_img.i1" expression="int(#kbd_number/100%10)" type="number"/>
+			<VariableCommand name="kbd_img.i2" expression="int(#kbd_number/10%10)" type="number"/>
+			<VariableCommand name="kbd_img.i3" expression="int(#kbd_number/1%10)" type="number"/>
+			<VariableCommand name="kbd_img.x" expression="#kbd_x-(#kbd_level.bmp_width+2+(#kbd_unit_space)+#kbd_LevelPct.bmp_width)/2*#kbd_align" type="number"/>
+
+		</Trigger>
+	</Var>
+
+	<Var name="kbd_x" expression="0" type="number"/>
+	<Var name="kbd_y" expression="0" type="number"/>
+	<Var name="kbd_align" expression="1" type="number"/>
+	<Var name="kbd_space" expression="0" type="number"/>
+	<Var name="kbd_unit_space" expression="0" type="number"/>
+	<Var name="kbd_number" expression="0" type="number"/>
+
+	<Group visibility="1">
+		<Image x="#kbd_img.x" y="0" align="left" alignV="center" src="assets/key/img.png" srcid="#kbd_img.i0" name="kbd_level.a" visibility="#kbd_img.v0"/>
+		<Image x="#kbd_img.x+#kbd_img.v0*#kbd_level.a.bmp_width+(#kbd_space)" y="0" align="left" alignV="center" src="assets/key/img.png" srcid="#kbd_img.i1" name="kbd_level.b" visibility="#kbd_img.v1"/>
+		<Image x="#kbd_img.x+#kbd_img.v0*#kbd_level.a.bmp_width+(#kbd_space)+#kbd_img.v1*#kbd_level.b.bmp_width+(#kbd_space)" y="0" align="left" alignV="center" src="assets/key/img.png" srcid="#kbd_img.i2" name="kbd_level.c" visibility="#kbd_img.v2"/>
+		<Image x="#kbd_img.x+#kbd_img.v0*#kbd_level.a.bmp_width+(#kbd_space)+#kbd_img.v1*#kbd_level.b.bmp_width+(#kbd_space)+#kbd_img.v2*#kbd_level.c.bmp_width+(#kbd_space)" y="0" align="left" alignV="center" src="assets/key/img.png" srcid="#kbd_img.i3" name="kbd_level.d" visibility="#kbd_img.v3"/>
+		<Image x="#kbd_img.x+#kbd_level.bmp_width+2+(#kbd_unit_space)" y="0" align="left" alignV="center" src="assets/key/img_unit.png" name="kbd_LevelPct"/>
+	</Group>
+
+</Lockscreen>

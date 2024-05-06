@@ -2,16 +2,15 @@
 /assets/
 /venv/
 /.idea/
+/__pycache__/
+.idea/MAML Pilot.iml
+
 Icon
 main.log
 anti.xml
 antiAliasing.xml
-lib/.DS_Store
-tools/action/.DS_Store
-anti.xml
-antiAliasing.xml
-anti.xml
-.idea/MAML Pilot.iml
-/tools/arc/
-/dev/
+
+/dev/json_icons/
 .DS_Store
+
+/theme/sample/

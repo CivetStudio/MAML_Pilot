@@ -34,7 +34,14 @@
 			<!-- <VariableCommand name="mWeekCur" expression="int(#day_of_week-1)" type="number" /> -->
 			<!-- <VariableCommand name="mDisFriday" expression="ifelse(eq(#mWeekCur,0),5,eq(#mWeekCur,6),6,5-#mWeekCur)" type="number" /> -->
 			<VariableCommand name="mDisFriday" expression="ifelse(eq(int((#day_of_week-1)),0),5,eq(int((#day_of_week-1)),6),6,5-int((#day_of_week-1)))" type="number" />
+			<VariableCommand name="mDisFriday_CJ" expression="ifelse(eq(#day_of_week,1),5,eq(#day_of_week,2),4,eq(#day_of_week,3),3,eq(#day_of_week,4),2,eq(#day_of_week,5),1,eq(#day_of_week,6),0,eq(#day_of_week,7),6,0)" type="number" />
+
 			<VariableCommand name="mDisSaturday" expression="ifelse(eq(int((#day_of_week-1)),0),6,eq(int((#day_of_week-1)),6),0,6-int((#day_of_week-1)))" type="number" />
+
+			<!-- 距离周末：时 -->
+			<VariableCommand name="mCurWeekDay" expression="int(#day_of_week-1-1+7)%7" type="number" />
+			<VariableCommand name="mDisWeekend" expression="ifelse(lt(#mCurWeekDay,5),5-#mCurWeekDay,6-#mCurWeekDay)" type="number" />
+			<VariableCommand name="mDisWeekHour" expression="#mDisWeekend*24-#CurrentHour" type="number" />
 
 			<!-- 当月最大天数 -->
 			<VariableCommand name="mMonthMaxDate" expression="ifelse(eq(int(#month+1),1),31,eq(int(#month+1),2),28+#isLeapYear,eq(int(#month+1),3),31,eq(int(#month+1),4),30,eq(int(#month+1),5),31,eq(int(#month+1),6),30,eq(int(#month+1),7),31,eq(int(#month+1),8),31,eq(int(#month+1),9),30,eq(int(#month+1),10),31,eq(int(#month+1),11),30,eq(int(#month+1),12),31,31)" />
@@ -58,7 +65,7 @@
 			<!-- 本月剩余：百分比 -->
 			<VariableCommand name="mMonthLevel" expression="100-round(#date/#mMonthMaxDate*100)" />
 			<!-- 今年剩余：百分比 -->
-			<VariableCommand name="mYearLevel" expression="round(#CountYear/(365+#lya)*100)" />
+			<VariableCommand name="mYearLevel" expression="round(#CountYear/(365+#isLeapYear)*100)" />
 			<!-- 全平台通用秒数（已适配vivo低端机） -->
 			<VariableCommand name="seconds" expression="ifelse(eq(#LangsId,5)*eq(#mXplay5A,1),int((#time%60000)/1000),#second)" />
 

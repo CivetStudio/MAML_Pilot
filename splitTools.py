@@ -22,7 +22,7 @@ def splitVar(parse_file, save_file):
         # 10.06 BUG: Array > Group > Var
         if group.parent.name != 'Array':
             for var in group.find_all('Var'):
-                if var.parent.name == "Group" and var.get('name') != 'Progress' and var.parent.name != 'Array':
+                if var.parent.name == "Group" and var.get('name') != 'Progress' and var.parent.name != 'Array' and var.get('index') is None:
                     var.extract()
                     lockscreen.append(var)
 
@@ -400,55 +400,55 @@ def intentMarket(save_file, manifest_root='Lockscreen'):
         xml_str = f.read()
     soup = BeautifulSoup(xml_str, features="lxml-xml")
 
-    # 针对 MIUI 第三方APP自动跳转商店
-    if 'content://keyguard.notification/notifications' in str(soup) and '_pauseIntent="1"' not in str(soup):
-        print('IntentMarket: 1')
-        IntentCommand = 0
-        for i in soup.find_all('IntentCommand'):
-            IntentCommand += 1
-            # 第三方APP自动跳转商店
-            # ['com.android', 'com.coloros', 'com.oppo', 'com.nearme', 'com.heytap', 'com.oplus',
-            #  'com.miui', 'com.vivo', 'com.bbk', 'com.iqoo', 'com.huawei', 'com.hihonor']
-            if not str(i.get('package')).startswith('com.android') \
-                    and not str(i.get('package')).startswith('com.huawei') \
-                    and not str(i.get('package')).startswith('com.example.android.notepad') \
-                    and not str(i.get('package')).startswith('com.coloros') \
-                    and not str(i.get('package')).startswith('com.oppo') \
-                    and not str(i.get('package')).startswith('com.nearme') \
-                    and not str(i.get('package')).startswith('com.heytap') \
-                    and not str(i.get('package')).startswith('com.oplus') \
-                    and not str(i.get('package')).startswith('com.miui') \
-                    and not str(i.get('package')).startswith('com.vivo') \
-                    and not str(i.get('package')).startswith('com.bbk') \
-                    and not str(i.get('package')).startswith('com.iqoo') \
-                    and not str(i.get('package')).startswith('com.hihonor') \
-                    and str(i.get('action')).upper() == 'ANDROID.INTENT.ACTION.MAIN'\
-                    and i.get('package') is not None\
-                    and i.get('class') is not None:
-                hex_name = hex(zlib.crc32(str(i.get('class')).encode('UTF-8')))[2:].capitalize()
-                img_var_name = f"{hex_name}_app"
-                pkg_var_name = f"{hex_name}_app_pkg"
-                pkg_var_exp = str(i.get('package'))
-                cls_var_name = f"{hex_name}_app_cls"
-                cls_var_exp = str(i.get('class'))
-                print(
-                    f"\t<IntentCommand action=\"{i.get('action')}\" package=\"{pkg_var_exp}\" class=\"{cls_var_exp}\" />")
-
-                img_icon = f'&#60;Image name="{img_var_name}" w="1" h="1" srcType="ApplicationIcon" srcExp="@{pkg_var_name}" /&#62;'
-                img_pkg_var = f'&#60;Var name="{pkg_var_name}" expression="\'{pkg_var_exp}\'" type="string" /&#62;'
-                img_cls_var = f'&#60;Var name="{cls_var_name}" expression="\'{cls_var_exp}\'" type="string" /&#62;'
-                soup.Lockscreen.Var.insert_before(f"{img_icon}\n{img_pkg_var}\n{img_cls_var}")
-
-                origin_condition = str(i.get('condition')) if i.get('condition') is not None else '1'
-                multi_command = f'&#60;MultiCommand condition="{origin_condition}" &#62;\n&#60;IntentCommand ' \
-                                f'action="android.intent.action.VIEW" uriExp="\'market://details?id=' \
-                                f'\'+@{pkg_var_name}+\'&amp;ref=mithemelocksreen\'" flags="268435456" condition="!#' \
-                                f'{img_var_name}.bmp_width" /&#62;\n&#60;IntentCommand action="android.intent.action.MAIN" ' \
-                                f'packageExp="@{pkg_var_name}" classExp="@{cls_var_name}" condition="#' \
-                                f'{img_var_name}.bmp_width" /&#62;\n&#60;/MultiCommand&#62;'
-                i.insert_after(multi_command)
-                i.decompose()
-        print('\t')
+    # 针对 MIUI 第三方APP自动跳转商店（异步到 tools.xiaomi）
+    # if 'content://keyguard.notification/notifications' in str(soup) and '_pauseIntent="1"' not in str(soup):
+    #     print('IntentMarket: 1')
+    #     IntentCommand = 0
+    #     for i in soup.find_all('IntentCommand'):
+    #         IntentCommand += 1
+    #         # 第三方APP自动跳转商店
+    #         # ['com.android', 'com.coloros', 'com.oppo', 'com.nearme', 'com.heytap', 'com.oplus',
+    #         #  'com.miui', 'com.vivo', 'com.bbk', 'com.iqoo', 'com.huawei', 'com.hihonor']
+    #         if not str(i.get('package')).startswith('com.android') \
+    #                 and not str(i.get('package')).startswith('com.huawei') \
+    #                 and not str(i.get('package')).startswith('com.example.android.notepad') \
+    #                 and not str(i.get('package')).startswith('com.coloros') \
+    #                 and not str(i.get('package')).startswith('com.oppo') \
+    #                 and not str(i.get('package')).startswith('com.nearme') \
+    #                 and not str(i.get('package')).startswith('com.heytap') \
+    #                 and not str(i.get('package')).startswith('com.oplus') \
+    #                 and not str(i.get('package')).startswith('com.miui') \
+    #                 and not str(i.get('package')).startswith('com.vivo') \
+    #                 and not str(i.get('package')).startswith('com.bbk') \
+    #                 and not str(i.get('package')).startswith('com.iqoo') \
+    #                 and not str(i.get('package')).startswith('com.hihonor') \
+    #                 and str(i.get('action')).upper() == 'ANDROID.INTENT.ACTION.MAIN'\
+    #                 and i.get('package') is not None\
+    #                 and i.get('class') is not None:
+    #             hex_name = hex(zlib.crc32(str(i.get('class')).encode('UTF-8')))[2:].capitalize()
+    #             img_var_name = f"{hex_name}_app"
+    #             pkg_var_name = f"{hex_name}_app_pkg"
+    #             pkg_var_exp = str(i.get('package'))
+    #             cls_var_name = f"{hex_name}_app_cls"
+    #             cls_var_exp = str(i.get('class'))
+    #             print(
+    #                 f"\t<IntentCommand action=\"{i.get('action')}\" package=\"{pkg_var_exp}\" class=\"{cls_var_exp}\" />")
+    #
+    #             img_icon = f'&#60;Image name="{img_var_name}" w="1" h="1" srcType="ApplicationIcon" srcExp="@{pkg_var_name}" /&#62;'
+    #             img_pkg_var = f'&#60;Var name="{pkg_var_name}" expression="\'{pkg_var_exp}\'" type="string" /&#62;'
+    #             img_cls_var = f'&#60;Var name="{cls_var_name}" expression="\'{cls_var_exp}\'" type="string" /&#62;'
+    #             soup.Lockscreen.Var.insert_before(f"{img_icon}\n{img_pkg_var}\n{img_cls_var}")
+    #
+    #             origin_condition = str(i.get('condition')) if i.get('condition') is not None else '1'
+    #             multi_command = f'&#60;MultiCommand condition="{origin_condition}" &#62;\n&#60;IntentCommand ' \
+    #                             f'action="android.intent.action.VIEW" uriExp="\'market://details?id=' \
+    #                             f'\'+@{pkg_var_name}+\'&amp;ref=mithemelocksreen\'" flags="268435456" condition="!#' \
+    #                             f'{img_var_name}.bmp_width" /&#62;\n&#60;IntentCommand action="android.intent.action.MAIN" ' \
+    #                             f'packageExp="@{pkg_var_name}" classExp="@{cls_var_name}" condition="#' \
+    #                             f'{img_var_name}.bmp_width" /&#62;\n&#60;/MultiCommand&#62;'
+    #             i.insert_after(multi_command)
+    #             i.decompose()
+    #     print('\t')
 
     # 针对 OPPO 组件卡加入 market="true"
     market_mode = 1
@@ -567,6 +567,8 @@ def intentMarket(save_file, manifest_root='Lockscreen'):
                 if 'Animation' in str(child_tag.name):
                     image['name'] = image_name
                     print(f"\t{str(child_tag.name)}: <Image name=\"{image_name}\" src=\"{image.get('src')}\" >")
+                    if child_tag.Source and image.get('src') is None:
+                        image['src'] = child_tag.Source.get('src')
     print('\t')
 
     # 没有 name 属性的 threshold 标签加入 name 属性

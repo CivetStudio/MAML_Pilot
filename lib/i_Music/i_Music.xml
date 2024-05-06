@@ -15,6 +15,7 @@
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.oppo.music" class="com.allsaints.music.MainActivity" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.heytap.music" class="com.allsaints.music.MainActivity" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.heytap.music" class="com.allsaints.music.ui.splash.SplashActivity" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.hihonor.cloudmusic" class="com.netease.cloudmusic.activity.MainActivity" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.android.mediacenter" class="com.android.mediacenter.PageActivity" />
 
 </Template>

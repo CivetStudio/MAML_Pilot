@@ -9,6 +9,7 @@
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.vivo.game" class="com.vivo.game.ui.LogoActivity" />
 	<!-- alias="mCivetCode_5" -->
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.nearme.gamecenter" class="com.nearme.gamecenter.ui.activity.SplashActivity" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.hihonor.gamecenter" class="com.hihonor.gamecenter.bu_games_display.splash.SplashActivity" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.huawei.gamebox" class="com.huawei.gamebox.GameBoxActivity" />
 
 </Template>

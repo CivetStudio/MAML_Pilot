@@ -1,10 +1,11 @@
 import pyperclip
+from lxml import etree as ET
 
 
 def orderXML(input_file, output_file=None):
 
-    import xml.etree.ElementTree as ET
-    import xml.dom.minidom
+    # import xml.etree.ElementTree as ET
+    # import xml.dom.minidom
 
     # import html
     #
@@ -80,23 +81,27 @@ def orderXML(input_file, output_file=None):
     #                 encoded_value = encodeChinese(attr_value)
     #                 element.attrib[attr_name] = encoded_value
 
-    # 创建两条注释
-    comment1 = ET.Comment("欢迎定制锁屏：灵貓 QQ 1876461209  /  Welcome to customize the lock screen: Civet QQ 1876461209")
-    comment2 = ET.Comment("违规抄袭将依据《中华人民共和国民法典》追究法律责任  /  Illegal plagiarism will be investigated for legal liability in accordance with the Civil Code of the People's Republic of China.")
-
-    # 在根元素下添加注释
-    root.insert(0, comment1)
-    root.insert(1, comment2)
-
-    # 将 XML 树输出为字符串
     xml_str_modified = ET.tostring(root, encoding='utf-8', xml_declaration=True).decode('utf-8')
 
+    if 'Welcome' not in xml_str_modified:
+        # 创建两条注释
+        comment1 = ET.Comment("欢迎定制锁屏：灵貓 QQ 1876461209  /  Welcome to customize the lock screen: Civet QQ 1876461209")
+        comment2 = ET.Comment("违规抄袭将依据《中华人民共和国民法典》追究法律责任  /  Illegal plagiarism will be investigated for legal liability in accordance with the Civil Code of the People's Republic of China.")
+
+        # 在根元素下添加注释
+        root.insert(0, comment1)
+        root.insert(1, comment2)
+
+    # 将 XML 树输出为字符串
+    xml_str_modified = '<?xml version="1.0" encoding="utf-8"?>\n' + ET.tostring(root, encoding='utf-8', xml_declaration=False).decode('utf-8')
+    # print(xml_str_modified)
+
     # 使用xml.dom.minidom进行格式化
-    formatted_xml = xml.dom.minidom.parseString(xml_str_modified).toprettyxml(indent="	")
+    # formatted_xml = xml.dom.minidom.parseString(xml_str_modified).toprettyxml(indent="	")
 
     # 去除额外的空行
-    cleaned_xml_str = '\n'.join(line for line in formatted_xml.split('\n') if line.strip())\
-        .replace('<?xml version="1.0" ?>', '<?xml version="1.0" encoding="utf-8"?>')
+    # cleaned_xml_str = '\n'.join(line for line in formatted_xml.split('\n') if line.strip())\
+    #     .replace('<?xml version="1.0" ?>', '<?xml version="1.0" encoding="utf-8"?>')
 
     # 保存到新文件
     if output_file is None:
@@ -106,7 +111,7 @@ def orderXML(input_file, output_file=None):
     # tree.write(output_file, encoding="ASCII", xml_declaration=True)
 
     with open(output_file, 'w', encoding='utf-8') as file:
-        file.write(cleaned_xml_str)
+        file.write(xml_str_modified)
 
 
 if __name__ == "__main__":

@@ -1,5 +1,6 @@
 # Todo List
 # 2024/02/03 - 全平台锁屏打包工具（支付华为/OPPO/VIVO/荣耀）
+# 2024/04/07 - 新增 MIUI 平台打包支持（isnull转换，屏蔽充电动画）
 
 import os
 import sys
@@ -49,6 +50,7 @@ def clean_cache(folder_path):
 
 
 def zip_folder(folder_path, zip_path):
+    # os.path.basename(root) == 'lockscreen' or os.path.basename(root) == 'advance'
     with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
         for root, dirs, files in os.walk(folder_path):
             for file in files:
@@ -88,6 +90,7 @@ tmp_huawei = temp_folder + '_' + 'huawei'
 tmp_honor = temp_folder + '_' + 'honor'
 tmp_oppo = temp_folder + '_' + 'oppo'
 tmp_vivo = temp_folder + '_' + 'vivo'
+tmp_xiaomi = temp_folder + '_' + 'xiaomi'
 async_load = 'false'
 
 hw_theme_xml = f"""<?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -143,7 +146,6 @@ vivo_theme_xml = f"""<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 
 
 def pack_huawei(path, filename="HUAWEI"):
-
     global huawei_zip_path
 
     if os.path.exists(tmp_huawei):
@@ -175,14 +177,13 @@ def pack_huawei(path, filename="HUAWEI"):
         shutil.rmtree(huawei_path)
 
 
+def process_xml(honor_xml_file):
+    from tools.honor import detect_lockscreen_view, process_lockscreen_var
+    detect_lockscreen_view(honor_xml_file)
+    process_lockscreen_var(honor_xml_file)
+
+
 def pack_honor(path, filename="HONOR"):
-
-    def process_xml(honor_xml_file):
-
-        from tools.honor import detect_lockscreen_view, process_lockscreen_var
-        detect_lockscreen_view(honor_xml_file)
-        process_lockscreen_var(honor_xml_file)
-
     global honor_zip_path
 
     if os.path.exists(tmp_honor):
@@ -219,7 +220,6 @@ def pack_honor(path, filename="HONOR"):
 
 
 def pack_oppo(path, filename="OPPO"):
-
     global oppo_zip_path
 
     if os.path.exists(tmp_oppo):
@@ -236,7 +236,7 @@ def pack_oppo(path, filename="OPPO"):
     replace_in_text_file(xml_path, ' _const', ' const')
     replace_in_text_file(xml_path, 'globalPersist', '_glb')
 
-    oppo_folder = ['2x1','7x3','11x5','13x6','19x9','20x9','67x30','301x135','403x180','693x310']
+    oppo_folder = ['2x1', '7x3', '11x5', '13x6', '19x9', '20x9', '67x30', '301x135', '403x180', '693x310']
     for f in range(len(oppo_folder)):
         oppo_folder_path = os.path.join(tmp_oppo_1, oppo_folder[f])
         oppo_xml_folder = os.path.exists(oppo_folder_path)
@@ -270,7 +270,6 @@ def pack_oppo(path, filename="OPPO"):
 
 
 def pack_vivo(path, filename="VIVO"):
-
     global vivo_zip_path
 
     if os.path.exists(tmp_vivo):
@@ -298,6 +297,7 @@ def pack_vivo(path, filename="VIVO"):
     xml_path = os.path.join(tmp_vivo_1, 'manifest.xml')
     replace_in_text_file(xml_path, ',5,0)', ',5,5)')
     replace_in_text_file(xml_path, 'globalPersist', '_glb')
+    replace_in_text_file(xml_path, '_const="true"', '')
 
     vivo_lockscreen_path = os.path.join(os.path.dirname(tmp_vivo_1), f'{time_sys}.zip')
     clean_cache(tmp_vivo_1)
@@ -328,7 +328,122 @@ def pack_vivo(path, filename="VIVO"):
         shutil.rmtree(vivo_path)
 
 
-def main(platform=1, hw=0, oppo=0, vivo=0, honor=0):
+def pack_xiaomi(path, filename="XIAOMI"):
+    global xiaomi_zip_path
+
+    if os.path.exists(tmp_xiaomi):
+        shutil.rmtree(tmp_xiaomi)
+
+    os.mkdir(tmp_xiaomi)
+    tmp_xiaomi_0 = os.path.join(os.path.abspath(tmp_xiaomi), 'lockscreen')
+    os.mkdir(tmp_xiaomi_0)
+    tmp_xiaomi_1 = os.path.join(os.path.abspath(tmp_xiaomi_0), 'advance')
+    os.mkdir(tmp_xiaomi_1)
+
+    copy_folder_contents(path, tmp_xiaomi_1)
+
+    from tools.xiaomi import process_xml_xiaomi
+    process_xml_xiaomi(os.path.join(tmp_xiaomi_1, 'manifest.xml'))
+
+    xiaomi_path = os.path.abspath(tmp_xiaomi).replace(tmp_xiaomi, 'XIAOMI')
+    xiaomi_zip_path = os.path.join(os.path.dirname(path), f'{theme_name}_{filename}.zip')
+
+    shutil.move(tmp_xiaomi, xiaomi_path)
+    clean_cache(xiaomi_path)
+    platform_id = 'xiaomi'
+    update_array(platform_id)
+    zip_folder(xiaomi_path, xiaomi_zip_path)
+
+    if os.path.exists(tmp_xiaomi):
+        shutil.rmtree(tmp_xiaomi)
+
+    if os.path.exists(xiaomi_path):
+        shutil.rmtree(xiaomi_path)
+
+
+def pack_simple(path, filename=None):
+    tmp_simple = eval(f'tmp_{filename.lower()}')
+
+    if os.path.exists(tmp_simple):
+        shutil.rmtree(tmp_simple)
+
+    tmp_simple_1 = tmp_simple
+
+    copy_folder_contents(path, tmp_simple_1)
+
+    if filename == 'HUAWEI':
+        platform_id = None
+        pass
+
+    if filename == 'HONOR':
+        tmp_honor_1 = tmp_simple_1
+        process_xml_honor = 1
+        if process_xml_honor:
+            process_xml(os.path.join(tmp_honor_1, 'manifest.xml'))
+        platform_id = None
+
+    if filename == 'OPPO':
+        tmp_oppo_1 = tmp_simple_1
+        xml_path = os.path.join(tmp_oppo_1, 'manifest.xml')
+        replace_in_text_file(xml_path, ' _const', ' const')
+        replace_in_text_file(xml_path, 'globalPersist', '_glb')
+
+        oppo_folder = ['2x1', '7x3', '11x5', '13x6', '19x9', '20x9', '67x30', '301x135', '403x180', '693x310']
+        for f in range(len(oppo_folder)):
+            oppo_folder_path = os.path.join(tmp_oppo_1, oppo_folder[f])
+            oppo_xml_folder = os.path.exists(oppo_folder_path)
+            xml_folder_path = os.path.join(oppo_folder_path, 'manifest.xml')
+            if not oppo_xml_folder:
+                os.mkdir(oppo_folder_path)
+                shutil.copy2(xml_path, xml_folder_path)
+        platform_id = 'oppo'
+
+    if filename == 'VIVO':
+        tmp_vivo_1 = tmp_simple_1
+        xml_path = os.path.join(tmp_vivo_1, 'manifest.xml')
+        replace_in_text_file(xml_path, ',5,0)', ',5,5)')
+        replace_in_text_file(xml_path, 'globalPersist', '_glb')
+        replace_in_text_file(xml_path, '_const="true"', '')
+        platform_id = None
+
+    if filename == 'XIAOMI':
+        from tools.xiaomi import process_xml_xiaomi
+        process_xml_xiaomi(os.path.join(tmp_simple_1, 'manifest.xml'))
+        platform_id = 'xiaomi'
+
+    simple_path = os.path.abspath(tmp_simple).replace(tmp_simple, filename)
+    simple_zip_path = os.path.join(os.path.dirname(path), f'{theme_name}_{filename}.zip')
+
+    shutil.move(tmp_simple, simple_path)
+    clean_cache(simple_path)
+    update_array(platform_id)
+    zip_folder(simple_path, simple_zip_path)
+
+    if os.path.exists(tmp_simple):
+        shutil.rmtree(tmp_simple)
+
+    if os.path.exists(simple_path):
+        shutil.rmtree(simple_path)
+
+    global huawei_zip_path
+    global oppo_zip_path
+    global vivo_zip_path
+    global honor_zip_path
+    global xiaomi_zip_path
+
+    if filename == 'HUAWEI':
+        huawei_zip_path = simple_zip_path
+    if filename == 'OPPO':
+        oppo_zip_path = simple_zip_path
+    if filename == 'VIVO':
+        vivo_zip_path = simple_zip_path
+    if filename == 'HONOR':
+        honor_zip_path = simple_zip_path
+    if filename == 'XIAOMI':
+        xiaomi_zip_path = simple_zip_path
+
+
+def main(platform=1, hw=0, oppo=0, vivo=0, honor=0, xiaomi=0):
     global theme_name
 
     target_pack_path = pyperclip.paste().split('\n')
@@ -340,20 +455,29 @@ def main(platform=1, hw=0, oppo=0, vivo=0, honor=0):
             platform_hw = 1
             platform_oppo = 1
             platform_vivo = 1
-            platform_honor = 0
+            platform_honor = 1
+            platform_xiaomi = 1
         else:
             platform_hw = hw
             platform_oppo = oppo
             platform_vivo = vivo
             platform_honor = honor
+            platform_xiaomi = xiaomi
 
         for k in range(len(target_pack_path)):
             if os.path.isdir(target_pack_path[k]):
-                theme_name = target_pack_path[k].split('/')
+                theme_name_list = target_pack_path[k].split('/')
+                if theme_name_list[-1] == 'advance':
+                    theme_name = theme_name_list[-5]
+                    # print(theme_name)
+                else:
+                    theme_name = target_pack_path[-1]
+                    # print(theme_name)
                 if current_dir != os.path.dirname(target_pack_path[k]):
-                    for i in range(len(theme_name)):
-                        if str(theme_name[i]) == 'advance':
-                            theme_name = theme_name[max(i-4, 0)]
+                    pass
+                    # for i in range(len(theme_name)):
+                    #     if str(theme_name[i]) == 'advance':
+                    #         theme_name = theme_name[max(i - 4, 0)]
                 else:
                     # print(current_dir, os.path.dirname(target_pack_path[k]))
                     sys.exit("Source Folder is 'Sample Folder'")
@@ -361,23 +485,42 @@ def main(platform=1, hw=0, oppo=0, vivo=0, honor=0):
                 print(f'Theme: {theme_name}')
                 if platform_hw:
                     print('Pack Huawei: \t')
-                    pack_huawei(target_pack_path[k])
+                    if simple_mode:
+                        pack_simple(target_pack_path[k], 'HUAWEI')
+                    else:
+                        pack_huawei(target_pack_path[k])
                     print('\t', huawei_zip_path)
                 if platform_honor:
                     print('Pack Honor: \t')
-                    pack_honor(target_pack_path[k])
+                    if simple_mode:
+                        pack_simple(target_pack_path[k], 'HONOR')
+                    else:
+                        pack_honor(target_pack_path[k])
                     print('\t', honor_zip_path)
                 if platform_oppo:
                     print('Pack Oppo: \t')
-                    pack_oppo(target_pack_path[k])
+                    if simple_mode:
+                        pack_simple(target_pack_path[k], 'OPPO')
+                    else:
+                        pack_oppo(target_pack_path[k])
                     print('\t', oppo_zip_path)
                 if platform_vivo:
                     print('Pack Vivo: \t')
-                    pack_vivo(target_pack_path[k])
+                    if simple_mode:
+                        pack_simple(target_pack_path[k], 'VIVO')
+                    else:
+                        pack_vivo(target_pack_path[k])
                     print('\t', vivo_zip_path)
+                if platform_xiaomi:
+                    print('Pack Xiaomi: \t')
+                    if simple_mode:
+                        pack_simple(target_pack_path[k], 'XIAOMI')
+                    else:
+                        pack_xiaomi(target_pack_path[k])
+                    print('\t', xiaomi_zip_path)
                 if platform_all_e_honor:
                     print('Merge All Platform: \t')
-                    zip_path_list = [huawei_zip_path, oppo_zip_path, vivo_zip_path]
+                    zip_path_list = [huawei_zip_path, oppo_zip_path, vivo_zip_path, honor_zip_path, xiaomi_zip_path]
                     # print(zip_path_list)
                     # 将三平台zip解压到对应文件夹后，重新打包
                     for z in range(len(zip_path_list)):
@@ -390,6 +533,8 @@ def main(platform=1, hw=0, oppo=0, vivo=0, honor=0):
 
                     zip_folder_path = os.path.dirname(zip_list_folder)
                     zip_all_path = os.path.join(os.path.dirname(huawei_zip_path), f'{theme_name}.zip')
+                    global forbid_items
+                    forbid_items = []
                     zip_folder(zip_folder_path, zip_all_path)
                     shutil.rmtree(zip_folder_path)
                     print('\t', zip_all_path)
@@ -408,17 +553,22 @@ def update_array(platform_id):
         forbid_items = ['maml.xml', 'source.xml', 'anti.xml', 'oversea.jpg', 'red.png']
     else:
         forbid_items = ['maml.xml', 'source.xml', 'anti.xml', 'red.png']
+    forbid_items_add = []
+    forbid_items_add2 = []
 
-    if platform_id is None:
-        forbid_items_oppo = ['bg.png', 'bs.jpg']
-        if is_oversea_mode:
-            forbid_items = forbid_items + forbid_items_oppo
-        else:
-            forbid_items = forbid_items + forbid_items_oppo
+    if platform_id != 'oppo' or platform_id == 'xiaomi':
+        forbid_items_add = ['bg.png', 'bs.jpg']
+    if platform_id != 'xiaomi':
+        forbid_items_add2 = ['close.png']
+    if is_oversea_mode:
+        forbid_items = forbid_items + forbid_items_add + forbid_items_add2
+    else:
+        forbid_items = forbid_items + forbid_items_add + forbid_items_add2
 
 
 # 执行主程序
 if __name__ == '__main__':
+    simple_mode = 1
+    # platform = 1, hw = 0, oppo = 0, vivo = 0, honor = 0, xiaomi = 1
     current_dir = os.path.dirname(sys.argv[0])
-    # platform = 1, hw = 0, oppo = 0, vivo = 0, honor = 0
-    main(0, 1, 0, 1, 1)
+    main(1, 0, 0, 1, 0, 0)

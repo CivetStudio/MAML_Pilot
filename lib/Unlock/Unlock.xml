@@ -8,7 +8,7 @@
 	<ValueHolder name="UnlockVisibility" />
 	<ValueHolder name="UnlockCondition" />
 	<ValueHolder name="UnlockMoveVal" />
-	
+
 	<!-- <Var name="mUnlockOrnt" expression="UnlockDirection" type="number" />
 
 	<Button x="UnlockX" y="UnlockY" w="UnlockW" h="UnlockH" visibility="UnlockVisibility" >
@@ -22,7 +22,7 @@
 		</Triggers>
 	</Button> -->
 
-	<Button x="UnlockX" y="UnlockY" w="UnlockW" h="UnlockH" visibility="UnlockVisibility" >
+	<Button x="UnlockX" y="UnlockY" w="UnlockW" h="UnlockH" visibility="UnlockVisibility*(eq(#noticeDown,0))" >
 		<Triggers>
 			<Trigger action="up" >
 				<ExternCommand command="unlock" condition="ge(#touch_begin_y-#touch_y,UnlockMoveVal)*UnlockCondition*eq(UnlockDirection,0)" />

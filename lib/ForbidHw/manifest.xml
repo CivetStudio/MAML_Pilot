@@ -6,7 +6,8 @@
 	</Props>
 
 	<Group visibility="$visibility" >
-		
+
+		<Image x="0" y="0" w="#screen_width" h="#screen_height" src="bg.png" />
 		<Rectangle x="0" y="0" w="#screen_width" h="#screen_height" fillColor="#000000" />
 		<DateTime align="center" color="#FFFFFFFF" format="hh:mm" size="150" x="#screen_width/2" y="270+#unlocker.move_y" />
 		<DateTime align="center" color="#FFFFFFFF" format="yyyy.MM.dd EEEE" size="54" x="#screen_width/2" y="450+#unlocker.move_y" />

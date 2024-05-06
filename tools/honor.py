@@ -38,8 +38,9 @@ def detect_lockscreen_view(process_xml):
 
         if elem.tag in ['Text', 'APNG', 'DateTime', 'VibrateCommand', 'ParticleCommand',
                         'CollBodyCommand', 'Calendar', 'EditText', 'CollisionWorld',
-                        'PressingAPNGView', 'FluidsView', 'StereDropView', 'ARBase']:
-            print(f"Found <{elem.tag} /> at line {elem.sourceline}: {etree.tostring(elem, encoding='utf-8').decode('utf-8').strip()}")
+                        'PressingAPNGView', 'FluidsView', 'StereDropView', 'ARBase', 'Layer']:
+            print(
+                f"\t Found <{elem.tag} /> at line {elem.sourceline}: {etree.tostring(elem, encoding='utf-8').decode('utf-8').strip()}")
 
             # 处理 Text 标签
             if elem.tag == 'Text':
@@ -61,7 +62,7 @@ def detect_lockscreen_view(process_xml):
                 print(f"  Removing <{elem.tag} />")
                 elem.getparent().remove(elem)
 
-            print('\t')
+            # print('\t')
 
     tree.write(process_xml, encoding="utf-8", xml_declaration=True)
 
@@ -69,9 +70,12 @@ def detect_lockscreen_view(process_xml):
 def process_lockscreen_var(process_xml):
     soup = BeautifulSoup(open(process_xml), 'lxml-xml')
     start_tag = soup.new_tag('Start')
-    # print(start_tag)
     lockscreen = soup.Lockscreen
     lockscreen.insert(1, start_tag)
+
+    for var in soup.find_all('Var'):
+        if var.get('name') == 'isHonor':
+            var['expression'] = '1'
 
     for tag in soup.find_all('VariableCommand'):
         # 获取 VariableCommand 属性
@@ -85,15 +89,15 @@ def process_lockscreen_var(process_xml):
 
             # 输出同名变量
             for var in soup.find_all('Var'):
-                if var['name'] == var_comp_name and var.get('expression') and var['expression'] != var_comp_exp:
+                if var['name'] == var_comp_name and var.get('expression') and var['expression'] != var_comp_exp and var.get('index') is None and _DEBUG_:
                     print(var, var_comp_exp)
 
             # 查询是否有同名的 Var 变量
             var_tag_form = bool(soup.find_all('Var', attrs={'name': var_comp_name}) != [])
-            # print(var_tag_form)
 
             if not var_tag_form:
-                print(f'<Var name="{var_comp_name}" expression="{var_comp_exp}" />')
+                if _DEBUG_:
+                    print(f'<Var name="{var_comp_name}" expression="{var_comp_exp}" />')
                 if var_comp_persist == 'false':
                     new_var_honor = soup.new_tag('Var', attrs={'name': var_comp_name, 'expression': var_comp_exp, 'type': var_comp_type})
                 else:
@@ -105,29 +109,41 @@ def process_lockscreen_var(process_xml):
     for intent in soup.find_all('IntentCommand'):
         package_name = intent.get('package')
         class_name = intent.get('class')
-        if str(package_name).startswith('com.huawei.') or str(class_name).startswith('com.huawei.')\
-                or (str(package_name) == 'com.android.deskclock' and str(class_name) == 'com.android.deskclock.AlarmsMainActivity')\
-                or (str(package_name) == 'com.android.calendar' and str(class_name) == 'com.android.calendar.AllInOneActivity'):
+        if str(package_name).startswith('com.huawei.') or str(class_name).startswith('com.huawei.') \
+                or (str(package_name) == 'com.android.deskclock' and str(class_name) == 'com.android.deskclock.AlarmsMainActivity') \
+                or (str(package_name) == 'com.android.calendar' and str(class_name) == 'com.android.calendar.AllInOneActivity') \
+                or (str(package_name) == 'com.android.mms' and str(class_name) == 'com.android.mms.ui.ConversationList')\
+                or (str(package_name) == 'com.android.calculator2' and str(class_name) == 'com.android.calculator2.Calculator')\
+                or (str(package_name) == 'com.android.contacts')\
+                or (str(package_name) == 'com.android.email')\
+                or (str(package_name) == 'com.example.android.notepad')\
+                or (str(package_name) == 'com.android.soundrecorder')\
+                or (str(package_name) == 'com.vmall.client')\
+                or 'huawei' in str(package_name) or 'huawei' in str(class_name):
             intent.extract()
 
     for var in soup.find_all('Var'):
-        var_name = var.get('name')
-        var_exp = var.get('expression')
-        var_filter = f"#{str(var_name)}+1"
-        if var_exp and var_filter in str(var_exp):
-            print("Loop:", var)
-            var['expression'] = '0'
-        if f'#{var_name}' in str(soup):
-            var['type'] = 'number'
-        elif f'@{var_name}' in str(soup):
-            var['type'] = 'string'
-        else:
-            var['type'] = 'number'
+        if var.get('_honor') is None:
+            if var.get('index') is not None and var.parent.name == soup.name and _DEBUG_:
+                print(var)
+            var_name = var.get('name')
+            var_exp = var.get('expression')
+            var_filter = f"#{str(var_name)}+1"
+            if var_exp and var_filter in str(var_exp):
+                if _DEBUG_:
+                    print("Loop:", var)
+                var['expression'] = '0'
+            if f'#{var_name}' in str(soup):
+                var['type'] = 'number'
+            elif f'@{var_name}' in str(soup):
+                var['type'] = 'string'
+            else:
+                var['type'] = 'number'
 
-        # if lockscreen.ExternalCommands:
-        #     lockscreen.ExternalCommands.insert_after(var)
-        # else:
-        #     start_tag.insert_after(var)
+            # if lockscreen.ExternalCommands:
+            #     lockscreen.ExternalCommands.insert_after(var)
+            # else:
+            #     start_tag.insert_after(var)
 
     start_tag.decompose()
 
@@ -138,9 +154,11 @@ def process_lockscreen_var(process_xml):
 # 示例用法
 if __name__ == '__main__':
 
+    _DEBUG_ = 1
+
     maml_main_xml = pyperclip.paste().replace('\\', '/').replace('"', '')
 
-    maml_rule_file = "maml.xml"
+    maml_rule_file = ".xml"
     maml_file_name = os.path.basename(maml_main_xml)
 
     # 判断 maml_file_name 是否以 maml_rule_file 结尾
@@ -153,5 +171,8 @@ if __name__ == '__main__':
 
     detect_lockscreen_view(maml_main_xml)
     process_lockscreen_var(maml_main_xml)
+
+else:
+    _DEBUG_ = 0
 # 查找变量内是否循环套用 <Var name="a" expression="#a+1" />
 # 未知原因丢失 Var.type 属性

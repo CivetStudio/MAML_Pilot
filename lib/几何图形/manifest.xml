@@ -7,11 +7,24 @@
 		<item name="颜色" type="string" description="颜色" default="#ff00ff00" />
 	</Props>
 
-	<C_Array count="3" indexName="_r" >
+	<!-- <C_Array count="3" indexName="_r" >
 		<Rectangle x="$x" y="$y+100*#_r" w="$w" h="$h" fillColor="$颜色" />
 	</C_Array>
 
 	<Group>
 		<Slots slotName="几何图形" />
+	</Group> -->
+
+	<Fun name="几何图形" >
+
+		<C_Array count="3" indexName="_r" >
+			<Rectangle x="{x}" y="{y}+100*#_r" w="{w}" h="{h}" fillColor="{颜色}" />
+		</C_Array>
+
+	</Fun>
+
+	<Group>
+		<FunCom target="几何图形.插槽" />
 	</Group>
+
 </Template>

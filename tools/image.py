@@ -1,5 +1,7 @@
 # import pytesseract
 # import easyocr
+import time
+
 import pyperclip
 from PIL import Image
 import os
@@ -58,6 +60,13 @@ def main(source):
             # 打开图片
             image = Image.open(source)
 
+            # 如果图片模式为索引模式，将其转换为 RGBA 模式
+            if image.mode == 'P':
+                print(image.mode, 'to RGBA')
+            image = image.convert('RGBA')
+            # print(image.mode)
+            # time.sleep(1000)
+
             # 使用 Tesseract OCR 识别图像中的数字和符号
             # result = pytesseract.image_to_string(image, lang='eng', config='--psm 13 --oem 1 -c tessedit_char_whitelist=0123456789:')
 
@@ -75,26 +84,39 @@ def main(source):
             image = Image.open(source)
             # 获取图片的宽度和高度
             width, height = image.size
+            # print(source, width)
 
             # 更新最大宽度和最大高度
             max_width.append(width)
             max_height.append(height)
 
+        else:
+            jpeg_image = Image.open(source)
+            # 保存为PNG格式
+            png_image_path = source.replace('.jpg', '.png')
+            jpeg_image.save(png_image_path, "PNG")
+            # 关闭图像
+            jpeg_image.close()
+
     except Exception as e:
         print(e)
 
 
-def crop_image(source, target_width, target_height, alignment="center"):
+def crop_image(source, target_width, target_height, alignment="center", alignmentV="center"):
     image = Image.open(source)
 
-    if alignment == "top":
+    if alignment == "left":
         left = 0
-        top = 0
     elif alignment == "center":
         left = (image.width - target_width) // 2
-        top = (image.height - target_height) // 2
     elif alignment == "bottom":
         left = 0
+
+    if alignmentV == "top":
+        top = 0
+    elif alignmentV == "center":
+        top = (image.height - target_height) // 2
+    elif alignmentV == "bottom":
         top = image.height - target_height
 
     right = left + target_width
@@ -119,21 +141,24 @@ if len(preview_url) == 1:
 else:
     # 传入多个文件则取最大值处理
     single_mode = 0
+crop_mode = 0
 
 if not single_mode:
 
+    # Crop bbox
     for k in range(len(preview_url)):
         main(preview_url[k])
 
-    w = fixNum(max(max_width))
-    h = fixNum(max(max_height))
+    if crop_mode == 0:
+        w = fixNum(max(max_width) + 0)
+        h = fixNum(max(max_height) + 0)
 
-    for k in range(len(preview_url)):
-        # crop_image(preview_url[k], 112, 112, "center")
-        crop_image(preview_url[k], w, h, "center")
+        for k in range(len(preview_url)):
+            # crop_image(preview_url[k], 112, 112, "center")
+            crop_image(preview_url[k], w, h, "center", "center")
 
-    print(f"max_width: {max_width}, max_height: {max_height}")
-    print(f"w: {w}, h: {h}")
+        print(f"max_width: {max_width}, max_height: {max_height}")
+        print(f"w: {w}, h: {h}")
 
 else:
     for k in range(len(preview_url)):
