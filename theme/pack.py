@@ -9,6 +9,7 @@ import shutil
 import zipfile
 from PIL import Image
 import pyperclip
+from bs4 import BeautifulSoup
 
 
 def create_blank_image(width, height, color=(255, 255, 255)):
@@ -183,6 +184,17 @@ def process_xml(honor_xml_file):
     process_lockscreen_var(honor_xml_file)
 
 
+def change_var_value(xml_file, var_name, var_exp):
+    soup = BeautifulSoup(open(xml_file, encoding='utf-8'), 'lxml-xml')
+    for var in soup.find_all('Var', attrs={'name': var_name}):
+        var['expression'] = str(var_exp)
+    if var_name == 'isVivo':
+        for stereo in soup.find_all('StereoView'):
+            stereo.extract()
+    with open(xml_file, 'w', encoding='utf-8') as f:
+        f.write(str(soup.prettify()))
+
+
 def pack_honor(path, filename="HONOR"):
     global honor_zip_path
 
@@ -298,6 +310,7 @@ def pack_vivo(path, filename="VIVO"):
     replace_in_text_file(xml_path, ',5,0)', ',5,5)')
     replace_in_text_file(xml_path, 'globalPersist', '_glb')
     replace_in_text_file(xml_path, '_const="true"', '')
+    change_var_value(xml_path, 'isVivo', '1')
 
     vivo_lockscreen_path = os.path.join(os.path.dirname(tmp_vivo_1), f'{time_sys}.zip')
     clean_cache(tmp_vivo_1)
@@ -404,6 +417,7 @@ def pack_simple(path, filename=None):
         replace_in_text_file(xml_path, ',5,0)', ',5,5)')
         replace_in_text_file(xml_path, 'globalPersist', '_glb')
         replace_in_text_file(xml_path, '_const="true"', '')
+        change_var_value(xml_path, 'isVivo', '1')
         platform_id = None
 
     if filename == 'XIAOMI':

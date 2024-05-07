@@ -36,7 +36,7 @@ else:
 
 if not single_mode:
 
-    size = [338, 386, 774, 986]
+    size = [356, 1802, 532, 450]
     x, y, w, h = size[0], size[1], size[2], size[3]
     for k in range(len(preview_url)):
         crop_image(preview_url[k], x, y, w, h)

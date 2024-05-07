@@ -352,7 +352,7 @@ class SolarToLunarConverter:
         self.NNNN = self.NNN
         self.D = day_of_year(date)
         self.d = int(day)
-        self.dd = convert_to_digit(day)
+        self.dd = convert_to_digit(int(day))
         self.e = ee[rq]
         self.ee = rgz
         self.t = jq
