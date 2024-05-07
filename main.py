@@ -447,20 +447,11 @@ def dirLib(is_lib_folder):
 def getLibFile(lib_file):
     if os.path.exists('' + lib_folder_name + '/' + lib_file + '/' + lib_file + '.xml'):
         lib_file_name = '' + lib_folder_name + '/' + lib_file + '/' + lib_file + '.xml'
-<<<<<<< Updated upstream
-        lib_mode = 0
-    else:
-        lib_file_name = '' + lib_folder_name + '/' + lib_file + '/' + 'manifest.xml'
-        lib_mode = 1
-    soup = BeautifulSoup(open(lib_file_name, encoding='utf-8'), 'lxml-xml')
-    soup = cleanComments(soup)
-=======
     else:
         lib_file_name = '' + lib_folder_name + '/' + lib_file + '/' + 'manifest.xml'
     soup = BeautifulSoup(open(lib_file_name, encoding='utf-8'), 'lxml-xml')
     soup = cleanComments(soup)
     lib_mode = 'Props' in str(soup)
->>>>>>> Stashed changes
     return soup.prettify(), lib_mode
 
 
@@ -1246,13 +1237,6 @@ for tag in soup.find_all(True):
                         if _place_holder_.get('name'):
                             _place_name_ = _place_holder_.get('name')
                             for _place_in_ in soup.find_all(_place_name_):
-<<<<<<< Updated upstream
-                                for _p_in_ in range(len(_place_in_.contents) - 1, -1, -1):
-                                    _p_insert_contents_ = _place_in_.contents[_p_in_]
-                                    _p_insert_ = BeautifulSoup(str(_p_insert_contents_), 'lxml-xml')
-                                    # print(_p_insert_)
-                                    _place_holder_.insert_after(_p_insert_)
-=======
                                 _place_in_null_ = len(_place_in_.contents) == 1 and str(_place_in_.contents[0]).strip() == ''
                                 if not _place_in_null_:
                                     for _p_in_ in range(len(_place_in_.contents) - 1, -1, -1):
@@ -1260,7 +1244,6 @@ for tag in soup.find_all(True):
                                         _p_insert_ = BeautifulSoup(str(_p_insert_contents_), 'lxml-xml')
                                         # print(_p_insert_)
                                         _place_holder_.insert_after(_p_insert_)
->>>>>>> Stashed changes
                                 _place_holder_.extract()
 
                     with open(process_xml, 'w', encoding='utf-8') as f:
@@ -1386,11 +1369,7 @@ def calculateMemory(folder_path=None):
     folder_path = os.path.dirname(folder_path)
 
     total_memory = 0
-<<<<<<< Updated upstream
-    image_compress_ratio = 960 / 1080
-=======
     image_compress_ratio = 800 / 1080
->>>>>>> Stashed changes
     image_compress_mode = 0
 
     print(f'CompressMode: {image_compress_mode}')
