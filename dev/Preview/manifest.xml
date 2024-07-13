@@ -1,0 +1,19 @@
+<Widget>
+<!--	<Var name="__darkmode" expression="1" />-->
+<!--	<Var name="global_test" expression="100" />-->
+<!--	<Var name="a" expression="@b" type="string" />-->
+<!--	<Var name="b" expression="@c" type="string" />-->
+<!--	<Var name="c" expression="'999s7ushn'" type="string" />-->
+<!--	<Var name="colors" expression="ifelse(#__darkmode,'#00ff00','#ffffff')" type="string" />-->
+<!--	<Var name="colors2" expression="ifelse(#__darkmode,'#ffffff','#000000')" type="string" />-->
+<!--&lt;!&ndash;	<Var name="Demo" expression="#second" type="string" />&ndash;&gt;-->
+<!--&lt;!&ndash;	<Rectangle x="0" y="0" align="left" alignV="top" w="1" h="1" fillColor="@colors" />&ndash;&gt;-->
+<!--&lt;!&ndash;	<Image x="10+0*#global_test/2" y="10" src="bz.jpg" />&ndash;&gt;-->
+<!--	<Text x="#screen_width/2" y="#screen_height/2" align="center" alignV="center" size="36" color="@colors2" text="#time_sys" />-->
+<!--&lt;!&ndash;	<Text x="#screen_width/2" y="#screen_height/2" align="center" alignV="center" size="180" color="@colors2" text="Hello,World" />&ndash;&gt;-->
+<!--	<Text x="#screen_width/2" y="200+#screen_height/2" align="center" alignV="center" size="60" color="@colors2" text="这是锁屏预览测试机" />-->
+
+<!--<Rectangle x="0" y="0" align="left" alignV="top" w="1080*2" h="960" fillColor="#FFFFFF" />-->
+<!--    <Rectangle x="0" y="0" align="left" alignV="top" width="1080" height="1920" fillColor="#0000ff" />-->
+
+</Widget>

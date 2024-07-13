@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Template version="2" >
+    <Props>
+        <item name="x" default="100" type="number" description="x坐标"/>
+        <item name="y" default="100" type="number" description="y坐标"/>
+
+    </Props>
+    <Var name="text_value" expression="'foo'" const="true" type="string"/>
+    <Text x="$x" y="$y" color="#ffffff" size="50" textExp="#text_value" />
+
+    <Group name="test" >
+        <Image src="aa.png" alpha="255*#init_ani" />
+    </Group>
+    <Var name="init_ani" >
+        <VariableAnimation loop="false" initPause="true" >
+            <AniFrame value="0" time="0" />
+            <AniFrame value="1" time="500" />
+        </VariableAnimation>
+    </Var>
+
+</Template >

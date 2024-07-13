@@ -82,13 +82,14 @@
 		</ContentProviderBinder> -->
 
 		<!-- oppo天气（勿删，判断平台的标准之一） -->
-		<ContentProviderBinder name="weather1" columns="_id,city_name,city_name_en,city_name_tw" countName="hasWeather" uri="content://com.oppo.weather.provider.data/attent_city" notifyUri="content://com.oppo.weather.provider.data/attent_city" where="current=1" >
+		<ContentProviderBinder columns="_id,city_name,city_name_en,city_name_tw" countName="hasWeather" name="weather1" notifyUri="content://com.oppo.weather.provider.data/attent_city" uri="content://com.oppo.weather.provider.data/attent_city" where="current=1">
 			<Variable name="cityid" column="_id" type="int" />
 			<Variable name="cityname" column="city_name" type="string" />
 			<Variable name="cityname_en" column="city_name_en" type="string" />
 			<Variable name="cityname_tw" column="city_name_tw" type="string" />
 		</ContentProviderBinder>
-		<ContentProviderBinder name="weather2" columns="weather_id,current_weather,current_temp,current_wind_direct,current_wind_power,day_temp,night_temp,day_weather_id,night_weather_id,current_wind_degrees" countName="hasWeather" uri="content://com.oppo.weather.provider.data/weather_info" notifyUri="content://com.oppo.weather.provider.data/weather_info" whereExp="'city_id='+#cityid+' and weather_index=1'" dependency="weather1" >
+		<!-- <ContentProviderBinder columns="weather_id,current_weather,current_temp,day_temp,night_temp,current_wind_direct,current_wind_power,aqi_level" countName="hasWeather" dependency="weather7" name="weather72" notifyUri="content://com.oppo.weather.provider.data/weather_info" uri="content://com.oppo.weather.provider.data/weather_info" whereExp="'city_id='+#cityid7_1+' and weather_index=0'"> -->
+		<ContentProviderBinder name="weather2" columns="weather_id,current_weather,current_temp,current_wind_direct,current_wind_power,day_temp,night_temp,day_weather_id,night_weather_id,current_wind_degrees,current_humidity,sunrise_time,sunset_time" countName="hasWeather" uri="content://com.oppo.weather.provider.data/weather_info" notifyUri="content://com.oppo.weather.provider.data/weather_info" whereExp="'city_id='+#cityid+' and weather_index=1'" dependency="weather1" >
 			<!-- 当前天气string类型 -->
 			<Variable name="cur_weather" column="current_weather" type="string" />
 			<!-- 当前温度 -->
@@ -102,6 +103,10 @@
 
 			<!--当前风向string类型-->
 			<Variable name="cur_weather_power" column="current_wind_power" type="string" />
+			<Variable name="cur_weather_humidity" column="current_humidity" type="int" />
+
+			<Variable name="cur_sun_rise" column="sunrise_time" type="long" />
+			<Variable name="cur_sun_set" column="sunset_time" type="long" />
 
 			<!-- 部分低版本系统风向数据不对，显示为数字，疑似为风速km/h -->
 			<!-- 风向 int型，替代方案 -->

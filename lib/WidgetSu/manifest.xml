@@ -125,6 +125,10 @@
 			</Trigger>
 		</BroadcastBinder>
 
+		<ContentProviderBinder name="globalProvider_alarm" uri="content://settings/global" where="name='next_alarm_clock_long'" countName="hasGlobal_alarm" useCache="false" >
+			<Variable name="next_alarm_time_long" type="long" column="value" />
+		</ContentProviderBinder>
+
 	</VariableBinders>
 
 	<Var name="folder" expression="'widget_$size'" type="string" />
@@ -135,6 +139,8 @@
 	<Var name="hrs.1" expression="int(#hours%10)" type="number" />
 	<Var name="min.0" expression="int(#minute/10)" type="number" />
 	<Var name="min.1" expression="int(#minute%10)" type="number" />
+	<Var name="months" expression="int(#month+1)" type="number" />
+	<Var name="weeks" expression="int(#day_of_week-1)" type="number" />
 	<Var name="monthStr" values="'日','一','二','三','四','五','六','七','八','九','十','十一','十二'" expression="''" type="string[]" />
 	<Var name="monthStrEn" values="'January','February','March','April','May','June','July','August','September','October','November','December'" expression="''" type="string[]" />
 	<Var name="weekStrEn" values="'Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'" expression="''" type="string[]" />
@@ -152,6 +158,14 @@
 	<Var name="s.1" type="number" expression="min(#view_width/#__view_width,#view_height/#__view_height)" />
 	<Var name="s.2" type="number" expression="#view_width/#__view_width" />
 	<Var name="s.3" type="number" expression="#view_height/#__view_height" />
+	<Var name="_HH" expression="#hrs.0+#hrs.1" type="string" />
+	<Var name="_hh" expression="#hrs.0+#hrs.1" type="string" />
+	<Var name="_mm" expression="#min.0+#min.1" type="string" />
+	<Var name="_ss" expression="int(#second/10)+int(#second%10)" type="string" />
+	<Var name="_MM/dd" expression="int(#months/10)+int(#months%10)+'/'+int(#date/10)+int(#date%10)" type="string" />
+	<Var name="_MM" expression="int(#months/10)+int(#months%10)" type="string" />
+	<Var name="_dd" expression="int(#date/10)+int(#date%10)" type="string" />
+	<Var name="_星期" expression="'星期'+@monthStr[#day_of_week-1]" type="string" />
 
 	<Function name="Health" >
 		<IntentCommand action="android.intent.action.VIEW" uri="com.mi.health://localhost/d?action=steps&amp;origin=mithemelocksreen" package="com.mi.health" />

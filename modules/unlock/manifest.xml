@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Template version="2" >
+    <Props>
+        <item name="x" default ="0" type="number" description="x坐标"/>
+        <item name="y" default ="0" type="number" description="y坐标"/>
+        <item name="w" default ="#screen_width" type="number" description="宽度"/>
+        <item name="h" default ="#screen_height" type="number" description="高度"/>
+        <item name="size" default ="300" type="number" description="距离"/>
+        <item name="type" default ="0" type="select"  description="解锁方式,0上划,1下划,2左划,3右划"/>
+        <item name="image" default ="0" type="select"  description="Image,0,1,2,3"/>
+    </Props >
+    <!-- Select为模块选择器标签,通过index属性绑定上面类型为item的参数来指定最终合成时用哪个Item内部的代码,其他的代码不会被添加 -->
+    <Select index="$type">
+        <Item>
+            <!-- 上划解锁 -->
+            <Unlocker name="unlocker" alwaysShow="true" >
+                <StartPoint x="$x" y="$y" w="$w" h="$h" easeType="QuintEaseOut" easeTime="600"/>
+                <EndPoint x="$x" y="-$h-$size" w="$w" h="$h" >
+                    <Path x="$x" y="$y" tolerance="2000">
+                        <Position x="$x" y="$y" />
+                        <Position x="$x" y="-#screen_height" />
+                    </Path>
+                </EndPoint>
+            </Unlocker>
+        </Item>
+        <Item>
+            <!-- 下划解锁 -->
+            <Unlocker name="unlocker" alwaysShow="true" >
+                <StartPoint x="$x" y="$y" w="$w" h="$h" easeType="BounceEaseOut" easeTime="800"/>
+                <EndPoint x="$x" y="$size" w="$w" h="$h">
+                    <Path x="$x" y="$y" tolerance="2000">
+                        <Position x="$x" y="$y" />
+                        <Position x="$x" y="$h" />
+                    </Path>
+                </EndPoint>
+            </Unlocker>
+        </Item>
+        <Item>
+            <!-- 左划解锁 -->
+            <Unlocker name="unlocker" alwaysShow="true"  >
+                <StartPoint x="$x" y="$y" w="1080" h="$h" easeType="QuintEaseOut" easeTime="300"/>
+                <EndPoint x="-$w-$size" y="$y" w="$w" h="$h">
+                    <Path x="$x" y="$y" tolerance="1500">
+                        <Position x="$x" y="$y" />
+                        <Position x="-$w" y="$y" />
+                    </Path>
+                </EndPoint>
+            </Unlocker>
+        </Item>
+        <Item>
+            <!-- 右划解锁 -->
+            <Unlocker name="unlocker" alwaysShow="true"  >
+                <StartPoint x="$x" y="$y" w="$w" h="$h" easeType="BounceEaseOut" easeTime="800"/>
+                <EndPoint x="$size" y="$y" w="$w" h="$h">
+                    <Path x="$x" y="$y" tolerance="1500">
+                        <Position x="$x" y="$y" />
+                        <Position x="1080" y="$y" />
+                    </Path>
+                </EndPoint>
+            </Unlocker>
+        </Item>
+    </Select>
+</Template>

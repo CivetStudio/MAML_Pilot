@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import pyperclip
 import time
@@ -6,6 +7,25 @@ import subprocess
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from datetime import datetime
+
+
+def modify_jsx_variable(file_path, variable_name, new_value):
+    # 读取JSX文件内容
+    with open(file_path, 'r', encoding='utf-8') as file:
+        content = file.read()
+
+    # 定义正则表达式模式
+    pattern = re.compile(r'var\s+' + re.escape(variable_name) + r'\s*=\s*["\'](.*?)["\']\s*;')
+
+    # 替换变量值
+    new_content = pattern.sub(f'var {variable_name} = "{new_value}";', content)
+
+    # 写入修改后的内容到JSX文件
+    with open(file_path, 'w', encoding='utf-8') as file:
+        file.write(new_content)
+
+    print(f"Modified {variable_name} to {new_value} in {file_path}.")
+
 
 maml_main_xml = pyperclip.paste().replace('\\', '/').replace('"', '')
 maml_rule_file = "maml.xml"
@@ -23,6 +43,7 @@ parent_folder_path = os.path.dirname(current_script_path)
 main_script_path = os.path.join(parent_folder_path, 'main.py')
 print(f'Source: {maml_main_xml}')
 print(f'Script: {main_script_path}\n')
+modify_jsx_variable('/Users/wangshilong/Desktop/1x/jsx/Layer2Maml_Pro.jsx', 'mPyperclip', maml_main_xml)
 
 
 def get_logging_time():
@@ -41,6 +62,7 @@ def execute_script():
 
     pyperclip.copy(file_to_monitor)
     script_path = main_script_path  # 替换为你的 Python 脚本文件路径
+
     try:
         # 使用 print 输出
         # print(f"Start: {get_logging_time()}"), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
@@ -59,6 +81,13 @@ def execute_script():
 
     # 示例调用
     show_notification("maml.xml", "代码更新成功")
+
+    call_editor = 0
+    if call_editor:
+        editor_path = '/Applications/锁屏预览工具.app/Contents/MacOS/锁屏预览工具'
+        editor_file = maml_main_xml.replace('maml', 'manifest')
+        call_editor_result = subprocess.run([editor_path, editor_file], check=True)
+        print(call_editor_result)
 
 
 class MyHandler(FileSystemEventHandler):

@@ -65,7 +65,7 @@
 			<VariableCommand name="mResumeTime_3" expression="ge(#mResumeTime.t,0.6)*min(#mResumeTime_3+#mBalanceTime*(max(#mResumeSpeed,1)*0.0125),1)" condition="1" />
 			<VariableCommand name="mResumeTime_4" expression="ge(#mResumeTime.t,0.8)*min(#mResumeTime_4+#mBalanceTime*(max(#mResumeSpeed,1)*0.0125),1)" condition="1" />
 			<VariableCommand name="mResumeTime_5" expression="ge(#mResumeTime.t,1.0)*min(#mResumeTime_5+#mBalanceTime*(max(#mResumeSpeed,1)*0.0125),1)" condition="1" />
-			<VariableCommand name="mResumeTime_6" expression="ge(#mResumeTime.t,1.2)*min(#mResumeTime_6+#mBalanceTime*(max(#mResumeSpeed,1)*0.0125),1)" condition="1" />
+			<VariableCommand name="mResumeTime_6" expression="ge(#mResumeTime_5,0.2)*min(#mResumeTime_6+#mBalanceTime*(max(#mResumeSpeed,1)*0.0125),1)" condition="1" />
 			<VariableCommand name="PI" expression="3.1415926535898" />
 			<VariableCommand name="EaseC1" expression="1.70158+#mResumeEaseAdd" />
 			<VariableCommand name="EaseC2" expression="1.525*#EaseC1" />
@@ -92,7 +92,7 @@
 			<VariableCommand name="mBezierTrans_3" expression="ge(#mResumeTime.t,0.6)*(1+(#EaseC3-1)*(#mResumeTime_3-1)*(#mResumeTime_3-1)*(#mResumeTime_3-1)+(#EaseC1-1)*(#mResumeTime_3-1)*(#mResumeTime_3-1))" condition="1" />
 			<VariableCommand name="mBezierTrans_4" expression="ge(#mResumeTime.t,0.8)*(1+(#EaseC3-1)*(#mResumeTime_4-1)*(#mResumeTime_4-1)*(#mResumeTime_4-1)+(#EaseC1-1)*(#mResumeTime_4-1)*(#mResumeTime_4-1))" condition="1" />
 			<VariableCommand name="mBezierTrans_5" expression="ge(#mResumeTime.t,1.0)*(1+(#EaseC3-1)*(#mResumeTime_5-1)*(#mResumeTime_5-1)*(#mResumeTime_5-1)+(#EaseC1-1)*(#mResumeTime_5-1)*(#mResumeTime_5-1))" condition="1" />
-			<VariableCommand name="mBezierTrans_6" expression="ge(#mResumeTime.t,1.2)*(1+(#EaseC3-1)*(#mResumeTime_6-1)*(#mResumeTime_6-1)*(#mResumeTime_6-1)+(#EaseC1-1)*(#mResumeTime_6-1)*(#mResumeTime_6-1))" condition="1" />
+			<VariableCommand name="mBezierTrans_6" expression="ge(#mResumeTime_5,0.2)*(1+(#EaseC3-1)*(#mResumeTime_6-1)*(#mResumeTime_6-1)*(#mResumeTime_6-1)+(#EaseC1-1)*(#mResumeTime_6-1)*(#mResumeTime_6-1))" condition="1" />
 
 			<!-- <VariableCommand name="mBezierTrans" expression="0" type="number" condition="eq(#resume_flag,0)" />
 			<VariableCommand name="mBezierTrans_1" expression="0" type="number" condition="eq(#resume_flag,0)" />

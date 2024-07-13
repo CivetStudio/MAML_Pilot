@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Template version="2" >
+    <Props>
+        <item name="y" default ="200" type="number" description="y坐标" />
+    </Props>
+
+    <Var name="text_x" expression="300" />
+    <Text name="text" x="#text_x" y="$y" color="#ffffff" size="30" text="foo" />
+    <Button w="1080" h="2160">
+        <Triggers>
+            <Trigger action="up">
+                <VariableCommand name="text_x" expression="500" />
+            </Trigger>
+        </Triggers>
+    </Button>
+
+    <!-- 音乐封面 -->
+    <Image name="music_album_cover" />
+
+    <!-- 音乐控件下一首按钮 -->
+    <Button name="music_next" />
+
+    <!-- 音乐控件暂停按钮 -->
+    <Button name="music_pause" />
+
+    <!-- 音乐控件播放按钮 -->
+    <Button name="music_play" />
+
+    <!-- 音乐控件上一首按钮 -->
+    <Button name="music_prev" />
+
+    <!-- 点击后打开时钟app按钮 -->
+    <Button name="clock_button" />
+
+    <!-- Extra 标签不会重命名 -->
+    <!-- 使用2张切图通过#lightSwitch引用可展模拟开与关的状态，切图命名为：flashlight_0.png,flashlight_1.png -->
+    <Image x="800" y="#screen_height-150" src="flashlight.png" srcid="#lightSwitch" />
+    <Button x="800" y="#screen_height-150" w="150" h="150">
+        <Triggers>
+            <Trigger action="up">
+                <VariableCommand name="lightSwitch" expression="!(#lightSwitch)" />
+                <IntentCommand action="miui.intent.action.TOGGLE_TORCH" broadcast="true">
+                    <Extra name="miui.intent.extra.IS_ENABLE" type="boolean" expression="ifelse(int(@__miui_version_code)}=8,#lightSwitch,1)" />
+                </IntentCommand>
+            </Trigger>
+        </Triggers>
+    </Button>
+
+    <Var name="$move_x$" expression="300" />
+    <Text text="$#move_x$" />
+
+</Template>

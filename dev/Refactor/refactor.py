@@ -2,28 +2,44 @@ import os.path
 import re
 import string
 import random
+import sys
 import time
 
 import pyperclip
 from lxml import etree
 import zlib
-import base64
+import bz2
+# import base64
 
 comment_1 = "欢迎定制锁屏：灵貓 QQ 1876461209  /  Welcome to customize the lock screen: Civet QQ 1876461209"
 comment_2 = "违规抄袭将依据《中华人民共和国民法典》追究法律责任  /  Illegal plagiarism will be investigated for legal liability in accordance with the Civil Code of the People's Republic of China."
 
 
-def aes_encode(text):
-    encoded_bytes = base64.b64encode(text.encode('utf-8'))
-    hex_encoded = encoded_bytes.hex()
-    return hex_encoded
+# def aes_encode(text):
+#     encoded_bytes = base64.b64encode(text.encode('utf-8'))
+#     hex_encoded = encoded_bytes.hex()
+#     return hex_encoded
+#
+#
+# def aes_decode(encoded_text):
+#     decoded_bytes = bytes.fromhex(encoded_text)
+#     decoded_text = base64.b64decode(decoded_bytes).decode('utf-8')
+#     return decoded_text
+
+def aes_encode(data):
+    # data = data.replace(' ', '')
+    compressed_data = bz2.compress(data.encode('utf-8'))
+    # 将压缩后的数据转换为十六进制表示
+    compressed_data_hex = compressed_data.hex()
+    return compressed_data_hex
 
 
-def aes_decode(encoded_text):
-    decoded_bytes = bytes.fromhex(encoded_text)
-    decoded_text = base64.b64decode(decoded_bytes).decode('utf-8')
-    return decoded_text
-
+def aes_decode(compressed_data_hex):
+    # 将十六进制表示的数据转换为压缩后的数据
+    compressed_data = bytes.fromhex(compressed_data_hex)
+    # 使用 bz2 模块进行解压缩
+    decompressed_data = bz2.decompress(compressed_data).decode('utf-8')
+    return decompressed_data
 
 # from Crypto.Cipher import AES
 # from Crypto.Util.Padding import pad, unpad
@@ -134,6 +150,9 @@ def get_xml_content(file, var_forbid_list=[]):
 
 def xml_var_alias(input_xml, content, is_library_mode=0, var_forbid_list=[], suffix=None):
     global var_alias_dict
+    global _callback
+
+    _callback = ''
 
     def custom_encrypt(input_string, k=2, m='m', crc32_mode=1):
         if input_string in var_forbid_list or input_string in var_forbid_global:
@@ -150,69 +169,79 @@ def xml_var_alias(input_xml, content, is_library_mode=0, var_forbid_list=[], suf
                 return encrypted_string
 
     var_from_target = get_xml_variable(input_xml)
-    random_8_digit = custom_encrypt('CIVET', 4, '').lower()
+    # random_8_digit = custom_encrypt('CIVET', 4, '').lower()
+    random_8_digit = custom_encrypt(int(time.time() * 1000), 4, '').lower()
 
     var_alias_dict = {}
 
     for _i in range(len(var_from_target)):
         initial = str(var_from_target[_i])
-        if is_library_mode == 0:
-            after = custom_encrypt(initial, 8, 'm')
-        elif is_library_mode == 1:
-            after = initial + '_' + random_8_digit
-        elif is_library_mode == 2:
-            after = initial + str(suffix)
-        elif is_library_mode == 3:
-            after = str(suffix) + initial
-        var_alias_dict[after] = initial
+        if initial not in var_forbid_list:
+            if is_library_mode == 0:
+                # 正常加密
+                after = custom_encrypt(initial, 8, 'm')
+                _callback = ''
+            elif is_library_mode == 1:
+                # 随机字符串
+                after = initial + '_' + random_8_digit[:6]
+                _callback = random_8_digit[:6]
+            elif is_library_mode == 2:
+                # 添加后缀
+                after = initial + str(suffix)
+                _callback = suffix
+                # print('_callback', _callback)
+            elif is_library_mode == 3:
+                # 添加前缀
+                after = str(suffix) + initial
+            var_alias_dict[after] = initial
 
-        # 将 initial 和 after 添加到字典中
+            # 将 initial 和 after 添加到字典中
 
-        content = (
-            content
-            .replace(' name="' + initial + '"', ' name="' + after + '"')
-            .replace(' target="' + initial + '"', ' target="' + after + '"')
-            .replace(' dependency="' + initial + '"', ' dependency="' + after + '"')
-            .replace(' indexName="' + initial + '"', ' indexName="' + after + '"')
-            .replace(' countName="' + initial + '"', ' countName="' + after + '"')
-            .replace(' src="' + initial + '.artwork"', ' src="' + after + '.artwork"')
-            .replace(' strPara="' + initial + '"', ' strPara="' + after + '"')
-            .replace('#' + initial + '"', '#' + after + '"')
-            .replace('@' + initial + '"', '@' + after + '"')
-            .replace('#' + initial + ')', '#' + after + ')')
-            .replace('#' + initial + '+', '#' + after + '+')
-            .replace('#' + initial + '-', '#' + after + '-')
-            .replace('#' + initial + '*', '#' + after + '*')
-            .replace('#' + initial + '/', '#' + after + '/')
-            .replace('#' + initial + '%', '#' + after + '%')
-            .replace('#' + initial + '=', '#' + after + '=')
-            .replace('@' + initial + '=', '@' + after + '=')
-            .replace('#' + initial + '}', '#' + after + '}')
-            .replace('@' + initial + '}', '@' + after + '}')
-            .replace('#' + initial + '{', '#' + after + '{')
-            .replace('@' + initial + '{', '@' + after + '{')
-            .replace('#' + initial + '!', '#' + after + '!')
-            .replace('@' + initial + '!', '@' + after + '!')
-            .replace('#' + initial + '[', '#' + after + '[')
-            .replace('@' + initial + '[', '@' + after + '[')
-            .replace('[#' + initial + ']', '[#' + after + ']')
-            .replace('[@' + initial + ']', '[@' + after + ']')
-            # .replace('[#' + initial, '[#' + after)
-            # .replace('[@' + initial, '[@' + after)
-            .replace('#' + initial + ']', '#' + after + ']')
-            .replace('@' + initial + ']', '@' + after + ']')
-            .replace('#' + initial + ',', '#' + after + ',')
-            .replace('#' + initial + '.', '#' + after + '.')
-            .replace('#' + initial + ' ', '#' + after + ' ')
-            .replace('@' + initial + ')', '@' + after + ')')
-            .replace('@' + initial + '+', '@' + after + '+')
-            .replace('@' + initial + ',', '@' + after + ',')
-            .replace('@' + initial + '.', '@' + after + '.')
-            .replace('@' + initial + ' ', '@' + after + ' ')
-            .replace(' src="' + initial + '"', ' src="' + after + '"')
-            .replace('"' + initial + '.animation', '"' + after + '.animation')
-            .replace('"' + initial + '.visibility', '"' + after + '.visibility')
-        )
+            content = (
+                content
+                .replace(' name="' + initial + '"', ' name="' + after + '"')
+                .replace(' target="' + initial + '"', ' target="' + after + '"')
+                .replace(' dependency="' + initial + '"', ' dependency="' + after + '"')
+                .replace(' indexName="' + initial + '"', ' indexName="' + after + '"')
+                .replace(' countName="' + initial + '"', ' countName="' + after + '"')
+                .replace(' src="' + initial + '.artwork"', ' src="' + after + '.artwork"')
+                .replace(' strPara="' + initial + '"', ' strPara="' + after + '"')
+                .replace('#' + initial + '"', '#' + after + '"')
+                .replace('@' + initial + '"', '@' + after + '"')
+                .replace('#' + initial + ')', '#' + after + ')')
+                .replace('#' + initial + '+', '#' + after + '+')
+                .replace('#' + initial + '-', '#' + after + '-')
+                .replace('#' + initial + '*', '#' + after + '*')
+                .replace('#' + initial + '/', '#' + after + '/')
+                .replace('#' + initial + '%', '#' + after + '%')
+                .replace('#' + initial + '=', '#' + after + '=')
+                .replace('@' + initial + '=', '@' + after + '=')
+                .replace('#' + initial + '}', '#' + after + '}')
+                .replace('@' + initial + '}', '@' + after + '}')
+                .replace('#' + initial + '{', '#' + after + '{')
+                .replace('@' + initial + '{', '@' + after + '{')
+                .replace('#' + initial + '!', '#' + after + '!')
+                .replace('@' + initial + '!', '@' + after + '!')
+                .replace('#' + initial + '[', '#' + after + '[')
+                .replace('@' + initial + '[', '@' + after + '[')
+                .replace('[#' + initial + ']', '[#' + after + ']')
+                .replace('[@' + initial + ']', '[@' + after + ']')
+                # .replace('[#' + initial, '[#' + after)
+                # .replace('[@' + initial, '[@' + after)
+                .replace('#' + initial + ']', '#' + after + ']')
+                .replace('@' + initial + ']', '@' + after + ']')
+                .replace('#' + initial + ',', '#' + after + ',')
+                .replace('#' + initial + '.', '#' + after + '.')
+                .replace('#' + initial + ' ', '#' + after + ' ')
+                .replace('@' + initial + ')', '@' + after + ')')
+                .replace('@' + initial + '+', '@' + after + '+')
+                .replace('@' + initial + ',', '@' + after + ',')
+                .replace('@' + initial + '.', '@' + after + '.')
+                .replace('@' + initial + ' ', '@' + after + ' ')
+                .replace(' src="' + initial + '"', ' src="' + after + '"')
+                .replace('"' + initial + '.animation', '"' + after + '.animation')
+                .replace('"' + initial + '.visibility', '"' + after + '.visibility')
+            )
 
     # 创建根元素
     root = etree.Element("AntiAliasing", version="1")
@@ -273,11 +302,14 @@ def content_to_xml(content, modified_xml):
 
 # 处理 XML 内容
 def refactor(input_xml, is_library_mode=0, var_forbid_list=[], suffix='', output_xml=None):
+    global _callback
     content = get_xml_content(input_xml, var_forbid_list)
     content = xml_var_alias(input_xml, content, is_library_mode, var_forbid_list, suffix)
     if output_xml is None:
         output_xml = input_xml
     content_to_xml(content, output_xml)
+    # _callback: may be sufix / prefix
+    return _callback.replace('_', '')
 
 
 def get_var_alias_dict(_anti_xml):
@@ -298,10 +330,17 @@ def get_var_alias_dict(_anti_xml):
 
 
 def main():
-    print("[DEV_MODE]\nWELCOME TO REFACTOR.PY!")
+    import time
+    name = "[DEV_MODE]\nWELCOME TO REFACTOR.PY!"
+    encode = aes_encode(name)[20:]
+    length = len(encode)
+    decode = aes_decode('425a6839314159265359' + encode)
+    print(decode)
+    print(f'{length}: {encode}')
 
 
 if __name__ == "__main__":
+
     main()
 
     comment_1 = ""

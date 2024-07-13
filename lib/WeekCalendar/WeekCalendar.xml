@@ -62,88 +62,88 @@
 
 	<!-- 31张图 -->
 	<Group visibility="eq(CalendarCode,0)" >
-		
-		<Image x="CalendarX+CalendarW*0" y="CalendarY" align="center" alignV="center" src="CalendarNum" srcid="#mDateWeek_0" />
-		<Image x="CalendarX+CalendarW*1" y="CalendarY" align="center" alignV="center" src="CalendarNum" srcid="#mDateWeek_1" />
-		<Image x="CalendarX+CalendarW*2" y="CalendarY" align="center" alignV="center" src="CalendarNum" srcid="#mDateWeek_2" />
-		<Image x="CalendarX+CalendarW*3" y="CalendarY" align="center" alignV="center" src="CalendarNum" srcid="#mDateWeek_3" />
-		<Image x="CalendarX+CalendarW*4" y="CalendarY" align="center" alignV="center" src="CalendarNum" srcid="#mDateWeek_4" />
-		<Image x="CalendarX+CalendarW*5" y="CalendarY" align="center" alignV="center" src="CalendarNum" srcid="#mDateWeek_5" />
-		<Image x="CalendarX+CalendarW*6" y="CalendarY" align="center" alignV="center" src="CalendarNum" srcid="#mDateWeek_6" />
 
-		<Image x="CalendarX+CalendarW*0" y="CalendarY" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,0)" />
-		<Image x="CalendarX+CalendarW*1" y="CalendarY" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,1)" />
-		<Image x="CalendarX+CalendarW*2" y="CalendarY" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,2)" />
-		<Image x="CalendarX+CalendarW*3" y="CalendarY" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,3)" />
-		<Image x="CalendarX+CalendarW*4" y="CalendarY" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,4)" />
-		<Image x="CalendarX+CalendarW*5" y="CalendarY" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,5)" />
-		<Image x="CalendarX+CalendarW*6" y="CalendarY" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,6)" />
+		<Image x="(CalendarX)+(CalendarW)*0" y="(CalendarY)" align="center" alignV="center" src="CalendarNum" srcid="#mDateWeek_0" />
+		<Image x="(CalendarX)+(CalendarW)*1" y="(CalendarY)" align="center" alignV="center" src="CalendarNum" srcid="#mDateWeek_1" />
+		<Image x="(CalendarX)+(CalendarW)*2" y="(CalendarY)" align="center" alignV="center" src="CalendarNum" srcid="#mDateWeek_2" />
+		<Image x="(CalendarX)+(CalendarW)*3" y="(CalendarY)" align="center" alignV="center" src="CalendarNum" srcid="#mDateWeek_3" />
+		<Image x="(CalendarX)+(CalendarW)*4" y="(CalendarY)" align="center" alignV="center" src="CalendarNum" srcid="#mDateWeek_4" />
+		<Image x="(CalendarX)+(CalendarW)*5" y="(CalendarY)" align="center" alignV="center" src="CalendarNum" srcid="#mDateWeek_5" />
+		<Image x="(CalendarX)+(CalendarW)*6" y="(CalendarY)" align="center" alignV="center" src="CalendarNum" srcid="#mDateWeek_6" />
 
-		<Image x="CalendarX+CalendarW*0" y="CalendarY" align="center" alignV="center" src="CalendarTodayNum" srcid="#date" visibility="eq(#day_of_week-1,0)" />
-		<Image x="CalendarX+CalendarW*1" y="CalendarY" align="center" alignV="center" src="CalendarTodayNum" srcid="#date" visibility="eq(#day_of_week-1,1)" />
-		<Image x="CalendarX+CalendarW*2" y="CalendarY" align="center" alignV="center" src="CalendarTodayNum" srcid="#date" visibility="eq(#day_of_week-1,2)" />
-		<Image x="CalendarX+CalendarW*3" y="CalendarY" align="center" alignV="center" src="CalendarTodayNum" srcid="#date" visibility="eq(#day_of_week-1,3)" />
-		<Image x="CalendarX+CalendarW*4" y="CalendarY" align="center" alignV="center" src="CalendarTodayNum" srcid="#date" visibility="eq(#day_of_week-1,4)" />
-		<Image x="CalendarX+CalendarW*5" y="CalendarY" align="center" alignV="center" src="CalendarTodayNum" srcid="#date" visibility="eq(#day_of_week-1,5)" />
-		<Image x="CalendarX+CalendarW*6" y="CalendarY" align="center" alignV="center" src="CalendarTodayNum" srcid="#date" visibility="eq(#day_of_week-1,6)" />
+		<Image x="(CalendarX)+(CalendarW)*0" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,0)" />
+		<Image x="(CalendarX)+(CalendarW)*1" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,1)" />
+		<Image x="(CalendarX)+(CalendarW)*2" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,2)" />
+		<Image x="(CalendarX)+(CalendarW)*3" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,3)" />
+		<Image x="(CalendarX)+(CalendarW)*4" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,4)" />
+		<Image x="(CalendarX)+(CalendarW)*5" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,5)" />
+		<Image x="(CalendarX)+(CalendarW)*6" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,6)" />
+
+		<Image x="(CalendarX)+(CalendarW)*0" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayNum" srcid="#date" visibility="eq(#day_of_week-1,0)" />
+		<Image x="(CalendarX)+(CalendarW)*1" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayNum" srcid="#date" visibility="eq(#day_of_week-1,1)" />
+		<Image x="(CalendarX)+(CalendarW)*2" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayNum" srcid="#date" visibility="eq(#day_of_week-1,2)" />
+		<Image x="(CalendarX)+(CalendarW)*3" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayNum" srcid="#date" visibility="eq(#day_of_week-1,3)" />
+		<Image x="(CalendarX)+(CalendarW)*4" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayNum" srcid="#date" visibility="eq(#day_of_week-1,4)" />
+		<Image x="(CalendarX)+(CalendarW)*5" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayNum" srcid="#date" visibility="eq(#day_of_week-1,5)" />
+		<Image x="(CalendarX)+(CalendarW)*6" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayNum" srcid="#date" visibility="eq(#day_of_week-1,6)" />
 
 	</Group>
 
 	<!-- 0-9图 -->
 	<Group visibility="eq(CalendarCode,1)" >
-		
-		<ImageNumber x="CalendarX+CalendarW*0" y="CalendarY" align="center" alignV="center" src="CalendarNum" number="#mDateWeek_0" />
-		<ImageNumber x="CalendarX+CalendarW*1" y="CalendarY" align="center" alignV="center" src="CalendarNum" number="#mDateWeek_1" />
-		<ImageNumber x="CalendarX+CalendarW*2" y="CalendarY" align="center" alignV="center" src="CalendarNum" number="#mDateWeek_2" />
-		<ImageNumber x="CalendarX+CalendarW*3" y="CalendarY" align="center" alignV="center" src="CalendarNum" number="#mDateWeek_3" />
-		<ImageNumber x="CalendarX+CalendarW*4" y="CalendarY" align="center" alignV="center" src="CalendarNum" number="#mDateWeek_4" />
-		<ImageNumber x="CalendarX+CalendarW*5" y="CalendarY" align="center" alignV="center" src="CalendarNum" number="#mDateWeek_5" />
-		<ImageNumber x="CalendarX+CalendarW*6" y="CalendarY" align="center" alignV="center" src="CalendarNum" number="#mDateWeek_6" />
 
-		<Image x="CalendarX+CalendarW*0" y="CalendarY" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,0)" />
-		<Image x="CalendarX+CalendarW*1" y="CalendarY" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,1)" />
-		<Image x="CalendarX+CalendarW*2" y="CalendarY" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,2)" />
-		<Image x="CalendarX+CalendarW*3" y="CalendarY" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,3)" />
-		<Image x="CalendarX+CalendarW*4" y="CalendarY" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,4)" />
-		<Image x="CalendarX+CalendarW*5" y="CalendarY" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,5)" />
-		<Image x="CalendarX+CalendarW*6" y="CalendarY" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,6)" />
+		<ImageNumber x="(CalendarX)+(CalendarW)*0" y="(CalendarY)" align="center" alignV="center" src="CalendarNum" number="#mDateWeek_0" />
+		<ImageNumber x="(CalendarX)+(CalendarW)*1" y="(CalendarY)" align="center" alignV="center" src="CalendarNum" number="#mDateWeek_1" />
+		<ImageNumber x="(CalendarX)+(CalendarW)*2" y="(CalendarY)" align="center" alignV="center" src="CalendarNum" number="#mDateWeek_2" />
+		<ImageNumber x="(CalendarX)+(CalendarW)*3" y="(CalendarY)" align="center" alignV="center" src="CalendarNum" number="#mDateWeek_3" />
+		<ImageNumber x="(CalendarX)+(CalendarW)*4" y="(CalendarY)" align="center" alignV="center" src="CalendarNum" number="#mDateWeek_4" />
+		<ImageNumber x="(CalendarX)+(CalendarW)*5" y="(CalendarY)" align="center" alignV="center" src="CalendarNum" number="#mDateWeek_5" />
+		<ImageNumber x="(CalendarX)+(CalendarW)*6" y="(CalendarY)" align="center" alignV="center" src="CalendarNum" number="#mDateWeek_6" />
 
-		<ImageNumber x="CalendarX+CalendarW*0" y="CalendarY" align="center" alignV="center" src="CalendarTodayNum" number="#date" visibility="eq(#day_of_week-1,0)" />
-		<ImageNumber x="CalendarX+CalendarW*1" y="CalendarY" align="center" alignV="center" src="CalendarTodayNum" number="#date" visibility="eq(#day_of_week-1,1)" />
-		<ImageNumber x="CalendarX+CalendarW*2" y="CalendarY" align="center" alignV="center" src="CalendarTodayNum" number="#date" visibility="eq(#day_of_week-1,2)" />
-		<ImageNumber x="CalendarX+CalendarW*3" y="CalendarY" align="center" alignV="center" src="CalendarTodayNum" number="#date" visibility="eq(#day_of_week-1,3)" />
-		<ImageNumber x="CalendarX+CalendarW*4" y="CalendarY" align="center" alignV="center" src="CalendarTodayNum" number="#date" visibility="eq(#day_of_week-1,4)" />
-		<ImageNumber x="CalendarX+CalendarW*5" y="CalendarY" align="center" alignV="center" src="CalendarTodayNum" number="#date" visibility="eq(#day_of_week-1,5)" />
-		<ImageNumber x="CalendarX+CalendarW*6" y="CalendarY" align="center" alignV="center" src="CalendarTodayNum" number="#date" visibility="eq(#day_of_week-1,6)" />
+		<Image x="(CalendarX)+(CalendarW)*0" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,0)" />
+		<Image x="(CalendarX)+(CalendarW)*1" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,1)" />
+		<Image x="(CalendarX)+(CalendarW)*2" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,2)" />
+		<Image x="(CalendarX)+(CalendarW)*3" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,3)" />
+		<Image x="(CalendarX)+(CalendarW)*4" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,4)" />
+		<Image x="(CalendarX)+(CalendarW)*5" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,5)" />
+		<Image x="(CalendarX)+(CalendarW)*6" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,6)" />
+
+		<ImageNumber x="(CalendarX)+(CalendarW)*0" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayNum" number="#date" visibility="eq(#day_of_week-1,0)" />
+		<ImageNumber x="(CalendarX)+(CalendarW)*1" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayNum" number="#date" visibility="eq(#day_of_week-1,1)" />
+		<ImageNumber x="(CalendarX)+(CalendarW)*2" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayNum" number="#date" visibility="eq(#day_of_week-1,2)" />
+		<ImageNumber x="(CalendarX)+(CalendarW)*3" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayNum" number="#date" visibility="eq(#day_of_week-1,3)" />
+		<ImageNumber x="(CalendarX)+(CalendarW)*4" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayNum" number="#date" visibility="eq(#day_of_week-1,4)" />
+		<ImageNumber x="(CalendarX)+(CalendarW)*5" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayNum" number="#date" visibility="eq(#day_of_week-1,5)" />
+		<ImageNumber x="(CalendarX)+(CalendarW)*6" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayNum" number="#date" visibility="eq(#day_of_week-1,6)" />
 
 	</Group>
 
 	<!-- 系统字体 -->
 	<Group visibility="eq(CalendarCode,2)" >
-		
-		<Text x="CalendarX+CalendarW*0" y="CalendarY-$#mTextSize_CalendarSize$" align="center" alignV="center" color="CalendarColor" size="CalendarSize" format="%d" paras="#mDateWeek_0" />
-		<Text x="CalendarX+CalendarW*1" y="CalendarY-$#mTextSize_CalendarSize$" align="center" alignV="center" color="CalendarColor" size="CalendarSize" format="%d" paras="#mDateWeek_1" />
-		<Text x="CalendarX+CalendarW*2" y="CalendarY-$#mTextSize_CalendarSize$" align="center" alignV="center" color="CalendarColor" size="CalendarSize" format="%d" paras="#mDateWeek_2" />
-		<Text x="CalendarX+CalendarW*3" y="CalendarY-$#mTextSize_CalendarSize$" align="center" alignV="center" color="CalendarColor" size="CalendarSize" format="%d" paras="#mDateWeek_3" />
-		<Text x="CalendarX+CalendarW*4" y="CalendarY-$#mTextSize_CalendarSize$" align="center" alignV="center" color="CalendarColor" size="CalendarSize" format="%d" paras="#mDateWeek_4" />
-		<Text x="CalendarX+CalendarW*5" y="CalendarY-$#mTextSize_CalendarSize$" align="center" alignV="center" color="CalendarColor" size="CalendarSize" format="%d" paras="#mDateWeek_5" />
-		<Text x="CalendarX+CalendarW*6" y="CalendarY-$#mTextSize_CalendarSize$" align="center" alignV="center" color="CalendarColor" size="CalendarSize" format="%d" paras="#mDateWeek_6" />
 
-		<Image x="CalendarX+CalendarW*0" y="CalendarY" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,0)" />
-		<Image x="CalendarX+CalendarW*1" y="CalendarY" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,1)" />
-		<Image x="CalendarX+CalendarW*2" y="CalendarY" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,2)" />
-		<Image x="CalendarX+CalendarW*3" y="CalendarY" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,3)" />
-		<Image x="CalendarX+CalendarW*4" y="CalendarY" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,4)" />
-		<Image x="CalendarX+CalendarW*5" y="CalendarY" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,5)" />
-		<Image x="CalendarX+CalendarW*6" y="CalendarY" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,6)" />
+		<Text x="(CalendarX)+(CalendarW)*0" y="(CalendarY)-$#mTextSize_CalendarSize$" align="center" alignV="center" color="CalendarColor" size="CalendarSize" format="%d" paras="#mDateWeek_0" />
+		<Text x="(CalendarX)+(CalendarW)*1" y="(CalendarY)-$#mTextSize_CalendarSize$" align="center" alignV="center" color="CalendarColor" size="CalendarSize" format="%d" paras="#mDateWeek_1" />
+		<Text x="(CalendarX)+(CalendarW)*2" y="(CalendarY)-$#mTextSize_CalendarSize$" align="center" alignV="center" color="CalendarColor" size="CalendarSize" format="%d" paras="#mDateWeek_2" />
+		<Text x="(CalendarX)+(CalendarW)*3" y="(CalendarY)-$#mTextSize_CalendarSize$" align="center" alignV="center" color="CalendarColor" size="CalendarSize" format="%d" paras="#mDateWeek_3" />
+		<Text x="(CalendarX)+(CalendarW)*4" y="(CalendarY)-$#mTextSize_CalendarSize$" align="center" alignV="center" color="CalendarColor" size="CalendarSize" format="%d" paras="#mDateWeek_4" />
+		<Text x="(CalendarX)+(CalendarW)*5" y="(CalendarY)-$#mTextSize_CalendarSize$" align="center" alignV="center" color="CalendarColor" size="CalendarSize" format="%d" paras="#mDateWeek_5" />
+		<Text x="(CalendarX)+(CalendarW)*6" y="(CalendarY)-$#mTextSize_CalendarSize$" align="center" alignV="center" color="CalendarColor" size="CalendarSize" format="%d" paras="#mDateWeek_6" />
 
-		<Text x="CalendarX+CalendarW*0" y="CalendarY-$#mTextSize_CalendarSize$" align="center" alignV="center" color="CalendarTodayColor" size="CalendarSize" format="%d" paras="#date" visibility="eq(#day_of_week-1,0)" />
-		<Text x="CalendarX+CalendarW*1" y="CalendarY-$#mTextSize_CalendarSize$" align="center" alignV="center" color="CalendarTodayColor" size="CalendarSize" format="%d" paras="#date" visibility="eq(#day_of_week-1,1)" />
-		<Text x="CalendarX+CalendarW*2" y="CalendarY-$#mTextSize_CalendarSize$" align="center" alignV="center" color="CalendarTodayColor" size="CalendarSize" format="%d" paras="#date" visibility="eq(#day_of_week-1,2)" />
-		<Text x="CalendarX+CalendarW*3" y="CalendarY-$#mTextSize_CalendarSize$" align="center" alignV="center" color="CalendarTodayColor" size="CalendarSize" format="%d" paras="#date" visibility="eq(#day_of_week-1,3)" />
-		<Text x="CalendarX+CalendarW*4" y="CalendarY-$#mTextSize_CalendarSize$" align="center" alignV="center" color="CalendarTodayColor" size="CalendarSize" format="%d" paras="#date" visibility="eq(#day_of_week-1,4)" />
-		<Text x="CalendarX+CalendarW*5" y="CalendarY-$#mTextSize_CalendarSize$" align="center" alignV="center" color="CalendarTodayColor" size="CalendarSize" format="%d" paras="#date" visibility="eq(#day_of_week-1,5)" />
-		<Text x="CalendarX+CalendarW*6" y="CalendarY-$#mTextSize_CalendarSize$" align="center" alignV="center" color="CalendarTodayColor" size="CalendarSize" format="%d" paras="#date" visibility="eq(#day_of_week-1,6)" />
+		<Image x="(CalendarX)+(CalendarW)*0" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,0)" />
+		<Image x="(CalendarX)+(CalendarW)*1" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,1)" />
+		<Image x="(CalendarX)+(CalendarW)*2" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,2)" />
+		<Image x="(CalendarX)+(CalendarW)*3" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,3)" />
+		<Image x="(CalendarX)+(CalendarW)*4" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,4)" />
+		<Image x="(CalendarX)+(CalendarW)*5" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,5)" />
+		<Image x="(CalendarX)+(CalendarW)*6" y="(CalendarY)" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(#day_of_week-1,6)" />
+
+		<Text x="(CalendarX)+(CalendarW)*0" y="(CalendarY)-$#mTextSize_CalendarSize$" align="center" alignV="center" color="CalendarTodayColor" size="CalendarSize" format="%d" paras="#date" visibility="eq(#day_of_week-1,0)" />
+		<Text x="(CalendarX)+(CalendarW)*1" y="(CalendarY)-$#mTextSize_CalendarSize$" align="center" alignV="center" color="CalendarTodayColor" size="CalendarSize" format="%d" paras="#date" visibility="eq(#day_of_week-1,1)" />
+		<Text x="(CalendarX)+(CalendarW)*2" y="(CalendarY)-$#mTextSize_CalendarSize$" align="center" alignV="center" color="CalendarTodayColor" size="CalendarSize" format="%d" paras="#date" visibility="eq(#day_of_week-1,2)" />
+		<Text x="(CalendarX)+(CalendarW)*3" y="(CalendarY)-$#mTextSize_CalendarSize$" align="center" alignV="center" color="CalendarTodayColor" size="CalendarSize" format="%d" paras="#date" visibility="eq(#day_of_week-1,3)" />
+		<Text x="(CalendarX)+(CalendarW)*4" y="(CalendarY)-$#mTextSize_CalendarSize$" align="center" alignV="center" color="CalendarTodayColor" size="CalendarSize" format="%d" paras="#date" visibility="eq(#day_of_week-1,4)" />
+		<Text x="(CalendarX)+(CalendarW)*5" y="(CalendarY)-$#mTextSize_CalendarSize$" align="center" alignV="center" color="CalendarTodayColor" size="CalendarSize" format="%d" paras="#date" visibility="eq(#day_of_week-1,5)" />
+		<Text x="(CalendarX)+(CalendarW)*6" y="(CalendarY)-$#mTextSize_CalendarSize$" align="center" alignV="center" color="CalendarTodayColor" size="CalendarSize" format="%d" paras="#date" visibility="eq(#day_of_week-1,6)" />
 
 	</Group>
 

@@ -1,25 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Lockscreen frameRate="240" screenWidth="1080" version="1" vibrate="false" _dev="civet" _devTime="$_devTime" _splitExt="1" _splitGroup="1" _preload="1" _getSource="0" _pauseIntent="1" compiler="true" >
+<Lockscreen frameRate="240" screenWidth="1080" version="1" vibrate="false" _dev="civet" _devTime="$_devTime" _splitExt="1" _splitGroup="1" _preload="1" _getSource="0" _pauseIntent="1" compiler="true" _processHonorVar="0" >
 
 	<!-- 欢迎定制锁屏：灵貓 QQ 1876461209 -->
 
 	<!-- 违规抄袭将依据《中华人民共和国民法典》《中华人民共和国民法通则》《中华人民共和国著作权法》《计算机软件保护条例》《软件产品管理办法》《侵权责任法》《中华人民共和国知识产权法》追究法律责任 -->
 
-	<!-- <Layer visibility="1" >
-		<ForbidHw alias="禁止华为" _port="LangsId" visibility="eq(#LangsId,4)" content="C&#8202;o&#8202;n&#8202;t&#8202;a&#8202;c&#8202;t Q&#8202;Q:&#8202;1&#8202;8&#8202;7&#8202;6&#8202;4&#8202;6&#8202;1&#8202;2&#8202;0&#8202;9" />
-	</Layer> -->
-
-	<!-- <Var name="mBalanceTime" expression="ifelse(eq(#LangsId,0)+eq(#LangsId,5),1/max(1.6*#LangsId,0.5),1)" type="number" /> -->
-	<!-- speed * mBalanceTime -->
+	<Var name="mResumeSpeed" expression="2.741234578" type="number" />
+	<!-- <Var alias="叮咚叮咚" name="mResumeSpeed" expression="1.741234578" type="number" /> -->
+	<!-- <Var alias="叮咚叮咚" name="mResumeEaseAdd" expression="0+0.2666" type="number" /> -->
 
 	<Su alias="超级用户" _port="LangsId(0,2,4,5),mOversea,mInitVar" />
 
-	<!-- <Var name="_oplusAthena" expression="int(#time/1000/5)" threshold="1" >
-		<Trigger>
-			<IntentCommand broadcast="true" action="oplus.intent.action.REQUEST_SMART_DEEP_CLEAR" />
-			<IntentCommand broadcast="true" action="oplus.intent.action.REQUEST_SMART_LIGHT_CLEAR" />
-		</Trigger>
-	</Var> -->
+	<Var name="_rotationY" expression="int(#time/19.6)%360" type="number" />
 
 	<!-- _port里的内容为插件提供的全局变量 -->
 
@@ -29,16 +21,20 @@
 			<!-- 按钮点击防误触 -->
 			<VariableCommand name="tc" expression="ifelse(eq(#noticeDown,1),0,le(abs(#touch_x-#touch_begin_x),24)*le(abs(#touch_y-#touch_begin_y),24))" />
 			<!-- 不同分辨率偏移量 -->
+			<VariableCommand name="Ha" expression="(#screen_width-1080)" type="number" />
 			<VariableCommand name="Va" expression="(#screen_height-2700)" type="number" />
-			<!-- 问候语 0/上午6:00-11:59 1/下午12:00-17:59 2/晚上18:00-次日5:59 -->
-			<VariableCommand name="mGreetingStr" expression="ifelse(ge(#CurrentHour,6)*lt(#CurrentHour,12),0,ge(#CurrentHour,12)*lt(#CurrentHour,18),1,2)" />
 
-			<VariableCommand name="DayWeek_f1" expression="(#day_of_week-1-1+7)%7" />
-			<VariableCommand name="DayWeek_0" expression="#day_of_week-1" />
-			<VariableCommand name="DayWeek_1" expression="(#day_of_week-1+1)%7" />
+			<i_Hidden alias="unusual" >
 
-			<!-- fo;shichen;0;0;/assets;子时=丑时=寅时=卯时=辰时=巳时=午时=未时=申时=酉时=戌时=亥时 -->
-			<VariableCommand name="mShichen" expression="ifelse(
+				<!-- 问候语 0/上午6:00-11:59 1/下午12:00-17:59 2/晚上18:00-次日5:59 -->
+				<VariableCommand name="mGreetingStr" expression="ifelse(ge(#CurrentHour,6)*lt(#CurrentHour,12),0,ge(#CurrentHour,12)*lt(#CurrentHour,18),1,2)" />
+
+				<VariableCommand name="DayWeek_f1" expression="(#day_of_week-1-1+7)%7" />
+				<VariableCommand name="DayWeek_0" expression="#day_of_week-1" />
+				<VariableCommand name="DayWeek_1" expression="(#day_of_week-1+1)%7" />
+
+				<!-- fo;shichen;0;0;/assets;子时=丑时=寅时=卯时=辰时=巳时=午时=未时=申时=酉时=戌时=亥时 -->
+				<VariableCommand name="mShichen" expression="ifelse(
 				ge(#CurrentHour,1)*lt(#CurrentHour,3),1,
 				ge(#CurrentHour,3)*lt(#CurrentHour,5),2,
 				ge(#CurrentHour,5)*lt(#CurrentHour,7),3,
@@ -51,6 +47,8 @@
 				ge(#CurrentHour,19)*lt(#CurrentHour,21),10,
 				ge(#CurrentHour,21)*lt(#CurrentHour,23),11,
 				0)" />
+
+			</i_Hidden>
 
 			<!-- <VariableCommand name="mStrAni_11" expression="ifelse(#_dt,min(max(#_mStrAni,11)-11,1),1)" type="number" />
 			<VariableCommand name="mStrAni_10" expression="ifelse(#_dt,min(max(#_mStrAni,10)-10,1),1)" type="number" />
@@ -67,6 +65,75 @@
 
 		</SysCommand>
 	</SysTime>
+
+	<i_Hidden alias="飘浮动画" >
+
+		<ExternalCommands>
+			<Trigger action="resume">
+
+				<C_Array count="13" indexName="_j">
+					<VariableCommand name="xx{#_j+1}" expression="int(rand()*1020+20)" type="number" />
+				</C_Array>
+			</Trigger>
+		</ExternalCommands>
+		<Group visibility="eq(#xx,0)">
+
+			<C_Array count="13" indexName="_j">
+				<Var name="FILENAME" expression="''" type="string[]" _c="1" values="'wJn1GjA2.png','1gRTI3Y2.png','qtFkeZTq.png','UGDz0NAQ.png','floCuTdI.png','glegJqM0.png','xRVgAeFa.png','9xErAugB.png','uvU5PdPw.png','JHFjCfBO.png','wARSpJiI.png','gsRmlzv8.png','V4n2pZb3.png'" />
+
+				<Image x="abs(#xx{#_j+1}+sin(2*#time/int(1000+#xx{#_j+1}))*int(#xx{#_j+1}/3.5))" y="(3.2*#time/int(4+4*#xx{#_j+1}/100))%(#screen_height+100)-100" src="assets/{@FILENAME[int(13/2-#_j/2)]}" />
+
+			</C_Array>
+
+		</Group>
+
+	</i_Hidden>
+
+	<i_Hidden alias="ExecAni" _beta="1" >
+
+		<!-- <Compose class="act.Exec()" visibility="eq(#Exec,0)*(eq(#ExecAni,1)+eq(#ExecAni,0))">
+			<VariableCommand condition="#tc" name="Exec.v" expression="1" type="number" />
+			<Command condition="#tc" target="ExecAni.animation" value="stop" />
+			<Command condition="#tc" target="ExecAni.animation" value="play" />
+		</Compose>
+
+		<Var expression="#time" threshold="1">
+			<Trigger>
+				<VariableCommand name="Exec" expression="ifelse(#Exec.v,#ExecAni,0)" type="number" />
+			</Trigger>
+		</Var>
+
+		<Var name="ExecAni">
+			<VariableAnimation >
+				<AniFrame easeType="ElasticEaseIn" varSpeedFlag="ElasticFun_In" value="0" time="0" />
+				<AniFrame easeType="ElasticEaseIn" varSpeedFlag="ElasticFun_In" value="1" time="666" />
+				<AniFrame easeType="ElasticEaseIn" varSpeedFlag="ElasticFun_In" value="1" time="1876461209000" />
+			</VariableAnimation>
+		</Var>
+		<ExternalCommands>
+			<Trigger action="resume">
+				<VariableCommand name="Exec.v" expression="0" type="number" />
+			</Trigger>
+		</ExternalCommands> -->
+
+		<Exec alias="播放动画" x="#screen_width/2" y="#screen_height/2" align="center" alignV="center" w="#screen_width" h="#screen_height" local_anim="0" name="动画名称" ease="Back" ease_d="Out" begin="1" end="800" _port="#动画名称Ani" />
+
+	</i_Hidden>
+
+	<i_Hidden alias="Music" >
+
+		<MediaControl />
+		<MediaCommand command="skipToPrevious" />
+
+		<MediaCommand command="skipToNext" />
+
+		<!-- ne(#media_play_status,3) -->
+		<MediaCommand command="mediaPlay" />
+
+		<!-- eq(#media_play_status,3) -->
+		<MediaCommand command="mediaPause" />
+
+	</i_Hidden>
 
 	<i_Hidden alias="For Miui" >
 
@@ -178,8 +245,9 @@
 		<Var name="mFluidsRatio" expression="(#screen_height/2160)" type="number" />
 
 		<!-- bgSrc="bz.jpg" srcid="#mScreenId"  -->
-		<FluidsView gravityRatio="1" viscosity="1" color="#FFFFFF" waterAlpha="1" bgSrc="ifelse(eq(#mScreenId,1),'bz_1.jpg','bz_0.jpg')" name="fluids_view" x="0" y="0" w="#screen_width" h="#screen_height" >
+		<FluidsView gravityRatio="1" viscosity="1" color="argb(255,255,0,255)" waterAlpha="1" bgSrcH="bz.jpg" srcidH="#mScreenId" bgSrcO="ifelse(eq(#mScreenId,1),'bz_1.jpg','bz_0.jpg')" name="fluids_view" x="0" y="0" w="#screen_width" h="#screen_height">
 			<CircleShape radius="1.3" xPosition="0.7" yPosition="0.3" />
+			<!-- value: "%.{Float}" -->
 			<!-- <CircleShape radius="1.3" xPosition="0.7" yPosition="0.1" /> -->
 		</FluidsView>
 
@@ -224,13 +292,7 @@
 
 	</i_Hidden>
 
-	<!-- del /f "_port=*" -->
-	<!-- del /f "alias=*" -->
-	<!-- del /f "description=*" -->
-
-	<!-- <Import name="mGlobalVar" globalPersist="true" /> -->
-
-	<i_Hidden>
+	<i_Hidden alias="Background (Old)" >
 
 		<Image x="(#screen_width)/2" y="(1-int(#screen_height/#mBzImg.bmp_height))*ifelse(eq(#mAlignStyle,0),0,eq(#mAlignStyle,1),(#screen_height-(#mBzImg.bmp_height))/2,(#screen_height-(#mBzImg.bmp_height)))" align="center" alignV="top" src="bz.jpg" name="mBzImg" />
 		<Wallpaper src="bs.jpg" w="#screen_width" h="#screen_height" />
@@ -388,9 +450,9 @@
 		<ResumeAniCommand alias="其他贝塞尔同步" >
 
 			<!-- 88 -->
-			<VariableCommand name="mWidgetAni_t" persist="true" expression="min(#mWidgetAni_t+(198/2/2.2/1000/#mResumeTimeV),1)" condition="eq(#mWidgetFlag,1)" />
-			<VariableCommand name="mWidgetAni_t" persist="true" expression="max(#mWidgetAni_t-(198/2/2.2/1000/#mResumeTimeV),0)" condition="eq(#mWidgetFlag,0)" />
-			<VariableCommand name="mWidgetAni" persist="true" expression="1+#_ease.c3*(#mWidgetAni_t-1)*(#mWidgetAni_t-1)*(#mWidgetAni_t-1)+(#_ease.c3-1)*(#mWidgetAni_t-1)*(#mWidgetAni_t-1)" />
+			<!-- <VariableCommand name="mWidgetAni_t" persist="true" expression="min(#mWidgetAni_t+((198+80)/2/2.2/1000/#mResumeTimeV),1)" condition="eq(#mWidgetFlag,1)" />
+			<VariableCommand name="mWidgetAni_t" persist="true" expression="max(#mWidgetAni_t-((238+80)/2/2.2/1000/#mResumeTimeV),0)" condition="eq(#mWidgetFlag,0)" />
+			<VariableCommand name="mWidgetAni" persist="true" expression="1+#_ease.c3*(#mWidgetAni_t-1)*(#mWidgetAni_t-1)*(#mWidgetAni_t-1)+(#_ease.c3-1)*(#mWidgetAni_t-1)*(#mWidgetAni_t-1)" /> -->
 
 			<!-- <VariableCommand name="mExChangeAni" persist="true" expression="min(#mExChangeAni+(88/1.6/2.2/1000/#mResumeTimeV),1)" condition="eq(#mExChangeFlag,1)*ne(#mExChangeAni,1)" />
 			<VariableCommand name="mExChangeAni" persist="true" expression="max(#mExChangeAni-(88/2.2/2.2/1000/#mResumeTimeV),0)" condition="eq(#mExChangeFlag,0)*ne(#mExChangeAni,0)" />
@@ -402,19 +464,21 @@
 	<ExternalCommands>
 		<Trigger action="resume" >
 
-			<VariableCommand name="mWidgetAni_t" expression="0" />
+			<!-- <VariableCommand name="mWidgetAni_t" expression="0" />
 			<VariableCommand name="mWidgetAni" expression="0" />
-			<VariableCommand name="mWidgetFlag" expression="0" />
+			<VariableCommand name="mWidgetFlag" expression="0" /> -->
 
 		</Trigger>
 		<Trigger action="pause" >
 
-			<VariableCommand name="mWidgetAni_t" expression="0" />
+			<!-- <VariableCommand name="mWidgetAni_t" expression="0" />
 			<VariableCommand name="mWidgetAni" expression="0" />
-			<VariableCommand name="mWidgetFlag" expression="0" />
+			<VariableCommand name="mWidgetFlag" expression="0" /> -->
 
 		</Trigger>
 	</ExternalCommands>
+
+	<Var name="mScreenId" expression="0" type="number" persist_const="true" _const="true" />
 
 	<ScreenId alias="多屏切换" _port="mScreenId,mScreenId.Num" >
 		<ValueHolder name="ScreenId_S" value="0" alias="0单向滑动(OPPO) 1双向滑动" />
@@ -433,7 +497,7 @@
 		</Triggers>
 	</Button>
 
-	<!-- <Button x="" y="" w="" h="" alias="系统" >
+	<Button disabled="1" x="" y="" w="" h="" alias="系统" >
 		<Triggers>
 			<Trigger action="up" >
 
@@ -475,7 +539,7 @@
 			</Trigger>
 		</Triggers>
 	</Button>
-	<Button x="" y="" w="" h="" alias="第三方" >
+	<Button disabled="1" x="" y="" w="" h="" alias="第三方" >
 		<Triggers>
 			<Trigger action="up" >
 
@@ -567,7 +631,7 @@
 
 			</Trigger>
 		</Triggers>
-	</Button> -->
+	</Button>
 
 	<Lehua alias="乐划锁屏" >
 		<ValueHolder name="LehuaVisibility" value="1" />
@@ -610,7 +674,21 @@
 		<ValueHolder name="CalendarNum" value="calendar/calendar_num.png" alias="日历数字" />
 		<ValueHolder name="CalendarTodayBg" value="calendar/today_bg.png" alias="当日背景图" />
 		<ValueHolder name="CalendarTodayNum" value="calendar/calendar_num.png" alias="当日数字" />
+		<ValueHolder name="CalendarRotation" value="0" alias="图片旋转角度" />
 	</Calendar>
+	<Calendar.Lite disabled="1" alias="日历-精简版" >
+		<ValueHolder name="CalendarCode" value="0" alias="0为srcid写法(31张图) 1为ImageNumber写法(0-9共10张图)" />
+		<ValueHolder name="CalendarX" value="540" alias="日历X坐标" description="该坐标为第一天数字的中心坐标" />
+		<ValueHolder name="CalendarY" value="1320" alias="日历Y坐标" />
+		<ValueHolder name="CalendarW" value="60" alias="数字左右间隔(两中心点距离)" />
+		<ValueHolder name="CalendarH" value="60" alias="数字上下间隔(两中心点距离)" />
+		<ValueHolder name="CalendarD" value="0" alias="1显示过去将来日期 0不显示" />
+		<ValueHolder name="CalendarStart" value="0" alias="起始日:0周日 1周一" />
+		<ValueHolder name="CalendarNum" value="calendar/calendar_num.png" alias="日历数字" />
+		<ValueHolder name="CalendarTodayBg" value="calendar/today_bg.png" alias="当日背景图" />
+		<ValueHolder name="CalendarTodayNum" value="calendar/calendar_num.png" alias="当日数字" />
+		<ValueHolder name="CalendarIndent" value="1" alias="自动对齐高度" />
+	</Calendar.Lite>
 
 	<WeekCalendar disabled="1" alias="周历" _port="mDateWeek_0,..,mDateWeek_6" >
 		<ValueHolder name="CalendarCode" value="0" alias="0为srcid写法(31张图) 1为ImageNumber写法(0-9共10张图) 2为系统字体" />
@@ -627,7 +705,7 @@
 
 	<!-- <WeekCalendar x="" y="" w="" h="" today_bg="" /> -->
 
-	<DrinkCup disabled="1" alias="喝水打卡" _port="mDrinkCup,mDrinkCount,mClearDaily" />
+	<DrinkCup disabled="0" alias="喝水打卡" _port="mDrinkCup,mDrinkCount,mClearDaily" />
 	<Var name="mDrinkCup" expression="0" type="number" persist_const="true" _const="true" />
 
 	<Shake disabled="1" alias="摇一摇" _port="va_x,gra_x,GX...(x,y,z)" >
@@ -646,12 +724,12 @@
 			<!-- 默认日期：2023/1/1 -->
 			<Var name="EventYear_0" expression="2" type="number" persist_const="true" _const="true" />
 			<Var name="EventYear_1" expression="0" type="number" persist_const="true" _const="true" />
-			<Var name="EventYear_2" expression="2" type="number" persist_const="true" _const="true" />
-			<Var name="EventYear_3" expression="4" type="number" persist_const="true" _const="true" />
+			<Var name="EventYear_2" expression="0" type="number" persist_const="true" _const="true" />
+			<Var name="EventYear_3" expression="0" type="number" persist_const="true" _const="true" />
 			<Var name="EventMonth_0" expression="0" type="number" persist_const="true" _const="true" />
-			<Var name="EventMonth_1" expression="1" type="number" persist_const="true" _const="true" />
-			<Var name="EventDate_0" expression="0" type="number" persist_const="true" _const="true" />
-			<Var name="EventDate_1" expression="1" type="number" persist_const="true" _const="true" />
+			<Var name="EventMonth_1" expression="7" type="number" persist_const="true" _const="true" />
+			<Var name="EventDate_0" expression="2" type="number" persist_const="true" _const="true" />
+			<Var name="EventDate_1" expression="5" type="number" persist_const="true" _const="true" />
 		</InputDateVar>
 
 		<ValueHolder name="CountStartVal" value="0" alias="倒计时输入格式：0年月日(yyyy/MM/dd) 1月日(MM/dd) 2日(dd)" />
@@ -812,5 +890,11 @@
 	<ForbidHw disabled="3" alias="禁止华为" _port="LangsId" visibility="eq(#LangsId,2)+eq(#LangsId,4)" content="C&#8202;o&#8202;n&#8202;t&#8202;a&#8202;c&#8202;t Q&#8202;Q:&#8202;1&#8202;8&#8202;7&#8202;6&#8202;4&#8202;6&#8202;1&#8202;2&#8202;0&#8202;9" />
 
 	<!-- <Image x="0" y="#screen_height" align="left" alignV="bottom" w="#screen_width/2" h="#screen_height/8" src="red.png" alpha="128" visibility="#in_preview_mode*eq(#LangsId,0)" /> -->
+
+	<!-- <Group visibility="#in_preview_mode*#mNoticeSize" alpha="255*(1-#mResumeAni_3)" >
+
+		<Rectangle weight="2" strokeAlign="inner" strokeColor="#00ffff" x="540+#mNoticeX" y="#mNoticeY" align="center" w="#mNoticeW" h="#mNoticeH" fillColor="#00ffffff" cornerRadius="49,49" />
+
+	</Group> -->
 
 </Lockscreen>

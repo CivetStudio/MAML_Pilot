@@ -14,6 +14,7 @@
 		<!-- 麦克： 222746250 -->
 		<!-- 偶见：450947809 -->
 		<!-- 屋里：281483251 -->
+		<!-- 熊猫不淘气： 1124996280 -->
 	</Props>
 
 	<!-- 主题 -->
@@ -21,13 +22,14 @@
 	<IntentCommand condition="($condition)" action="com.vivo.action.theme.Theme" package="com.bbk.theme" class="com.bbk.theme.Theme" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.miui.themestore" class="com.miui.themestore.ThemeResourceTabActivity" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.android.thememanager" class="com.android.thememanager.ThemeResourceTabActivity" />
+	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.android.thememanager" class="com.android.thememanager.ThemeResourceProxyTabActivity" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.nearme.themespace" class="com.nearme.themespace.activities.ThemeActivity" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.nearme.themestore" class="com.nearme.themespace.activities.ThemeActivity" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.heytap.themestore" class="com.nearme.themespace.activities.ThemeActivity" />
 	<!-- <IntentCommand condition="($condition)*eq($#LangsId$,0)" action="android.intent.action.VIEW" uri="oaps://theme/home?enterId=100038" /> -->
 	<IntentCommand condition="($condition)*eq($#LangsId$,0)*ne(#designId,0)" uri="oaps://theme/home?_SWL_=1&amp;swl=1&amp;enterId=100038&amp;oapTargetUri=oaps%3A%2F%2Ftheme%2Fdesigner%2Fcustomized%3FenterId%3D100038%26id%3D$designId" />
 
-	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.hihonor.android.thememanager" class="com.hihonor.android.thememanager.PageActivity" />
-	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.huawei.android.thememanager" class="com.huawei.android.thememanager.mvp.view.activity.onlinebase.PageActivity" />
+	<IntentCommand condition="($condition)*eq(#isHonor,1)" action="android.intent.action.MAIN" package="com.hihonor.android.thememanager" class="com.hihonor.android.thememanager.PageActivity" />
+	<IntentCommand condition="($condition)*eq(#isHonor,0)" action="android.intent.action.MAIN" package="com.huawei.android.thememanager" class="com.huawei.android.thememanager.mvp.view.activity.onlinebase.PageActivity" />
 
 </Template>

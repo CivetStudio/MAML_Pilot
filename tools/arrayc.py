@@ -427,7 +427,8 @@ def c_array(code):
                     or ('eq(1,0)*' in str(empty_tag.get('visibility'))) \
                     or ('eq(1,2)*' in str(empty_tag.get('visibility'))) \
                     or ('eq(2,0)*' in str(empty_tag.get('visibility'))) \
-                    or ('eq(2,1)*' in str(empty_tag.get('visibility'))):
+                    or ('eq(2,1)*' in str(empty_tag.get('visibility'))) \
+                    or ('*0*' in str(empty_tag.get('visibility'))):
                 empty_tag.extract()
 
     if __name__ == '__main__':

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Template version="2" >
+	<Props>
+		<item name="x" type="string" description="X坐标" default="0" />
+		<item name="y" type="string" description="Y坐标" default="0" />
+		<item name="w" type="string" description="宽度" default="540" />
+		<item name="h" type="string" description="高度" default="960" />
+		<item name="rotation" type="number" description="旋转角度" default="0" />
+		<item name="alpha" type="number" description="透明度" default="255" />
+		<item name="color0" type="color" description="渐变色0" default="#ff060c2c" />
+		<item name="color1" type="color" description="渐变色.2" default="#ff17163e" />
+		<item name="color2" type="color" description="渐变色.6" default="#ff422b57" />
+		<item name="color3" type="color" description="渐变色1" default="#ff8e4b5d" />
+		<item name="adaptationType" type="select" item="0,1" description="全屏适配" default="0" />
+	</Props>
+	<Animations />
+	<Select index="$adaptationType">
+		<Item>
+			<Emits x="$x" y="$y" w="$w" h="$h" />
+			<Rectangle x="$x" y="$y" w="$w" h="$h" alpha="$alpha" rotation="$rotation">
+				<FillShaders>
+					<LinearGradient x="$w" y="0" x1="0" y1="$h" tile="clamp">
+						<GradientStop color="$color0" position="0" />
+						<GradientStop color="$color1" position="0.2" />
+						<GradientStop color="$color2" position="0.6" />
+						<GradientStop color="$color3" position="1" />
+					</LinearGradient>
+				</FillShaders>
+			</Rectangle>
+		</Item>
+		<Item>
+			<!-- 全屏适配 -->
+			<Emits w="#screen_width" h="#screen_height" />
+			<Rectangle w="#screen_width" h="#screen_height" alpha="$alpha">
+				<FillShaders>
+					<LinearGradient x="#screen_width" y="0" x1="0" y1="#screen_height" tile="clamp">
+						<GradientStop color="$color0" position="0" />
+						<GradientStop color="$color1" position="0.2" />
+						<GradientStop color="$color2" position="0.6" />
+						<GradientStop color="$color3" position="1" />
+					</LinearGradient>
+				</FillShaders>
+			</Rectangle>
+		</Item>
+	</Select>
+</Template>

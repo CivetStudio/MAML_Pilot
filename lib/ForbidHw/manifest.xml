@@ -2,7 +2,7 @@
 
 	<Props>
 		<item name="visibility" type="string" description="可见性" default="eq(#LangsId,2)" />
-		<item name="content" type="string" description="自定义" default="&#83;&#108;&#105;&#100;&#101;&#32;&#117;&#112;&#32;&#116;&#111;&#32;&#117;&#110;&#108;&#111;&#99;&#107;" />
+		<item name="content" type="string" description="自定义" default="S&#8202;l&#8202;i&#8202;d&#8202;e&#8202; u&#8202;p&#8202; t&#8202;o&#8202; u&#8202;n&#8202;l&#8202;o&#8202;c&#8202;k" />
 	</Props>
 
 	<Group visibility="$visibility" >

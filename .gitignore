@@ -11,7 +11,11 @@ main.log
 anti.xml
 antiAliasing.xml
 
-/dev/json_icons/
+/dev/Icons/
 
 /theme/sample/
 /su/main_202403151918_before_03161217.py
+/dev/Refactor/__pycache__
+/dev/Refactor/Func/__pycache__
+dev/Image/example.png
+dev/Image/example_cv2.jpg

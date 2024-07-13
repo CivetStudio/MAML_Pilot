@@ -13,8 +13,8 @@
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.coloros.weather2" class="com.coloros.weather.OppoMainActivity" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.coloros.weather2" class="com.coloros.weather.main.view.WeatherMainActivity" />
 	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.coloros.weather2" class="com.oplus.weather.main.view.WeatherMainActivity" />
-	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.hihonor.android.totemweather" class="com.hihonor.android.totemweather.WeatherHome" />
-	<IntentCommand condition="($condition)" action="android.intent.action.MAIN" package="com.huawei.android.totemweather" class="com.huawei.android.totemweather.WeatherHome" />
+	<IntentCommand condition="($condition)*eq(#isHonor,1)" action="android.intent.action.MAIN" package="com.hihonor.android.totemweather" class="com.hihonor.android.totemweather.WeatherHome" />
+	<IntentCommand condition="($condition)*eq(#isHonor,0)" action="android.intent.action.MAIN" package="com.huawei.android.totemweather" class="com.huawei.android.totemweather.WeatherHome" />
 	<!-- <IntentCommand condition="($condition)" package="com.huawei.android.totemweather" class="com.huawei.android.totemweather.WeatherMainActivity" /> -->
 
 </Template>

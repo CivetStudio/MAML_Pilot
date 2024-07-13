@@ -1,0 +1,78 @@
+<Template>
+
+	<Props>
+		<item name="x" type="string" description="X坐标" default="0" />
+		<item name="y" type="string" description="Y坐标" default="0" />
+		<item name="align" type="string" description="水平对齐方式" default="left" />
+		<item name="alignV" type="string" description="垂直对齐方式" default="top" />
+		<item name="w" type="string" description="宽度" default="1" />
+		<item name="h" type="string" description="高度" default="1" />
+		<item name="name" type="string" description="变量名称" default="Exec" />
+		<item name="condition" type="string" description="条件判断" default="#tc" />
+		<item name="ease" type="string" description="缓动类型" default="Elastic" />
+		<item name="ease_d" type="string" description="缓动函数" default="In" />
+		<item name="ani_start" type="string" description="开始值" default="0" />
+		<item name="ani_end" type="string" description="结束值" default="1" />
+		<item name="begin" type="string" description="延迟时间" default="1" />
+		<item name="end" type="string" description="结束时间" default="666" />
+		<item name="repeat" type="string" description="重复点击" default="0" />
+		<item name="local_anim" type="string" description="动画本地化" default="0" />
+	</Props>
+
+	<Image x="$x" y="$y" align="$align" alignV="$alignV" w="$w" h="$h" act="act.$name()" />
+
+	<Var name="$name.Compose.v" expression="ifelse(eq(#$name,0)*(eq(#$nameAni,1)+eq(#$nameAni,0)),1,0)" type="number" />
+	<Compose class="act.$name()" visibility="#$name.Compose.v">
+		<VariableCommand condition="$condition" name="$name.v" expression="1" type="number" />
+		<Command condition="$condition" target="$nameAni.animation" value="stop" />
+		<Command condition="$condition" target="$nameAni.animation" value="play" />
+		<VariableCommand condition="$repeat" delay="$ani_end" name="$name.v" expression="0" type="number" />
+
+	</Compose>
+
+	<Var name="_var_$name_" expression="0" type="number" persist_const="true" _const="true" />
+	<Var expression="#_var_$name_" threshold="1" >
+		<Trigger>
+			<VariableCommand condition="$condition" name="$name.v" expression="1" type="number" />
+			<Command condition="$condition" target="$nameAni.animation" value="stop" />
+			<Command condition="$condition" target="$nameAni.animation" value="play" />
+			<VariableCommand condition="$repeat" delay="$ani_end" name="$name.v" expression="0" type="number" />
+
+		</Trigger>
+	</Var>
+
+	<Var name="_act_$name_" expression="int(#time/10)" threshold="1">
+		<Trigger>
+			<VariableCommand name="$name" expression="ifelse(#$name.v,#$nameAni,0)" type="number" />
+		</Trigger>
+	</Var>
+	<Var name="$name" expression="0" type="number" persist_const="true" _const="true" />
+
+	<Var name="$nameAni" disabled="$local_anim" >
+		<VariableAnimation >
+			<AniFrame easeType="$easeEase$ease_d" varSpeedFlag="$easeFun_$ease_d" value="$ani_start" time="0" />
+			<AniFrame easeType="$easeEase$ease_d" varSpeedFlag="$easeFun_$ease_d" value="$ani_start" time="$begin" />
+			<AniFrame easeType="$easeEase$ease_d" varSpeedFlag="$easeFun_$ease_d" value="$ani_end" time="$end" />
+			<AniFrame easeType="$easeEase$ease_d" varSpeedFlag="$easeFun_$ease_d" value="$ani_end" time="1876461209000" />
+		</VariableAnimation>
+	</Var>
+
+	<!-- <C_Array count="1" indexName="_j" >
+
+		<Var name="{ifelse(not($local_anim),'$nameAni','_$local_anim_')}">
+			<VariableAnimation >
+				<AniFrame easeType="$easeEase$ease_d" varSpeedFlag="$easeFun_$ease_d" value="$ani_start" time="0" />
+				<AniFrame easeType="$easeEase$ease_d" varSpeedFlag="$easeFun_$ease_d" value="$ani_start" time="$begin" />
+				<AniFrame easeType="$easeEase$ease_d" varSpeedFlag="$easeFun_$ease_d" value="$ani_end" time="$end" />
+				<AniFrame easeType="$easeEase$ease_d" varSpeedFlag="$easeFun_$ease_d" value="$ani_end" time="1876461209000" />
+			</VariableAnimation>
+		</Var>
+
+	</C_Array> -->
+	<ExternalCommands>
+		<Trigger action="resume">
+			<VariableCommand name="$name.v" expression="0" type="number" />
+		</Trigger>
+	</ExternalCommands>
+
+</Template>

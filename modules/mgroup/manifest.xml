@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Template version="2" >
+    <Props>
+        <item name="x" default="0" type="number" description="x坐标" />
+        <item name="y" default="0" type="number" description="y坐标" />
+    </Props>
+    <Group x="$x-1080" y="$y">
+        <Slots slotName="负一屏" />
+    </Group>
+    <Group x="$x" y="$y">
+        <Slots slotName="正一屏" />
+    </Group>
+</Template>

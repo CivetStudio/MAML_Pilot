@@ -54,4 +54,4 @@ def tint_images_color(input_folder_path, output_folder_path, color="#ffff00", ke
 if __name__ == "__main__":
     input_folder = pyperclip.paste()
     output_folder = input_folder
-    tint_images_color(input_folder, output_folder, color="#111111", keep_alpha=True)
+    tint_images_color(input_folder, output_folder, color="#FFFFFF", keep_alpha=True)

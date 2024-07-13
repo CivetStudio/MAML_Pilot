@@ -14,7 +14,7 @@ def main():
     try:
         # 使用 print 输出
         # stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
-        result = subprocess.run(['python3', script_path], check=True)
+        result = subprocess.run(['./venv/bin/python3', script_path], check=True)
         print('\t')
 
         # 处理 result 中的输出信息

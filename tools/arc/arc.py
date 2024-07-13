@@ -17,12 +17,15 @@ import os
 
 # 输入参数
 arc_num = 100  # 圆环数量
-stroke_color = '#f9cbd0'  # 描边颜色，输入6位hex值
-stroke_width = 14 * 2  # 描边宽度 w * 2
+stroke_color = '#2db840'  # 描边颜色，输入6位hex值
+stroke_width = 10 * 2  # 描边宽度 w * 2
 startAngle = -90  # startAngle 单位为度数，表示圆环的覆盖角度
-direct = -1  # 1：顺时针 -1：逆时针
-real_width = 104  # 圆环宽度
-real_height = 104  # 圆环高度
+# startAngle = -180 - 30  # startAngle 单位为度数，表示圆环的覆盖角度
+direct = 1  # 1：顺时针 -1：逆时针
+real_width = 80  # 圆环宽度
+real_height = 80  # 圆环高度
+sweep = 360
+# sweep = 360 - (90 - 30) * 2
 filename = 'circle'  # 图片名称
 
 # 内部变量
@@ -45,13 +48,13 @@ for i in range(arc_num + 1):
         center[0] + radius - stroke_width / 2,
         center[1] + radius - stroke_width / 2),
         start=startAngle,
-        end=startAngle + i / arc_num * 360,
+        end=startAngle + i / arc_num * sweep,
         fill=stroke_color,
         width=stroke_width)
 
     # specify the start and end angles of the arc in degrees
     start_angle = startAngle
-    end_angle = startAngle + i / arc_num * 360
+    end_angle = startAngle + i / arc_num * sweep
 
     # calculate the start and end points of the arc
     start_x = center[0] + radius2 * math.cos(math.radians(start_angle))

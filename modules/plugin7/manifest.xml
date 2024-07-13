@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Template version="2" >
+    <Props>
+        <item name="x" default="100" type="number" description="x坐标" />
+        <item name="y" default="100" type="number" description="y坐标" />
+
+    </Props>
+
+    <PluginCommands>
+        <!-- 插件入场时执行的操作,为方便记忆,入场的action统一约定为init -->
+        <Trigger action="init">
+            <AnimationCommand target="ani" command="play(0,300)" />
+        </Trigger>
+        <!-- 插件退场时执行的操作,为方便记忆,入场的action约定为exit,其他的需要添加的action自行定义 -->
+        <Trigger action="exit">
+            <AnimationCommand target="ani" command="play(300,0)" />
+        </Trigger>
+        <Trigger action="action">
+            <AnimationCommand target="ani" command="play(600,900)" />
+        </Trigger>
+        <Trigger action="resume">
+            <AnimationCommand target="ani" command="resume" />
+        </Trigger>
+    </PluginCommands>
+
+    <Var name="ani">
+        <VariableAnimation loop="false" initPause="true">
+            <AniFrame value="0" time="0" />
+            <AniFrame value="1" time="300" />
+        </VariableAnimation>
+    </Var>
+    <Image alpha="255*#ani" x="0" y="0" align="center" alignV="center" src="aa.png" />
+
+</Template >

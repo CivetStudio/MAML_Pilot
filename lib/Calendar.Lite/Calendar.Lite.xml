@@ -11,9 +11,12 @@
 	<ValueHolder name="CalendarNum" type="string" />
 	<ValueHolder name="CalendarTodayBg" type="string" />
 	<ValueHolder name="CalendarTodayNum" type="string" />
+	<ValueHolder name="CalendarRotation" default="0" />
+	<ValueHolder name="CalendarIndent" default="1" />
 
+	<Var name="CalendarRotation" expression="CalendarRotation" type="number" />
 
-	<i_Hidden>
+	<!-- <i_Hidden> -->
 
 		<!-- 日历组 -->
 
@@ -25,9 +28,10 @@
 		<Var name="calendar_date_w" expression="CalendarW" />
 		<!-- 日期间距高度 -->
 		<Var name="calendar_date_h" expression="CalendarH" />
+		<Var name="calendar_indent" expression="CalendarIndent" type="number" />
 
 		<!-- 日历变量 -->
-		<Var name="calendar_date_h_real" expression="#calendar_date_h-ifelse(le(#calendar_week+35,#calendar_maxday)*gt(#calendar_week+6,0),#calendar_date_h/5,0)" />
+		<Var name="calendar_date_h_real" expression="#calendar_date_h-#calendar_indent*ifelse(le(#calendar_week+35,#calendar_maxday)*gt(#calendar_week+6,0),#calendar_date_h/5,0)" />
 		<Var name="calendar_crr" expression="#time" threshold="1">
 			<Trigger>
 				<VariableCommand name="calendar_leap" expression="eq(#calendar_year%4,0)*ne(#calendar_year%100,0)+eq(#calendar_year%400,0)" />
@@ -338,6 +342,6 @@
 
 		</Group>
 
-	</i_Hidden>
+	<!-- </i_Hidden> -->
 
 </ROOT>

@@ -1,3 +1,7 @@
+import random
+import sys
+
+
 # 加密函数
 def encrypt_number(number):
     # encrypted = 0
@@ -52,8 +56,14 @@ def map_to_letters_reverse(number):
 
 
 # 测试
-# original_number = 52086045
-original_number = 51956522
+original_number = 52086045
+original_number = int(random.random() * 999999999999)
+original_char = '5136f8e9117ceb89'
+translation_table = str.maketrans('abcdef', '012345')
+original_char = original_char.translate(translation_table)
+print(original_char)
+original_number = int(original_char[:8])
+# original_number = 51956522
 # original_number = 1323365097
 encrypted_number = encrypt_number(original_number)
 mapped_letters = map_to_letters(encrypted_number)

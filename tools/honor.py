@@ -73,38 +73,47 @@ def process_lockscreen_var(process_xml):
     lockscreen = soup.Lockscreen
     lockscreen.insert(1, start_tag)
 
+    if 'name="isHonor"' not in str(soup):
+        is_honor = soup.new_tag('Var', attrs={'name': 'isHonor', 'expression': '1'})
+        lockscreen.append(is_honor)
+
     for var in soup.find_all('Var'):
         if var.get('name') == 'isHonor':
             var['expression'] = '1'
 
-    for tag in soup.find_all('VariableCommand'):
-        # 获取 VariableCommand 属性
-        if (tag.parent.name == 'Trigger' and tag.parent.parent.get('threshold')) or \
-                tag.parent.parent.name == 'ExternalCommands':
-            var_comp_name = tag.get('name')
-            var_comp_exp = tag.get('expression')
-            var_comp_type = tag.get('type')
+    var_procress_honor = 0 if str(lockscreen.get('_processHonorVar')).upper() == "FALSE" or lockscreen.get(
+        '_processHonorVar') == "0" else 1
+    print(f'Root[_processHonorVar]: {var_procress_honor}')
 
-            var_comp_persist = 'false' if tag.get('persist') is None else 'true'
+    if var_procress_honor:
+        for tag in soup.find_all('VariableCommand'):
+            # 获取 VariableCommand 属性
+            if (tag.parent.name == 'Trigger' and not tag.parent.parent.get('threshold')) or \
+                    tag.parent.parent.name == 'ExternalCommands':
+                var_comp_name = tag.get('name')
+                var_comp_exp = tag.get('expression')
+                var_comp_type = tag.get('type')
 
-            # 输出同名变量
-            for var in soup.find_all('Var'):
-                if var['name'] == var_comp_name and var.get('expression') and var['expression'] != var_comp_exp and var.get('index') is None and _DEBUG_:
-                    print(var, var_comp_exp)
+                var_comp_persist = 'false' if tag.get('persist') is None else 'true'
 
-            # 查询是否有同名的 Var 变量
-            var_tag_form = bool(soup.find_all('Var', attrs={'name': var_comp_name}) != [])
+                # 输出同名变量
+                for var in soup.find_all('Var'):
+                    if var['name'] == var_comp_name and var.get('expression') and var['expression'] != var_comp_exp and var.get('index') is None and _DEBUG_:
+                        print(var, var_comp_exp)
 
-            if not var_tag_form:
-                if _DEBUG_:
-                    print(f'<Var name="{var_comp_name}" expression="{var_comp_exp}" />')
-                if var_comp_persist == 'false':
-                    new_var_honor = soup.new_tag('Var', attrs={'name': var_comp_name, 'expression': var_comp_exp, 'type': var_comp_type})
-                else:
-                    new_var_honor = soup.new_tag('Var', attrs={'name': var_comp_name, 'expression': var_comp_exp, 'type': var_comp_type, 'persist': var_comp_persist})
-                if 'rand()' in var_comp_exp:
-                    new_var_honor['const'] = 'true'
-                soup.Lockscreen.append(new_var_honor)
+                # 查询是否有同名的 Var 变量
+                var_tag_form = bool(soup.find_all('Var', attrs={'name': var_comp_name}) != [])
+
+                if not var_tag_form:
+                    if _DEBUG_:
+                        print(f'<Var name="{var_comp_name}" expression="{var_comp_exp}" />')
+                    if var_comp_persist == 'false':
+                        new_var_honor = soup.new_tag('Var', attrs={'name': var_comp_name, 'expression': var_comp_exp, 'type': var_comp_type})
+                    else:
+                        new_var_honor = soup.new_tag('Var', attrs={'name': var_comp_name, 'expression': var_comp_exp, 'type': var_comp_type, 'persist': var_comp_persist})
+                    if 'rand()' in var_comp_exp:
+                        new_var_honor['const'] = 'true'
+                    soup.Lockscreen.append(new_var_honor)
 
     for intent in soup.find_all('IntentCommand'):
         package_name = intent.get('package')
@@ -121,6 +130,9 @@ def process_lockscreen_var(process_xml):
                 or (str(package_name) == 'com.vmall.client')\
                 or 'huawei' in str(package_name) or 'huawei' in str(class_name):
             intent.extract()
+        else:
+            if intent.get('category'):
+                del intent['category']
 
     for var in soup.find_all('Var'):
         if var.get('_honor') is None:
@@ -128,8 +140,9 @@ def process_lockscreen_var(process_xml):
                 print(var)
             var_name = var.get('name')
             var_exp = var.get('expression')
-            var_filter = f"#{str(var_name)}+1"
-            if var_exp and var_filter in str(var_exp):
+            var_filter_0 = f"#{str(var_name)}+1"
+            var_filter_1 = f"not(#{str(var_name)})"
+            if var_exp and (var_filter_0 in str(var_exp) or var_filter_1 in str(var_exp)):
                 if _DEBUG_:
                     print("Loop:", var)
                 var['expression'] = '0'

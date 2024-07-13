@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Template version="2" >
+    <Props>
+        <item name="x" default="100" type="number" description="x坐标" />
+        <item name="y" default ="200" type="number" description="y坐标" />
+        <item name="text" default ="hello world" type="string" description="y坐标" />
+        <item name="imgSrc" default ="a.png" type="bitmap" description="示例图片" />
+        <item name="alpha" default ="255" type="number" description="图片透明度" />
+    </Props>
+
+    <Text x="$x" y="$y" color="#ffffff" size="30" text="$text" />
+    <Image y="800" src="$imgSrc" alpha="$alpha" />
+
+</Template>

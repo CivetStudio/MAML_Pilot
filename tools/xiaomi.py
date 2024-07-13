@@ -22,8 +22,9 @@ def process_xml_xiaomi(process_xml):
     soup = BeautifulSoup(open(process_xml), 'lxml-xml')
     lockscreen = soup.Lockscreen
     external_commands = soup.Lockscreen.ExternalCommands
+    # print(external_commands)
 
-    if 'disableChargeAnim' not in str(soup):
+    if 'disableChargeAnim' not in str(soup) and 'battery_' in str(soup):
         trigger_binder = soup.new_tag('Trigger')
         trigger_binder['action'] = 'resume,pause,init'
         trigger_content = '''
@@ -31,7 +32,14 @@ def process_xml_xiaomi(process_xml):
         '''
         trigger_content = BeautifulSoup(trigger_content, 'lxml-xml')
         trigger_binder.append(trigger_content)
-        external_commands.append(trigger_binder)
+        # 若无 ExternalCommands 标签，则手动创建
+        if not soup.Lockscreen.ExternalCommands:
+            new_external_commands = soup.new_tag('ExternalCommands')
+            new_external_commands.append(trigger_binder)
+            print('\t', new_external_commands)
+            lockscreen.append(new_external_commands)
+        else:
+            external_commands.append(trigger_binder)
 
     for var in soup.find_all('Var'):
         var_name = var.get('name')

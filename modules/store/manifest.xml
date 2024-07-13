@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Maml version="2" >
+    <Var name="rot" expression="10" type="number" const="true" />
+    <Var name="text" expression="'hello world'" type="string" const="true" />
+</Maml>

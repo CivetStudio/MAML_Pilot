@@ -1,6 +1,11 @@
-import time
+import warnings
 
+# 忽略特定类型的警告
+warnings.filterwarnings("ignore")
+
+import time
 import requests
+import json
 
 
 headers = {
@@ -22,5 +27,5 @@ headers = {
 url = "https://platform.52mengdong.com/platform/sign/zodiac/detail/1"
 response = requests.get(url, headers=headers)
 
-print(response.text)
-print(response)
+# print(json.dumps(response.text, indent=4, ensure_ascii=False))
+print(response.json())

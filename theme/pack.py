@@ -1,6 +1,7 @@
 # Todo List
 # 2024/02/03 - 全平台锁屏打包工具（支付华为/OPPO/VIVO/荣耀）
 # 2024/04/07 - 新增 MIUI 平台打包支持（isnull转换，屏蔽充电动画）
+# 2024/05/13 - 新增Zip文件压缩密码支持
 
 import os
 import sys
@@ -10,6 +11,28 @@ import zipfile
 from PIL import Image
 import pyperclip
 from bs4 import BeautifulSoup
+import bz2
+import pyzipper
+
+BLACK = "\033[37m"
+RED = "\033[91m"
+GREEN = "\033[92m"
+YELLOW = "\033[93m"
+BLUE = "\033[94m"
+PURPLE = "\033[95m"
+CYAN = "\033[96m"
+WHITE = "\033[97m"
+RESET = "\033[0m"
+
+
+
+def compress_string(data):
+    # data = data.replace(' ', '')
+    data = str(data) + 'CivetCode'
+    compressed_data = bz2.compress(data.encode('utf-8'))
+    # 将压缩后的数据转换为十六进制表示
+    compressed_data_hex = compressed_data.hex()
+    return compressed_data_hex
 
 
 def create_blank_image(width, height, color=(255, 255, 255)):
@@ -51,17 +74,32 @@ def clean_cache(folder_path):
 
 
 def zip_folder(folder_path, zip_path):
+
     # os.path.basename(root) == 'lockscreen' or os.path.basename(root) == 'advance'
-    with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
-        for root, dirs, files in os.walk(folder_path):
-            for file in files:
-                if any(item == file for item in forbid_items):
-                    file_path = os.path.join(root, file)
-                    print('\t', file_path, 'Removed👌')
-                else:
-                    file_path = os.path.join(root, file)
-                    arcname = os.path.relpath(file_path, folder_path)
-                    zipf.write(file_path, arcname=arcname)
+    if password_mode:
+        with pyzipper.AESZipFile(zip_path, 'w', compression=pyzipper.ZIP_LZMA, encryption=pyzipper.WZ_AES) as zipf:
+            password_bytes = password.encode('utf-8')
+            zipf.setpassword(password_bytes)
+            for root, dirs, files in os.walk(folder_path):
+                for file in files:
+                    if any(item == file for item in forbid_items):
+                        file_path = os.path.join(root, file)
+                        print('\t', file_path, 'Removed👌')
+                    else:
+                        file_path = os.path.join(root, file)
+                        arcname = os.path.relpath(file_path, folder_path)
+                        zipf.write(file_path, arcname=arcname)
+    else:
+        with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            for root, dirs, files in os.walk(folder_path):
+                for file in files:
+                    if any(item == file for item in forbid_items):
+                        file_path = os.path.join(root, file)
+                        print('\t', file_path, 'Removed👌')
+                    else:
+                        file_path = os.path.join(root, file)
+                        arcname = os.path.relpath(file_path, folder_path)
+                        zipf.write(file_path, arcname=arcname)
 
 
 def copy_folder_contents(source_folder, destination_folder):
@@ -92,8 +130,6 @@ tmp_honor = temp_folder + '_' + 'honor'
 tmp_oppo = temp_folder + '_' + 'oppo'
 tmp_vivo = temp_folder + '_' + 'vivo'
 tmp_xiaomi = temp_folder + '_' + 'xiaomi'
-async_load = 'false'
-
 hw_theme_xml = f"""<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <HWTheme>
   <item style="slide"/>
@@ -105,7 +141,7 @@ hw_theme_xml = f"""<?xml version="1.0" encoding="UTF-8" standalone="no"?>
   <item maxHeight="2160"/>
   <item engineType="HWThemeEngine"/>
   <item baseVersion="6.0"/>
-  <item asyncLoad="{async_load}" />
+  <item asyncLoad="$async_load$" />
 </HWTheme>
 """
 
@@ -162,6 +198,9 @@ def pack_huawei(path, filename="HUAWEI"):
         xml_file.write(hw_theme_xml)
     copy_folder_contents(path, tmp_huawei_1)
 
+    xml_path = os.path.join(tmp_huawei_1, 'manifest.xml')
+    change_var_value(xml_path, 'isHuawei', '1')
+
     huawei_path = os.path.abspath(tmp_huawei).replace(tmp_huawei, 'HUAWEI')
     huawei_zip_path = os.path.join(os.path.dirname(path), f'{theme_name}_{filename}.zip')
 
@@ -178,7 +217,7 @@ def pack_huawei(path, filename="HUAWEI"):
         shutil.rmtree(huawei_path)
 
 
-def process_xml(honor_xml_file):
+def process_xml_honor(honor_xml_file):
     from tools.honor import detect_lockscreen_view, process_lockscreen_var
     detect_lockscreen_view(honor_xml_file)
     process_lockscreen_var(honor_xml_file)
@@ -186,13 +225,53 @@ def process_xml(honor_xml_file):
 
 def change_var_value(xml_file, var_name, var_exp):
     soup = BeautifulSoup(open(xml_file, encoding='utf-8'), 'lxml-xml')
+    platform_var_list = ['isHuawei', 'isHonor', 'isOppo', 'isVivo', 'isXiaomi']
+    for i in range(len(platform_var_list)):
+        platform_variable = soup.find_all('Var', attrs={'name': platform_var_list[i]})
+        if len(platform_variable) == 0:
+            platform_var = soup.new_tag('Var', attrs={'name': platform_var_list[i], 'expression': '0'})
+            # print(soup.Lockscreen)
+            soup.Lockscreen.append(platform_var)
+        else:
+            pass
     for var in soup.find_all('Var', attrs={'name': var_name}):
         var['expression'] = str(var_exp)
     if var_name == 'isVivo':
         for stereo in soup.find_all('StereoView'):
             stereo.extract()
+        # print(soup)
+        for tag in soup.find_all():
+            for attr, value in tag.attrs.items():
+                if 'formatDate' in value:
+                    print(f"\t ⚠️ Found {RED}'formatDate'{RESET} stringType in {YELLOW}'{tag}'{RESET}")
+
+    del_vivo_fluids = 0
+    for fluids in soup.find_all('FluidsView'):
+        colorO = fluids.get('colorO')
+        bgSrcO = fluids.get('bgSrcO')
+        bgSrcH = fluids.get('bgSrcH')
+        srcidH = fluids.get('srcidH')
+        if var_name == 'isOppo' or (var_name == 'isVivo' and del_vivo_fluids == 0):
+            if colorO:
+                fluids['color'] = colorO
+                del fluids['colorO']
+        elif var_name == 'isHuawei':
+            if bgSrcH:
+                fluids['bgSrc'] = bgSrcH
+                del fluids['bgSrcH']
+            if srcidH:
+                fluids['srcid'] = srcidH
+                del fluids['srcidH']
+            if bgSrcO:
+                del fluids['bgSrcO']
+        elif (var_name == 'isVivo' and del_vivo_fluids == 1) or var_name == 'isXiaomi' or var_name == 'isHonor':
+            fluids.extract()
+
     with open(xml_file, 'w', encoding='utf-8') as f:
-        f.write(str(soup.prettify()))
+        f.write(str(soup))
+
+    import tools.order
+    tools.order.orderXML(xml_file, None, 0)
 
 
 def pack_honor(path, filename="HONOR"):
@@ -211,9 +290,12 @@ def pack_honor(path, filename="HONOR"):
         xml_file.write(ho_theme_xml)
     copy_folder_contents(path, tmp_honor_1)
 
-    process_xml_honor = 1
-    if process_xml_honor:
-        process_xml(os.path.join(tmp_honor_1, 'manifest.xml'))
+    if process_honor:
+        print('Process Honor: ')
+        process_xml_honor(os.path.join(tmp_honor_1, 'manifest.xml'))
+
+    xml_path = os.path.join(tmp_honor_1, 'manifest.xml')
+    change_var_value(xml_path, 'isHonor', '1')
 
     honor_path = os.path.abspath(tmp_honor).replace(tmp_honor, 'honor')
     honor_zip_path = os.path.join(os.path.dirname(path), f'{theme_name}_{filename}.zip')
@@ -247,6 +329,7 @@ def pack_oppo(path, filename="OPPO"):
     xml_path = os.path.join(tmp_oppo_1, 'manifest.xml')
     replace_in_text_file(xml_path, ' _const', ' const')
     replace_in_text_file(xml_path, 'globalPersist', '_glb')
+    change_var_value(xml_path, 'isOppo', '1')
 
     oppo_folder = ['2x1', '7x3', '11x5', '13x6', '19x9', '20x9', '67x30', '301x135', '403x180', '693x310']
     for f in range(len(oppo_folder)):
@@ -358,6 +441,9 @@ def pack_xiaomi(path, filename="XIAOMI"):
     from tools.xiaomi import process_xml_xiaomi
     process_xml_xiaomi(os.path.join(tmp_xiaomi_1, 'manifest.xml'))
 
+    xml_path = os.path.join(tmp_xiaomi_1, 'manifest.xml')
+    change_var_value(xml_path, 'isXiaomi', '1')
+
     xiaomi_path = os.path.abspath(tmp_xiaomi).replace(tmp_xiaomi, 'XIAOMI')
     xiaomi_zip_path = os.path.join(os.path.dirname(path), f'{theme_name}_{filename}.zip')
 
@@ -386,13 +472,18 @@ def pack_simple(path, filename=None):
 
     if filename == 'HUAWEI':
         platform_id = None
-        pass
+        xml_path = os.path.join(tmp_simple_1, 'manifest.xml')
+        change_var_value(xml_path, 'isHuawei', '1')
 
     if filename == 'HONOR':
         tmp_honor_1 = tmp_simple_1
-        process_xml_honor = 1
-        if process_xml_honor:
-            process_xml(os.path.join(tmp_honor_1, 'manifest.xml'))
+        process_honor = 1
+        if process_honor:
+            process_xml_honor(os.path.join(tmp_honor_1, 'manifest.xml'))
+
+        xml_path = os.path.join(tmp_honor_1, 'manifest.xml')
+        change_var_value(xml_path, 'isHonor', '1')
+
         platform_id = None
 
     if filename == 'OPPO':
@@ -400,6 +491,7 @@ def pack_simple(path, filename=None):
         xml_path = os.path.join(tmp_oppo_1, 'manifest.xml')
         replace_in_text_file(xml_path, ' _const', ' const')
         replace_in_text_file(xml_path, 'globalPersist', '_glb')
+        change_var_value(xml_path, 'isOppo', '1')
 
         oppo_folder = ['2x1', '7x3', '11x5', '13x6', '19x9', '20x9', '67x30', '301x135', '403x180', '693x310']
         for f in range(len(oppo_folder)):
@@ -423,6 +515,10 @@ def pack_simple(path, filename=None):
     if filename == 'XIAOMI':
         from tools.xiaomi import process_xml_xiaomi
         process_xml_xiaomi(os.path.join(tmp_simple_1, 'manifest.xml'))
+
+        xml_path = os.path.join(tmp_simple_1, 'manifest.xml')
+        change_var_value(xml_path, 'isXiaomi', '1')
+
         platform_id = 'xiaomi'
 
     simple_path = os.path.abspath(tmp_simple).replace(tmp_simple, filename)
@@ -482,10 +578,10 @@ def main(platform=1, hw=0, oppo=0, vivo=0, honor=0, xiaomi=0):
             if os.path.isdir(target_pack_path[k]):
                 theme_name_list = target_pack_path[k].split('/')
                 if theme_name_list[-1] == 'advance':
-                    theme_name = theme_name_list[-5]
+                    theme_name = oversea_prefix + theme_name_list[-5]
                     # print(theme_name)
                 else:
-                    theme_name = target_pack_path[-1]
+                    theme_name = oversea_prefix + target_pack_path[-1]
                     # print(theme_name)
                 if current_dir != os.path.dirname(target_pack_path[k]):
                     pass
@@ -541,8 +637,14 @@ def main(platform=1, hw=0, oppo=0, vivo=0, honor=0, xiaomi=0):
                         zip_list_folder = zip_path_list[z].replace('.zip', '').replace(f'{theme_name}_', '')
                         zip_list_folder = os.path.join(os.path.dirname(zip_list_folder), theme_name, os.path.basename(zip_list_folder))
                         # print(zip_list_folder)
-                        with zipfile.ZipFile(zip_path_list[z], 'r') as zip_ref:
-                            zip_ref.extractall(zip_list_folder)
+                        if password_mode:
+                            with pyzipper.AESZipFile(zip_path_list[z], 'r') as zip_ref:
+                                password_bytes = password.encode('utf-8')
+                                zip_ref.setpassword(password_bytes)
+                                zip_ref.extractall(zip_list_folder)
+                        else:
+                            with zipfile.ZipFile(zip_path_list[z], 'r') as zip_ref:
+                                zip_ref.extractall(zip_list_folder)
                         os.remove(zip_path_list[z])
 
                     zip_folder_path = os.path.dirname(zip_list_folder)
@@ -553,6 +655,13 @@ def main(platform=1, hw=0, oppo=0, vivo=0, honor=0, xiaomi=0):
                     shutil.rmtree(zip_folder_path)
                     print('\t', zip_all_path)
                 print('Success🍺')
+
+                if password_mode:
+                    print(f'Password: {password}')
+                    password_file = os.path.join(os.path.dirname(target_pack_path[k]), 'pwd')
+                    with open(password_file, 'w') as fb:
+                        fb.write(password)
+
             else:
                 print(f"Error: '{target_pack_path[k]}' is not a folder")
     except Exception as e:
@@ -562,7 +671,6 @@ def main(platform=1, hw=0, oppo=0, vivo=0, honor=0, xiaomi=0):
 def update_array(platform_id):
     global forbid_items
 
-    is_oversea_mode = 0
     if is_oversea_mode:
         forbid_items = ['maml.xml', 'source.xml', 'anti.xml', 'oversea.jpg', 'red.png']
     else:
@@ -582,7 +690,27 @@ def update_array(platform_id):
 
 # 执行主程序
 if __name__ == '__main__':
+
+    # 异步加载
+    async_load = 0
+    process_honor = 1
+    hw_theme_xml = hw_theme_xml.replace('$async_load$', str(bool(async_load)).lower())
+
+    # 是否为海外版
+    is_oversea_mode = 0
+    oversea_prefix = '【海外版】' if is_oversea_mode else '【国内版】'
+    oversea_prefix = ''
+
+    # 压缩模式
     simple_mode = 1
+
+    # 密码模式
+    password_mode = 0
+    if password_mode:
+        password = compress_string(str(time_sys))
+    else:
+        password_mode = ''
+
     # platform = 1, hw = 0, oppo = 0, vivo = 0, honor = 0, xiaomi = 1
     current_dir = os.path.dirname(sys.argv[0])
-    main(1, 0, 0, 1, 0, 0)
+    main(platform=0, hw=0, oppo=0, vivo=1, honor=0, xiaomi=1)

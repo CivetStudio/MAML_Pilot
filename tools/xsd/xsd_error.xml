@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Lockscreen frameRate="10" screenWidth="1080" version="1" vibrate="false" _dev="civet" _devTime="$_devTime" _splitExt="1" _splitGroup="1" _preload="1" _getSource="0" _pauseIntent="1" compiler="true" >
+
+	<Var expression="1" type="number" />
+	<Var name="var_0" expression="1" type="number" />
+	<Var name="var_1" expression="not(#var_1)" type="number" />
+	<Var name="var_2" expression="ifelse(isnull(#var_2),0,#var_2)" type="number" />
+	<ExternalCommands>
+		<Trigger action="resume" >
+			<VariableCommand name="var_1" expression="2" type="number" />
+		</Trigger>
+	</ExternalCommands>
+	<Image x="0+#int(var_0" y="#var_1" align="center" alignV="center" src="0" />
+	<Var name="mBezierAni_R" alias="0.2" >
+		<VariableAnimation delay="-10" repeat="-1" >
+			<AniFrame easeType="BackEaseOut" varSpeedFlag="BackFun_Out" value="0" time="0" />
+			<AniFrame easeType="CubicEaseOut" varSpeedFlag="CubicFun_Out" value="1" time="100" />
+			<AniFrame easeType="BackEaseOut" varSpeedFlag="BackFun_Out" value="0" time="200" />
+			<AniFrame easeType="CubicEaseOut" varSpeedFlag="CubicFun_Out" value="1" time="300" />
+			<AniFrame easeType="BackEaseOut" varSpeedFlag="BackFun_Out" value="0" time="400" />
+			<AniFrame easeType="BackEaseOut" varSpeedFlag="BackFun_Out" value="0" time="1876461209000" />
+		</VariableAnimation>
+	</Var>
+	<Var name="mBezierAni_R" expression="8" type="number" />
+
+	<VarArray type="number[]" >
+		<Vars>
+			<Var name="ary" index="#" />
+		</Vars>
+		<Items>
+			<Item value="0" />
+			<Item value="1" />
+		</Items>
+	</VarArray>
+
+	<Text x="" y="" color="" size="" textExp="" shadow="5" />
+	<!-- correct -->
+	<Text x="" y="" color="" size="" textExp="" shadow="5.0|5|5|#585858" shadowColor="#585858" shadowDx="5" shadowDy="5" shadowRadius="5" Radius="5" radius="5"  />
+
+	<SensorBinder type="gravity" rate="0" >
+		<Variable name="gx" index="a" />
+		<Variable name="gy" index="1" />
+		<Variable name="gz" index="4" />
+	</SensorBinder>
+
+	<Var name="Weather.today.currentTem" mode="0" expression="ifelse(eq(#mScreenId,0),2,0))" />
+
+	<VirtualScreen name="aa" >
+
+	</VirtualScreen>
+
+	<VirtualScreen name="aa" >
+
+	</VirtualScreen>
+
+	<MusicControl name="aa" >
+
+	</MusicControl>
+
+	<MusicControl name="aa" >
+
+	</MusicControl>
+
+	<Text x="" y="" color="" size="" format="##Var" shadow="5" />
+	<Text x="" y="" color="" size="" format="00" shadow="5" />
+
+</Lockscreen>

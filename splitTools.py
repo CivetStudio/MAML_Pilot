@@ -25,6 +25,16 @@ def splitVar(parse_file, save_file):
                 if var.parent.name == "Group" and var.get('name') != 'Progress' and var.parent.name != 'Array' and var.get('index') is None:
                     var.extract()
                     lockscreen.append(var)
+    for layer in lockscreen.find_all('Layer'):
+        var = layer.find_all('Var')
+        # print(var)
+        # sys.exit(8)
+        for v in var:
+            lockscreen.append(v)
+
+    for var in lockscreen.find_all('Var'):
+        if var.parent.name == 'Layer':
+            var.extract()
 
     with open(save_file, 'w', encoding='utf-8') as f:
         f.write(str(soup.prettify(indent_width=4).replace('    ', '\t')))
@@ -481,6 +491,32 @@ def intentMarket(save_file, manifest_root='Lockscreen'):
                 intent['market'] = '1'
                 # intent['market'] = 'true'
                 print(f"\t{intent}")
+    # 针对 OPPO 组件卡加入合并 InputGroup 标签
+    if market_mode:
+        # 找到所有的 InputGroup 标签
+        input_groups = soup.find_all('InputGroup')
+
+        if input_groups:
+            # 创建一个新的 InputGroup 标签或使用第一个现有的 InputGroup
+            main_group = input_groups[0]
+
+            # 找到所有的 Input 标签
+            all_inputs = soup.find_all('Input')
+
+            # 清空第一个 InputGroup 的内容
+            main_group.clear()
+
+            # 将所有的 Input 标签添加到第一个 InputGroup 中
+            for input_tag in all_inputs:
+                main_group.append(input_tag)
+
+            # 移除所有其他的 InputGroup
+            for input_group in input_groups[1:]:
+                input_group.decompose()
+
+            # 将合并后的 InputGroup 插入到 Root 的第一个子元素位置
+            soup.Widget.insert(0, main_group)
+
     print('\t')
 
     # 针对 华为 图片缩放处理
@@ -509,7 +545,8 @@ def intentMarket(save_file, manifest_root='Lockscreen'):
             if str(intent.get('action')).upper() == 'ANDROID.INTENT.ACTION.MAIN'\
                     and intent.get('category') is None\
                     and intent.get('uri') is None\
-                    and intent.get('uriExp') is None:
+                    and intent.get('uriExp') is None\
+                    and not intent.Extra:
                 intent['category'] = 'android.intent.category.LAUNCHER'
                 print(f'\t{intent}')
         print('\t')
@@ -557,11 +594,11 @@ def intentMarket(save_file, manifest_root='Lockscreen'):
     print('Image: ')
     for image in soup.find_all('Image'):
         if image.get('name') is None:
-            time_sys = str(time.time())
+            # time_sys = str(time.time())
             # print(time_sys)
             image_uuid = image.encode('UTF-8')
-            image_uuid2 = hex(zlib.crc32(time_sys.encode('UTF-8')))[2:].capitalize()
-            image_name = hex(zlib.crc32(image_uuid))[2:].capitalize() + image_uuid2
+            # image_uuid2 = hex(zlib.crc32(time_sys.encode('UTF-8')))[2:].capitalize()
+            image_name = hex(zlib.crc32(image_uuid))[2:].capitalize()
 
             for child_tag in image.find_all(recursive=False):
                 if 'Animation' in str(child_tag.name):
@@ -575,11 +612,11 @@ def intentMarket(save_file, manifest_root='Lockscreen'):
     print('Var.threshold: ')
     for var_thrs in soup.find_all('Var'):
         if var_thrs.get('threshold') == '1' and var_thrs.get('name') is None:
-            time_sys = str(time.time())
+            # time_sys = str(time.time())
             # print(time_sys)
             var_thrs_uuid = var_thrs.encode('UTF-8')
-            var_thrs_uuid2 = hex(zlib.crc32(time_sys.encode('UTF-8')))[2:].capitalize()
-            var_thrs_name = hex(zlib.crc32(var_thrs_uuid))[2:].capitalize() + var_thrs_uuid2
+            # var_thrs_uuid2 = hex(zlib.crc32(time_sys.encode('UTF-8')))[2:].capitalize()
+            var_thrs_name = hex(zlib.crc32(var_thrs_uuid))[2:].capitalize()
 
             for child_tag in var_thrs.find_all(recursive=False):
                 if 'Trigger' in str(child_tag.name):
@@ -607,17 +644,17 @@ def intentMarket(save_file, manifest_root='Lockscreen'):
     var_array = 1
     if var_array == 1:
         print('VarArray:')
-        for var_arr in soup.find_all('Var'):
-            if var_arr.parent.name == 'Vars':
-                if var_arr.parent.parent.get('type') == 'string':
+        for var_arr in soup.find_all('VarArray'):
+            if var_arr.Vars.Var and var_arr.Vars.Var.name == 'Var':
+                if var_arr.get('type') == 'string':
                     var_arr_type = '@'
                 else:
                     var_arr_type = '#'
-                var_arr_name = str(var_arr_type + str(var_arr['name']))
+                var_arr_name = str(var_arr_type + str(var_arr.Vars.Var['name']))
                 # {var_arr.parent.parent.name}:
                 if var_arr_name not in str(soup):
                     print(f"\t{var_arr_name}")
-                    var_arr.parent.parent.decompose()
+                    var_arr.decompose()
         print('\t')
 
     with open(save_file, 'w', encoding='utf-8') as f:

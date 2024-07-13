@@ -4,7 +4,7 @@ import time
 import pyperclip
 import subprocess
 from PIL import Image, ImageSequence
-from image_crop import crop_image
+from dev.Image.image_crop import crop_image
 
 
 def extract_frames(input_file, output_dir, crop_image_v=1):
@@ -72,6 +72,15 @@ def convert_all_mov_to_apng(input_dir):
 
 
 if __name__ == "__main__":
-    input_dir = pyperclip.paste().strip()  # 从剪贴板中获取输入目录路径
     fps = 15
-    convert_all_mov_to_apng(input_dir)
+    input_dir = pyperclip.paste().strip()  # 从剪贴板中获取输入目录路径
+    if os.path.isdir(input_dir):
+        convert_all_mov_to_apng(input_dir)
+    else:
+        input_dir = input('Please Input Correct Path: ')
+        # input_dir = input('输入目录后按回车继续: ')
+        if os.path.isdir(input_dir):
+            convert_all_mov_to_apng(input_dir)
+        else:
+            # print('\r错误: 请检查目录格式! ')
+            print('\rError: Path is not exist! ')

@@ -1,6 +1,6 @@
 <ROOT>
 
-	<NameHolder name="calendar" />
+	<!-- <NameHolder name="calendar" /> -->
 	<ValueHolder name="CalendarCode" />
 	<ValueHolder name="CalendarX" />
 	<ValueHolder name="CalendarY" />
@@ -11,6 +11,14 @@
 	<ValueHolder name="CalendarNum" type="string" />
 	<ValueHolder name="CalendarTodayBg" type="string" />
 	<ValueHolder name="CalendarTodayNum" type="string" />
+	<ValueHolder name="CalendarRotation" default="0" />
+	<ValueHolder name="CalendarOffsetY" default="0" />
+	<ValueHolder name="CalendarPivotX" default="0" />
+	<ValueHolder name="CalendarPivotY" default="0" />
+	<ValueHolder name="CalendarColorNum" type="string" default="#FFFFFF" />
+	<ValueHolder name="CalendarSizeNum" default="48" />
+	<ValueHolder name="CalendarTodayColor" type="string" default="#FFFFFF" />
+	<ValueHolder name="CalendarTodaySize" default="48" />
 
 
 	<!-- <Var name="CalendarX" expression="240" type="number" />
@@ -38,7 +46,7 @@
 	<!-- 后31天的星期与日期 -->
 	<C_Array begin="1" end="42" indexName="_d" >
 
-		<Var name="nextDayWeek_#_d" expression="int(#day_of_week-1+#_d+42)%7" />
+		<!-- <Var name="nextDayWeek_#_d" expression="int(#day_of_week-1+#_d+42)%7" /> -->
 		<Var name="WeekDate_#_d" expression="ifelse(eq(#WeekDate_{#_d-1},28),ifelse(#HasDate29,29,1),eq(#WeekDate_{#_d-1},29),ifelse(#HasDate30,30,1),eq(#WeekDate_{#_d-1},30),ifelse(#HasDate31,31,1),eq(#WeekDate_{#_d-1},31),1,#WeekDate_{#_d-1}+1)" />
 
 	</C_Array>
@@ -46,14 +54,14 @@
 	<!-- 前31天的星期与日期 -->
 	<C_Array begin="1" end="42" indexName="_p" >
 
-		<Var name="prevDayWeek_#_p" expression="int(#day_of_week-1-#_p+42)%7" />
+		<!-- <Var name="prevDayWeek_#_p" expression="int(#day_of_week-1-#_p+42)%7" /> -->
 		<Var name="WeekDate_f#_p" expression="ifelse(eq(#WeekDate_f{#_p-1},1),ifelse(eq((#_month+1),3),28+#LeapYear,31*#HasDateF31+30*#HasDateF30+29*#HasDateF29),#WeekDate_f{#_p-1}-1)" />
 
 	</C_Array>
 
 	<!-- 起止点变量 -->
-	<Var name="prevDayEnd" expression="ifelse(#isWeekCal,int(#day_of_week-1),ifelse(#calendarD,max(#date-1,0)+#weekStartsIn,max(#date-1,0)))" type="number" />
-	<Var name="nextDayEnd" expression="ifelse(#isWeekCal,7-#day_of_week,ifelse(#calendarD,max(#_monthMaxDay-#date,0)+(42-7-#_monthMaxDay-#weekStartsIn),max(#_monthMaxDay-#date,0)))" type="number" />
+	<Var name="prevDayEnd" expression="ifelse(#_on_cell_mode,ifelse(eq(#day_of_week,1),7,7+int(#day_of_week-1)),ifelse(#isWeekCal,int(#day_of_week-1),ifelse(#calendarD,max(#date-1,0)+#weekStartsIn,max(#date-1,0))))" type="number" />
+	<Var name="nextDayEnd" expression="ifelse(#_on_cell_mode,ifelse(eq(#day_of_week,1),7-1,7-int(#day_of_week-1)-1),ifelse(#isWeekCal,7-#day_of_week,ifelse(#calendarD,max(#_monthMaxDay-#date,0)+(42-7-#_monthMaxDay-#weekStartsIn),max(#_monthMaxDay-#date,0))))" type="number" />
 	<!-- 每月最大天数 -->
 	<Var name="_monthMaxDay" expression="ifelse(eq(int(#_month+1),1),31,eq(int(#_month+1),2),28+#LeapYear,eq(int(#_month+1),3),31,eq(int(#_month+1),4),30,eq(int(#_month+1),5),31,eq(int(#_month+1),6),30,eq(int(#_month+1),7),31,eq(int(#_month+1),8),31,eq(int(#_month+1),9),30,eq(int(#_month+1),10),31,eq(int(#_month+1),11),30,eq(int(#_month+1),12),31,31)" />
 
@@ -76,12 +84,15 @@
 		</Trigger>
 	</Var>
 	<!-- 每月的第一天 -->
-	<Var name="weekStartsIn_N" expression="int((7-(#date-#day_of_week+1)%7)%7+1-CalendarStart+int(#_monthMaxDiff%7))%7" />
-	<Var name="weekStartsIn_L" expression="int((7-(#date-#day_of_week+1+int(#_monthMaxDiff%7))%7)%7+1-CalendarStart)%7" />
+	<Var name="weekStartsIn_N" expression="int((7-(#date-#day_of_week+1)%7)%7+1-CalendarStart+#_on_cell_mode+int(#_monthMaxDiff%7))%7" />
+	<Var name="weekStartsIn_L" expression="int((7-(#date-#day_of_week+1+int(#_monthMaxDiff%7))%7)%7+1-CalendarStart+#_on_cell_mode)%7" />
 	<Var name="weekStartsIn" expression="ifelse(lt(#_monthAdd,0),#weekStartsIn_L,#weekStartsIn_N)" type="number" />
 	<!-- 周历模式 -->
 	<!-- <Var name="isWeekCal" expression="1" type="number" /> -->
 	<!-- <Var name="isWeekTop" expression="1" type="number" /> -->
+
+	<!-- 05.18 Add 2 Lines Mode -->
+	<!-- <Var name="_on_cell_mode" expression="1" type="number" /> -->
 
 	<!-- 日期x居中 -->
 	<Var name="calendarX" expression="CalendarX" />
@@ -91,50 +102,74 @@
 	<Var name="calendarW" expression="CalendarW" />
 	<!-- 日期间距高度 -->
 	<Var name="calendarH" expression="CalendarH" />
-	<Var name="calendarD" expression="CalendarD*(1-#isWeekCal)" />
+	<Var name="calendarD" expression="CalendarD*(1-#isWeekCal)+#_on_cell_mode" />
 
-	<!-- 日历 -->
-	<C_Array count="42" indexName="_i" >
+	<Var name="_on_cell_y" expression="#_on_cell_mode*int(#calendarY-#_calendar_y.0+#calendarH)" type="number" />
 
-		<!-- 今年的第$天 -->
-		<Var expression="ifelse(eq(#_month,0),#WeekDate_f#_i+0,eq(#_month,1),#WeekDate_f#_i+31,eq(#_month,2),#WeekDate_f#_i+59,eq(#_month,3),#WeekDate_f#_i+90,eq(#_month,4),#WeekDate_f#_i+120,eq(#_month,5),#WeekDate_f#_i+151,eq(#_month,6),#WeekDate_f#_i+181,eq(#_month,7),#WeekDate_f#_i+212,eq(#_month,8),#WeekDate_f#_i+243,eq(#_month,9),#WeekDate_f#_i+273,eq(#_month,10),#WeekDate_f#_i+304,eq(#_month,11),#WeekDate_f#_i+334,0)+#LeapYear*ge(#_month,2)-1" name="da_prev_#_i" type="number" />
-		<Var expression="ifelse(eq(#_month,0),#WeekDate_#_i+0,eq(#_month,1),#WeekDate_#_i+31,eq(#_month,2),#WeekDate_#_i+59,eq(#_month,3),#WeekDate_#_i+90,eq(#_month,4),#WeekDate_#_i+120,eq(#_month,5),#WeekDate_#_i+151,eq(#_month,6),#WeekDate_#_i+181,eq(#_month,7),#WeekDate_#_i+212,eq(#_month,8),#WeekDate_#_i+243,eq(#_month,9),#WeekDate_#_i+273,eq(#_month,10),#WeekDate_#_i+304,eq(#_month,11),#WeekDate_#_i+334,0)+#LeapYear*ge(#_month,2)" name="da_next_#_i" type="number" />
+	<Group y="#_on_cell_y" >
 
-		<Var name="_calendar_x.#_i" expression="#calendarX+#calendarW*int((#weekStartsIn*(1-#calendarD)*(1-#isWeekCal)+#prevDayEnd-#_i)%7)" type="number" />
-		<Var name="_calendar_y.#_i" expression="#calendarY+#calendarH*int((#weekStartsIn*(1-#calendarD)*(1-#isWeekCal)+#prevDayEnd-#_i)/7)" type="number" />
+		<!-- 日历 -->
+		<C_Array count="32" indexName="_i" >
 
-		<Var name="_calendar_x_n.#_i" expression="#calendarX+#calendarW*int((#weekStartsIn*(1-#calendarD)*(1-#isWeekCal)+1+#prevDayEnd+#_i)%7)" type="number" />
-		<Var name="_calendar_y_n.#_i" expression="#calendarY+#calendarH*int((#weekStartsIn*(1-#calendarD)*(1-#isWeekCal)+1+#prevDayEnd+#_i)/7)" type="number" />
-		<Var name="_calendar_v_n.#_i" expression="ifelse(le(#WeekDate_{#_i+1},#_monthMaxDay)*lt(#_i,#nextDayEnd),1,0)" type="number" />
-		<Var name="_calendar_a.#_i" expression="ifelse(#calendarD,ifelse(gt(#_i,#prevDayEnd-#weekStartsIn),128,255),255)" type="number" />
-		<Var name="_calendar_a_n.#_i" expression="ifelse(#calendarD,ifelse(ge(#_i,#nextDayEnd-(42-7-#_monthMaxDay-#weekStartsIn)),128,255),255)" type="number" />
+			<!-- <Var name="_on_cell_n_#_i" expression="ifelse(#_on_cell_mode,eq(#_calendar_y_n.#_i-#_calendar_y.0,0)+eq(#_calendar_y_n.#_i-#_calendar_y.0,0-CalendarH*1),1)" type="number" /> -->
+			<!-- <Var name="_on_cell_#_i" expression="ifelse(#_on_cell_mode,eq(#_calendar_y.#_i-#_calendar_y.0,0)+eq(#_calendar_y.#_i-#_calendar_y.0,0-CalendarH*1),1)" type="number" /> -->
 
+			<!-- if above current date -->
+			<!-- <Var name="_on_cell_n_#_i:f1" expression="eq(#_calendar_y_n.#_i-#_calendar_y.0,0-CalendarH*1)" type="number" />
+				<Var name="_on_cell_n_#_i:0" expression="eq(#_calendar_y_n.#_i-#_calendar_y.0,0)" type="number" />
 
-		<!-- 今日及之前 -->
-		<Image alpha="#_calendar_a.#_i" x="#_calendar_x.#_i" y="#_calendar_y.#_i" align="center" alignV="center" src="CalendarNum" srcid="#WeekDate_f#_i" visibility="eq(CalendarCode,0)*le(#_i,#prevDayEnd)" />
-		<!-- 之后 -->
-		<Image alpha="#_calendar_a_n.#_i" x="#_calendar_x_n.#_i" y="#_calendar_y_n.#_i" align="center" alignV="center" src="CalendarNum" srcid="#WeekDate_{#_i+1}" visibility="eq(CalendarCode,0)*#_calendar_v_n.#_i" />
+				<Var name="_on_cell_#_i:f1" expression="eq(#_calendar_y.#_i-#_calendar_y.0,0-CalendarH*1)" type="number" />
+				<Var name="_on_cell_#_i:0" expression="eq(#_calendar_y.#_i-#_calendar_y.0,0)" type="number" />
+			-->
+
+			<!-- 今年的第$天 -->
+			<!-- <Var expression="ifelse(eq(#_month,0),#WeekDate_f#_i+0,eq(#_month,1),#WeekDate_f#_i+31,eq(#_month,2),#WeekDate_f#_i+59,eq(#_month,3),#WeekDate_f#_i+90,eq(#_month,4),#WeekDate_f#_i+120,eq(#_month,5),#WeekDate_f#_i+151,eq(#_month,6),#WeekDate_f#_i+181,eq(#_month,7),#WeekDate_f#_i+212,eq(#_month,8),#WeekDate_f#_i+243,eq(#_month,9),#WeekDate_f#_i+273,eq(#_month,10),#WeekDate_f#_i+304,eq(#_month,11),#WeekDate_f#_i+334,0)+#LeapYear*ge(#_month,2)-1" name="da_prev_#_i" type="number" /> -->
+			<!-- <Var expression="ifelse(eq(#_month,0),#WeekDate_#_i+0,eq(#_month,1),#WeekDate_#_i+31,eq(#_month,2),#WeekDate_#_i+59,eq(#_month,3),#WeekDate_#_i+90,eq(#_month,4),#WeekDate_#_i+120,eq(#_month,5),#WeekDate_#_i+151,eq(#_month,6),#WeekDate_#_i+181,eq(#_month,7),#WeekDate_#_i+212,eq(#_month,8),#WeekDate_#_i+243,eq(#_month,9),#WeekDate_#_i+273,eq(#_month,10),#WeekDate_#_i+304,eq(#_month,11),#WeekDate_#_i+334,0)+#LeapYear*ge(#_month,2)" name="da_next_#_i" type="number" /> -->
+
+			<Var name="_calendar_x.#_i" expression="#calendarX+#calendarW*int((#weekStartsIn*(1-#calendarD)*(1-#isWeekCal)+#prevDayEnd-#_i)%7)" type="number" />
+			<Var name="_calendar_y.#_i" expression="#calendarY+#calendarH*int((#weekStartsIn*(1-#calendarD)*(1-#isWeekCal)+#prevDayEnd-#_i)/7)+(CalendarOffsetY)*(int(#_calendar_x.#_i-#calendarX)/#calendarW)" type="number" />
+			<!-- <Var name="_calendar_x_pos.#_i" expression="int(#_calendar_x.#_i-#calendarX)/#calendarW" type="number" /> -->
+
+			<Var name="_calendar_x_n.#_i" expression="#calendarX+#calendarW*int((#weekStartsIn*(1-#calendarD)*(1-#isWeekCal)+1+#prevDayEnd+#_i)%7)" type="number" />
+			<Var name="_calendar_y_n.#_i" expression="#calendarY+#calendarH*int((#weekStartsIn*(1-#calendarD)*(1-#isWeekCal)+1+#prevDayEnd+#_i)/7)+(CalendarOffsetY)*(int(#_calendar_x_n.#_i-#calendarX)/#calendarW)" type="number" />
+			<!-- <Var name="_calendar_x_n_pos.#_i" expression="int(#_calendar_x_n.#_i-#calendarX)/#calendarW" type="number" /> -->
+
+			<!-- <Var name="_calendar_v_n.#_i" expression="ifelse(le(#WeekDate_{#_i+1},#_monthMaxDay)*lt(#_i,#nextDayEnd),1,0)" type="number" /> -->
+			<!-- <Var name="_calendar_a.#_i" expression="ifelse(#calendarD,ifelse(gt(#_i,#prevDayEnd-#weekStartsIn)*ne(#_on_cell_mode,1),128,255),255)" type="number" /> -->
+			<!-- <Var name="_calendar_a_n.#_i" expression="ifelse(#calendarD,ifelse(ge(#_i,#nextDayEnd-(42-7-#_monthMaxDay-#weekStartsIn)),128,255),255)" type="number" /> -->
+
+			<!-- 今日及之前 alpha="ifelse(#calendarD,ifelse(gt(#_i,#prevDayEnd-#weekStartsIn)*ne(#_on_cell_mode,1),128,255),255)" -->
+			<Image x="#_calendar_x.#_i" y="#_calendar_y.#_i" align="center" alignV="center" src="CalendarNum" rotation="(CalendarRotation)" pivotX="(CalendarPivotX)" pivotY="(CalendarPivotY)" srcid="#WeekDate_f#_i" visibility="eq(CalendarCode,0)*le(#_i,#prevDayEnd)" />
+			<!-- 之后 alpha="ifelse(#calendarD,ifelse(ge(#_i,#nextDayEnd-(42-7-#_monthMaxDay-#weekStartsIn)),128,255),255)" -->
+			<Image x="#_calendar_x_n.#_i" y="#_calendar_y_n.#_i" align="center" alignV="center" src="CalendarNum" rotation="(CalendarRotation)" pivotX="(CalendarPivotX)" pivotY="(CalendarPivotY)" srcid="#WeekDate_{#_i+1}" visibility="eq(CalendarCode,0)*le(#WeekDate_{#_i+1},#_monthMaxDay)*lt(#_i,#nextDayEnd)" />
+
+			<!-- 今日及之前 alpha="ifelse(#calendarD,ifelse(gt(#_i,#prevDayEnd-#weekStartsIn)*ne(#_on_cell_mode,1),128,255),255)" -->
+			<ImageNumber x="#_calendar_x.#_i" y="#_calendar_y.#_i" align="center" alignV="center" src="CalendarNum" rotation="(CalendarRotation)" pivotX="(CalendarPivotX)" pivotY="(CalendarPivotY)" number="#WeekDate_f#_i" visibility="eq(CalendarCode,1)*le(#_i,#prevDayEnd)" />
+			<!-- 之后 alpha="ifelse(#calendarD,ifelse(ge(#_i,#nextDayEnd-(42-7-#_monthMaxDay-#weekStartsIn)),128,255),255)" -->
+			<ImageNumber x="#_calendar_x_n.#_i" y="#_calendar_y_n.#_i" align="center" alignV="center" src="CalendarNum" rotation="(CalendarRotation)" pivotX="(CalendarPivotX)" pivotY="(CalendarPivotY)" number="#WeekDate_{#_i+1}" visibility="eq(CalendarCode,1)*le(#WeekDate_{#_i+1},#_monthMaxDay)*lt(#_i,#nextDayEnd)" />
+
+			<Text x="#calendarX+#calendarW*#_i" y="#calendarY-#calendarH" align="center" alignV="center" color="CalendarColorNum" size="CalendarSizeNum" text="{substr('日一二三四五六',#_i,1)}" visibility="eq(CalendarCode,2)*lt(#_i,7)*eq(#isWeekTop,1)" />
+			<!-- 今日及之前 alpha="ifelse(#calendarD,ifelse(gt(#_i,#prevDayEnd-#weekStartsIn)*ne(#_on_cell_mode,1),128,255),255)" -->
+			<Text x="#_calendar_x.#_i" y="#_calendar_y.#_i" align="center" alignV="center" color="CalendarColorNum" size="CalendarSizeNum" format="%d" paras="#WeekDate_f#_i" visibility="eq(CalendarCode,2)*le(#_i,#prevDayEnd)*le(#_i,#prevDayEnd)" />
+			<!-- 之后 alpha="ifelse(#calendarD,ifelse(ge(#_i,#nextDayEnd-(42-7-#_monthMaxDay-#weekStartsIn)),128,255),255)" -->
+			<Text x="#_calendar_x_n.#_i" y="#_calendar_y_n.#_i" align="center" alignV="center" color="CalendarColorNum" size="CalendarSizeNum" format="%d" paras="#WeekDate_{#_i+1}" visibility="eq(CalendarCode,2)*le(#WeekDate_{#_i+1},#_monthMaxDay)*lt(#_i,#nextDayEnd)" />
+
+		</C_Array>
+
 		<!-- 今日 -->
-		<Image x="#_calendar_x.#_i" y="#_calendar_y.#_i" align="center" alignV="center" src="CalendarTodayBg" visibility="{eq(CalendarCode,0)*eq(#_i,0)}*eq(#_monthAdd,0)" />
-		<Image x="#_calendar_x.#_i" y="#_calendar_y.#_i" align="center" alignV="center" src="CalendarTodayNum" srcid="#date" visibility="{eq(CalendarCode,0)*eq(#_i,0)}*eq(#_monthAdd,0)" />
-
-		<!-- 今日及之前 -->
-		<ImageNumber alpha="#_calendar_a.#_i" x="#_calendar_x.#_i" y="#_calendar_y.#_i" align="center" alignV="center" src="CalendarNum" number="#WeekDate_f#_i" visibility="eq(CalendarCode,1)*le(#_i,#prevDayEnd)" />
-		<!-- 之后 -->
-		<ImageNumber alpha="#_calendar_a_n.#_i" x="#_calendar_x_n.#_i" y="#_calendar_y_n.#_i" align="center" alignV="center" src="CalendarNum" number="#WeekDate_{#_i+1}" visibility="eq(CalendarCode,1)*#_calendar_v_n.#_i" />
+		<Image x="#_calendar_x.0" y="#_calendar_y.0" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(CalendarCode,0)*eq(#_monthAdd,0)" />
 		<!-- 今日 -->
-		<Image x="#_calendar_x.#_i" y="#_calendar_y.#_i" align="center" alignV="center" src="CalendarTodayBg" visibility="{eq(CalendarCode,1)*eq(#_i,0)}*eq(#_monthAdd,0)" />
-		<ImageNumber x="#_calendar_x.#_i" y="#_calendar_y.#_i" align="center" alignV="center" src="CalendarTodayNum" number="#date" visibility="{eq(CalendarCode,1)*eq(#_i,0)}*eq(#_monthAdd,0)" />
-
-		<Text x="#calendarX+#calendarW*#_i" y="#calendarY-#calendarH" align="center" alignV="center" color="#FFFFFF" size="48" text="{substr('日一二三四五六',#_i,1)}" visibility="eq(CalendarCode,2)*lt(#_i,7)*eq(#isWeekTop,1)" />
-		<!-- 今日及之前 -->
-		<Text alpha="#_calendar_a.#_i" x="#_calendar_x.#_i" y="#_calendar_y.#_i" align="center" alignV="center" color="#FFFFFF" size="48" format="%d" paras="#WeekDate_f#_i" visibility="eq(CalendarCode,2)*le(#_i,#prevDayEnd)" />
-		<!-- 之后 -->
-		<Text alpha="#_calendar_a_n.#_i" x="#_calendar_x_n.#_i" y="#_calendar_y_n.#_i" align="center" alignV="center" color="#FFFFFF" size="48" format="%d" paras="#WeekDate_{#_i+1}" visibility="eq(CalendarCode,2)*#_calendar_v_n.#_i" />
+		<Image x="#_calendar_x.0" y="#_calendar_y.0" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(CalendarCode,1)*eq(#_monthAdd,0)" />
 		<!-- 今日 -->
-		<Image x="#_calendar_x.#_i" y="#_calendar_y.#_i" align="center" alignV="center" src="CalendarTodayBg" visibility="{eq(CalendarCode,2)*eq(#_i,0)}*eq(#_monthAdd,0)" />
-		<Text x="#_calendar_x.#_i" y="#_calendar_y.#_i" align="center" alignV="center" color="#FFFFFF" size="48" format="%d" paras="#date" visibility="{eq(CalendarCode,2)*eq(#_i,0)}*eq(#_monthAdd,0)" />
+		<Image x="#_calendar_x.0" y="#_calendar_y.0" align="center" alignV="center" src="CalendarTodayBg" visibility="eq(CalendarCode,2)*eq(#_monthAdd,0)" />
 
-	</C_Array>
+		<!-- 今日 -->
+		<Image x="#_calendar_x.0" y="#_calendar_y.0" align="center" alignV="center" src="CalendarTodayNum" rotation="(CalendarRotation)" pivotX="(CalendarPivotX)" pivotY="(CalendarPivotY)" srcid="#date" visibility="eq(CalendarCode,0)*eq(#_monthAdd,0)" />
+		<!-- 今日 -->
+		<ImageNumber x="#_calendar_x.0" y="#_calendar_y.0" align="center" alignV="center" src="CalendarTodayNum" rotation="(CalendarRotation)" pivotX="(CalendarPivotX)" pivotY="(CalendarPivotY)" number="#date" visibility="eq(CalendarCode,1)*eq(#_monthAdd,0)" />
+		<!-- 今日 -->
+		<Text x="#_calendar_x.0" y="#_calendar_y.0" align="center" alignV="center" color="CalendarTodayColor" size="CalendarTodaySize" format="%d" paras="#date" visibility="eq(CalendarCode,2)*eq(#_monthAdd,0)" />
+
+	</Group>
 
 </ROOT>

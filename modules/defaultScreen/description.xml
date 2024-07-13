@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MIUI-Theme>
+	<title>解锁框架</title>
+	<version>1.0</version>
+	<description>解锁框架</description>
+	<type>container</type>
+	<typeName>容器</typeName>
+	<author>小米主题</author>
+</MIUI-Theme>

@@ -95,9 +95,8 @@
     <_action_tag_id_><VariableCommand /></_action_tag_id_>
     该写法在混淆前解析（相当于在不破坏 maml.xml 的情况下改动）
 
-    // ⚠️需要改进的点：
-    1.当缺少 ['w', 'h'] 属性时，能否从文件路径中寻找对应值（考虑srcid, srcExp）
-    2.支持 Rectangle 用法
+    TODO*: 1.当缺少 ['w', 'h'] 属性时，能否从文件路径中寻找对应值（考虑srcid, srcExp）
+    07.12 新增支持 Rectangle 标签
 02.02 新增 C_Array 数组标签写法: 支持单条的 VariableCommand 命令（不可与其他标签共用）
     <C_Array count="4" indexName="index">
         <VariableCommand name="test_#index" expression="#index" type="number" />
@@ -105,6 +104,7 @@
     16:18 已修复为自动识别代码，支持解析 {$pattern$} 为 eval($pattern$)
     TODO: C_Array 解析 Group 标签时多次复制
 02.21 新增 SoundCommand 自动处理：带 condition 属性的 SoundCommand 标签单独处理
+	2024.07.10 新增 _condition 属性存在时，屏蔽处理（适用于华为）
 03.15 重构加解密代码 -> dev.Refactor.refactor
 03.20 数据库新增列 anti_json 负责记录 var_alias_dict
 03.21 代码中新增变量 Key 作为解密（AES-256），Key['expression'] = encrypt_text(anti_json) 即 var_alias_dict 的加密版本
@@ -115,7 +115,7 @@
     type="number[]" 数字类型数组
     type="string[]" 文本类型数组
     使用时 Var 需加上 _c="1"，与 MIUI 分辨
-BEAT_04.13 新增 属性解析 eval 功能：（与 C_Array 的解析方式一致，支持常数变量解析）
+BETA_04.13 （已移除）新增 属性解析 eval 功能：（与 C_Array 的解析方式一致，支持常数变量解析）
     # eval {eval_content} eg: "{0+1}" => "1"
     from tools.arrayc import eval_soup
     complex from refactor.py
@@ -123,35 +123,44 @@ BEAT_04.13 新增 属性解析 eval 功能：（与 C_Array 的解析方式一�
 BETA_04.27 新增 解析函数功能：parse_function_beta
     当 count 参数缺失时：当作 Slot 使用，可省略 params 参数
     否则： count 与 params 为必填项，且 count 与 params 内的数量必须一致
+
+    07.12 Support ['condition'] attribution (Only for '*Command' Tags)
+
     # 用法示例：
     <Fun name="Demo1" count="3" >
         <VariableCommand name="{param1}" expression="{param2}" type="number" />
         <VariableCommand name="{param3}" expression="{param4}" type="number" />
     </Fun>
-    <FunCom target="Demo1" params="{'param1': 'test_0', 'param2': '2', 'param3': 'test_1', 'param4': '4'}" />
+    <FunCom condition="1" target="Demo1" params="{'param1': 'test_0', 'param2': '2', 'param3': 'test_1', 'param4': '4'}" />
+05.12 新增 ValueHolder['default'] 默认值定义:
+    # 用法示例
+    <ValueHolder name="CalendarRotation" default="0" />
+    目前 ValueHolder 可自动获取默认值，以便后期新增属性
+05.30 新增 modules/Demo/manifest.xml 写法 V2:
+    https://zhuti.designer.xiaomi.com/docs/blog/modular.html
+06.04 新增 OPPO 组件卡加入合并 InputGroup 标签
+06.20 优化 VarArray 检测逻辑
+BETA_07.10 通过获取 VariableCommand 删除无用的变量
+BETA_07.12 通过获取 Button 的 align、alignV 属性，自动修改坐标值
+07.12 修复 '&lt;'/'&gt;' 转码失败
 
-// 检测图片是否在代码内：
+⚠️TODO: START
+a. 检测图片是否在代码内：
     1. "pic.png": search directly
     2. if "_" in "pic_0.png":
         prefix = split("_")[0] = "pic"
         and search "pic.png" or "pic_" in code
-// 检测 IntentCommand 中 package 与 class 是否都存在
-    （VIEW除外）
-// 需求：【Mask / Paint】从Group中提取
-// 图片减半、重命名功能
 
-// 检测format是否为纯数字 / 或format内无%
-// 值内 ## 1# 错误
-// month/
+b. Soft 检测 IntentCommand 中 package 与 class 是否都存在（VIEW除外）
+c. Soft 需求：【Mask / Paint / LrcView】从Group中提取
 
-⚠️历史遗留问题:
-      1 四个空格转为/t
-      2 &lt; &gt; 应该为&amp;lt &amp;gt
-      3 lib文件夹下模块内变量名称混淆
-      4 插件属性完整性检测 <i_Theme designId="" condition="" /> designId 为空时 condition 出错
-      5 搜索【问题 #685】
+遗留问题: 四个空格转为/t
+⚠️TODO: END
 """
 
+
+import platform
+import warnings
 import logging
 import os
 import re
@@ -170,24 +179,26 @@ from dev.Refactor.refactor import aes_encode
 # import wx
 # import requests
 
-from splitTools import splitVar, splitExt, splitBinders, splitGroup, preLoadVar, preLoadExt, intentMarket
-from dev.Refactor.refactor import refactor
-import platform
-import warnings
+# from splitTools import splitVar, splitExt, splitBinders, splitGroup, preLoadVar, preLoadExt, intentMarket
+from splitTools import *
+from dev.Refactor.refactor import *
+from dev.Refactor.Var.var_forbid import var_forbid_name as vfb
+var_forbid_name = vfb
+
 
 # 禁用特定警告
 warnings.filterwarnings("ignore", category=UserWarning, message=".*MarkupResemblesLocatorWarning.*")
 warnings.simplefilter("ignore", category=UserWarning)
 
+RELEASE = 0
 
 sys_version = 0
 current_dir = os.getcwd()
 maml_main_xml = str(pyperclip.paste()).replace('\\', '/').replace('"', '')
-maml_rule_file = "maml.xml"
+maml_rule_file = "maml"
 maml_file_name = os.path.basename(maml_main_xml)
 maml_folder_name = os.path.dirname(maml_main_xml).split('/')[-1]
 
-# 判断 maml_file_name 是否以 maml_rule_file 结尾
 if maml_rule_file not in maml_file_name:
     print(f"Error: File must be '{maml_rule_file}'")
     sys.exit(1)
@@ -214,11 +225,16 @@ BeautifulSoup.prettify = prettify
 
 line = ''
 lib_folder_name = os.path.join(current_dir, 'lib')
+modules_folder_name = os.path.join(current_dir, 'modules')
 assets_folder_name = os.path.join(current_dir, 'assets')
 
 # 创建lib文件夹
 if not os.path.exists(lib_folder_name):
     os.makedirs(lib_folder_name)
+
+# 创建modules文件夹
+if not os.path.exists(modules_folder_name):
+    os.makedirs(modules_folder_name)
 
 # 创建assets文件夹
 if not os.path.exists(assets_folder_name):
@@ -271,88 +287,89 @@ lib_slots = []
 lib_slots_list = []
 
 var_from_xml = []
-var_forbid_name = ['Almanac', 'Almanac.baiji', 'Almanac.caishen', 'Almanac.chenA', 'Almanac.chenB', 'Almanac.chongsha',
-                   'Almanac.chouA', 'Almanac.chouB', 'Almanac.fushen', 'Almanac.ganzhi', 'Almanac.haiA', 'Almanac.haiB',
-                   'Almanac.ji', 'Almanac.jishen', 'Almanac.maoA', 'Almanac.maoB', 'Almanac.nongli', 'Almanac.riwuxing',
-                   'Almanac.shen12', 'Almanac.shenA', 'Almanac.shenB', 'Almanac.shengxiao', 'Almanac.siA',
-                   'Almanac.siB', 'Almanac.taishen', 'Almanac.weiA', 'Almanac.weiB', 'Almanac.wuA', 'Almanac.wuB',
-                   'Almanac.xingxiu28', 'Almanac.xiongshen', 'Almanac.xishen', 'Almanac.xuA', 'Almanac.xuB',
-                   'Almanac.yangli', 'Almanac.yi', 'Almanac.yinA', 'Almanac.yinB', 'Almanac.yingui', 'Almanac.youA',
-                   'Almanac.youB', 'Almanac.zhishen', 'Almanac.ziA', 'Almanac.ziB', 'BigEvent_0', 'BigEvent_0.event',
-                   'BigEvent_0.year', 'BigEvent_1', 'BigEvent_1.event', 'BigEvent_1.year', 'BigEvent_2',
-                   'BigEvent_2.event', 'BigEvent_2.year', 'BigEvent_3', 'BigEvent_3.event', 'BigEvent_3.year',
-                   'BigEvent_4', 'BigEvent_4.event', 'BigEvent_4.year', 'ChargeSpeed', 'ChargeWireState',
-                   'Constellations', 'Constellations.signName', 'Constellations.today.datetime',
-                   'Constellations.today.healthStar', 'Constellations.today.loveDes', 'Constellations.today.loveStar',
-                   'Constellations.today.luckyColor', 'Constellations.today.luckyNumber',
-                   'Constellations.today.matchSign', 'Constellations.today.moneyDes', 'Constellations.today.moneyStar',
-                   'Constellations.today.summaryDes', 'Constellations.today.summaryStar',
-                   'Constellations.today.workDes', 'Constellations.today.workStar', 'MiStep', 'MiSteps',
-                   'MiSteps_distance', 'MiSteps_energy', 'MiSteps_goal', 'MiSteps_steps', 'MiSteps_strength_duration',
-                   'MiSteps_summary', 'Mi_begin_time', 'Mi_end_time', 'Mi_step', 'Progress', 'SetLanguage', 'Weather',
-                   'Weather.today.aqivalue', 'Weather.today.aqivaluetext', 'Weather.today.carWashLevel',
-                   'Weather.today.cnweatherDes', 'Weather.today.cnweatherid', 'Weather.today.coldLevel',
-                   'Weather.today.currentTem', 'Weather.today.dressingLevel', 'Weather.today.humidity',
-                   'Weather.today.maxtemp', 'Weather.today.mintemp', 'Weather.today.moonRise', 'Weather.today.moonSet',
-                   'Weather.today.sportsLevel', 'Weather.today.sunRise', 'Weather.today.sunSet',
-                   'Weather.today.weatherDes', 'Weather.today.weatherIcon', 'Weather.today.weatherIconDes',
-                   'Weather.today.weatherid', 'Weather.today.winddir', 'Weather.today.winddirDes',
-                   'Weather.tomorrow.aqivalue', 'Weather.tomorrow.aqivaluetext', 'Weather.tomorrow.carWashLevel',
-                   'Weather.tomorrow.cnweatherDes', 'Weather.tomorrow.cnweatherid', 'Weather.tomorrow.coldLevel',
-                   'Weather.tomorrow.currentTem', 'Weather.tomorrow.dressingLevel', 'Weather.tomorrow.humidity',
-                   'Weather.tomorrow.maxtemp', 'Weather.tomorrow.mintemp', 'Weather.tomorrow.moonRise',
-                   'Weather.tomorrow.moonSet', 'Weather.tomorrow.sportsLevel', 'Weather.tomorrow.sunRise',
-                   'Weather.tomorrow.sunSet', 'Weather.tomorrow.weatherDes', 'Weather.tomorrow.weatherIcon',
-                   'Weather.tomorrow.weatherIconDes', 'Weather.tomorrow.weatherid', 'Weather.tomorrow.winddir',
-                   'Weather.tomorrow.winddirDes', 'Weather.yesterday.aqivalue', 'Weather.yesterday.aqivaluetext',
-                   'Weather.yesterday.carWashLevel', 'Weather.yesterday.cnweatherDes', 'Weather.yesterday.cnweatherid',
-                   'Weather.yesterday.coldLevel', 'Weather.yesterday.currentTem', 'Weather.yesterday.dressingLevel',
-                   'Weather.yesterday.humidity', 'Weather.yesterday.maxtemp', 'Weather.yesterday.mintemp',
-                   'Weather.yesterday.moonRise', 'Weather.yesterday.moonSet', 'Weather.yesterday.sportsLevel',
-                   'Weather.yesterday.sunRise', 'Weather.yesterday.sunSet', 'Weather.yesterday.weatherDes',
-                   'Weather.yesterday.weatherIcon', 'Weather.yesterday.weatherIconDes', 'Weather.yesterday.weatherid',
-                   'Weather.yesterday.winddir', 'Weather.yesterday.winddirDes', '__android_version', 'night_mode',
-                   'darkMode', '__darkmode', '__darkmode_wallpaper', '__maml_version', '__miui_version_code',
-                   '__miui_version_name', '__thememanager_version', 'almanacRespCode', 'ampm',
-                   'applied_light_wallpaper', 'aqi_level', 'automaticRotary', 'automaticRotaryValue', 'battery_level',
-                   'battery_state', 'bigEventRespCode', 'call_missed_count', 'calories_value', 'cityid', 'cityname',
-                   'cityname_en', 'cityname_tw', 'clock_button', 'constellationRespCode', 'constellationsId',
-                   'cur_aqi_co', 'cur_aqi_level', 'cur_aqi_no', 'cur_aqi_no2', 'cur_aqi_o3', 'cur_aqi_so',
-                   'cur_avg_aqi', 'cur_avg_pm25', 'cur_pm10', 'cur_pressure', 'cur_uv_desc', 'cur_uv_index',
-                   'cur_visibility', 'cur_weather', 'cur_weather_direct', 'cur_weather_humidity', 'cur_weather_power',
-                   'cur_weather_temp', 'cur_weather_type', 'date', 'date_lunar', 'day_temp', 'day_weather_type',
-                   'defaultScreen_x', 'defaultScreen_y', 'deviceTime', 'distance_value', 'feast', 'festival',
-                   'flashlight', 'flashlightValue', 'face_enable', 'face_detect_state_msg', 'face_detect_help_msg',
-                   'fod_enable', 'fod_height', 'fod_state_msg', 'fod_width', 'fod_x', 'fod_y', 'frame_rate',
-                   'hasSteps', 'hasWeather', 'hassteps', 'health1', 'heart_rate_value', 'hour', 'hour12', 'hour24',
-                   'isPreviewMode', 'isMatePad_H_2560', 'isMatePad_V_1600', 'isSupportMicro',
-                   'is_music_playing', 'is_work_day', 'ishour12', 'lunarDay', 'lunarMonth', 'lunarYear',
-                   'lunar_solar_term', 'mCivetCode_000', 'mCivetCode_001', 'mCivetCode_002',
-                   'mCivetCode_003', 'mCivetCode_004', 'mCivetCode_005', 'mCivetCode_006', 'mCivetCode_007',
-                   'mCivetCode_008', 'mCivetCode_009', 'mCivetCode_010', 'mGlobalVar', 'mGlobalVar_2H', 'media_genres',
-                   'media_like_status', 'media_loading_status', 'media_mode_status', 'media_play_status',
-                   'media_subtitle', 'media_title', 'microPhone_state', 'microPhone_volume', 'microphone_state',
-                   'minute', 'month', 'month1', 'month_lunar', 'month_lunar_leap', 'musicPlayDuration',
-                   'musicPlaySecond',
-                   'musicTotalDuration', 'musicTotalSecond', 'music_active', 'music_album_cover', 'music_control',
-                   'music_display', 'music_next', 'music_pause', 'music_play', 'music_prev', 'next_alarm_time',
-                   'night_temp', 'night_weather_type', 'noticeDown', 'notification', 'ownerinfo', 'point_count',
-                   'pollingTime', 'processCpuFree', 'processCpuRate', 'rain_probability', 'raw_screen_height',
-                   'raw_screen_width', 'real_feel_temp', 'repeat_mode', 'resting_heart_rate_value', 'screen_density',
-                   'second', 'shake', 'shake_record', 'x_acc', 'y_acc', 'z_acc',
-                   'sms_unread_count', 'sport_value', 'step', 'step_today', 'steps_value',
-                   'storageFree', 'storageFreeNum', 'storageTotal', 'storageTotalNum', 'sunrise_time', 'sunset_time',
-                   'system.date', 'system.time.ampm', 'system.time.hour1', 'system.time.hour2', 'system.time.min1',
-                   'system.time.min2', 'systemVersion', 'time', 'timeZone', 'time_format', 'time_sys',
-                   'touch_begin_time', 'touch_begin_x', 'touch_begin_y', 'touch_pressure', 'touch_x', 'touch_y',
-                   'vibration', 'view_height', 'view_width', 'volume_level', 'volume_level_old', 'volume_type',
-                   'weather', 'weather1', 'weather2', 'weather3', 'weatherRespCode', 'weather_', 'weather_city',
-                   'weather_condition', 'weather_cur_temp', 'weather_description', 'weather_high_temp', 'weather_id',
-                   'weather_location', 'weather_low_temp', 'weather_publish_time', 'weather_sunrise', 'weather_sunset',
-                   'weather_temperature', 'weather_tmphighs', 'weather_tmplows', 'weather_wind_dir', 'weather_wind_pow',
-                   'year_lunar', 'year_lunar1864', 'year_lunar_leap', 'lunar_calendar_enable', 'battery_enable',
-                   'notification_enable', 'preview_mode', 'connectedStatus', 'headsetName', 'headsetBatteryLevel',
-                   'in_preview_mode']
+# var_forbid_name = ['Almanac', 'Almanac.baiji', 'Almanac.caishen', 'Almanac.chenA', 'Almanac.chenB', 'Almanac.chongsha',
+#                    'Almanac.chouA', 'Almanac.chouB', 'Almanac.fushen', 'Almanac.ganzhi', 'Almanac.haiA', 'Almanac.haiB',
+#                    'Almanac.ji', 'Almanac.jishen', 'Almanac.maoA', 'Almanac.maoB', 'Almanac.nongli', 'Almanac.riwuxing',
+#                    'Almanac.shen12', 'Almanac.shenA', 'Almanac.shenB', 'Almanac.shengxiao', 'Almanac.siA',
+#                    'Almanac.siB', 'Almanac.taishen', 'Almanac.weiA', 'Almanac.weiB', 'Almanac.wuA', 'Almanac.wuB',
+#                    'Almanac.xingxiu28', 'Almanac.xiongshen', 'Almanac.xishen', 'Almanac.xuA', 'Almanac.xuB',
+#                    'Almanac.yangli', 'Almanac.yi', 'Almanac.yinA', 'Almanac.yinB', 'Almanac.yingui', 'Almanac.youA',
+#                    'Almanac.youB', 'Almanac.zhishen', 'Almanac.ziA', 'Almanac.ziB', 'BigEvent_0', 'BigEvent_0.event',
+#                    'BigEvent_0.year', 'BigEvent_1', 'BigEvent_1.event', 'BigEvent_1.year', 'BigEvent_2',
+#                    'BigEvent_2.event', 'BigEvent_2.year', 'BigEvent_3', 'BigEvent_3.event', 'BigEvent_3.year',
+#                    'BigEvent_4', 'BigEvent_4.event', 'BigEvent_4.year', 'ChargeSpeed', 'ChargeWireState',
+#                    'Constellations', 'Constellations.signName', 'Constellations.today.datetime',
+#                    'Constellations.today.healthStar', 'Constellations.today.loveDes', 'Constellations.today.loveStar',
+#                    'Constellations.today.luckyColor', 'Constellations.today.luckyNumber',
+#                    'Constellations.today.matchSign', 'Constellations.today.moneyDes', 'Constellations.today.moneyStar',
+#                    'Constellations.today.summaryDes', 'Constellations.today.summaryStar',
+#                    'Constellations.today.workDes', 'Constellations.today.workStar', 'MiStep', 'MiSteps',
+#                    'MiSteps_distance', 'MiSteps_energy', 'MiSteps_goal', 'MiSteps_steps', 'MiSteps_strength_duration',
+#                    'MiSteps_summary', 'Mi_begin_time', 'Mi_end_time', 'Mi_step', 'Progress', 'SetLanguage', 'Weather',
+#                    'Weather.today.aqivalue', 'Weather.today.aqivaluetext', 'Weather.today.carWashLevel',
+#                    'Weather.today.cnweatherDes', 'Weather.today.cnweatherid', 'Weather.today.coldLevel',
+#                    'Weather.today.currentTem', 'Weather.today.dressingLevel', 'Weather.today.humidity',
+#                    'Weather.today.maxtemp', 'Weather.today.mintemp', 'Weather.today.moonRise', 'Weather.today.moonSet',
+#                    'Weather.today.sportsLevel', 'Weather.today.sunRise', 'Weather.today.sunSet',
+#                    'Weather.today.weatherDes', 'Weather.today.weatherIcon', 'Weather.today.weatherIconDes',
+#                    'Weather.today.weatherid', 'Weather.today.winddir', 'Weather.today.winddirDes',
+#                    'Weather.tomorrow.aqivalue', 'Weather.tomorrow.aqivaluetext', 'Weather.tomorrow.carWashLevel',
+#                    'Weather.tomorrow.cnweatherDes', 'Weather.tomorrow.cnweatherid', 'Weather.tomorrow.coldLevel',
+#                    'Weather.tomorrow.currentTem', 'Weather.tomorrow.dressingLevel', 'Weather.tomorrow.humidity',
+#                    'Weather.tomorrow.maxtemp', 'Weather.tomorrow.mintemp', 'Weather.tomorrow.moonRise',
+#                    'Weather.tomorrow.moonSet', 'Weather.tomorrow.sportsLevel', 'Weather.tomorrow.sunRise',
+#                    'Weather.tomorrow.sunSet', 'Weather.tomorrow.weatherDes', 'Weather.tomorrow.weatherIcon',
+#                    'Weather.tomorrow.weatherIconDes', 'Weather.tomorrow.weatherid', 'Weather.tomorrow.winddir',
+#                    'Weather.tomorrow.winddirDes', 'Weather.yesterday.aqivalue', 'Weather.yesterday.aqivaluetext',
+#                    'Weather.yesterday.carWashLevel', 'Weather.yesterday.cnweatherDes', 'Weather.yesterday.cnweatherid',
+#                    'Weather.yesterday.coldLevel', 'Weather.yesterday.currentTem', 'Weather.yesterday.dressingLevel',
+#                    'Weather.yesterday.humidity', 'Weather.yesterday.maxtemp', 'Weather.yesterday.mintemp',
+#                    'Weather.yesterday.moonRise', 'Weather.yesterday.moonSet', 'Weather.yesterday.sportsLevel',
+#                    'Weather.yesterday.sunRise', 'Weather.yesterday.sunSet', 'Weather.yesterday.weatherDes',
+#                    'Weather.yesterday.weatherIcon', 'Weather.yesterday.weatherIconDes', 'Weather.yesterday.weatherid',
+#                    'Weather.yesterday.winddir', 'Weather.yesterday.winddirDes', '__android_version', 'night_mode',
+#                    'darkMode', '__darkmode', '__darkmode_wallpaper', '__maml_version', '__miui_version_code',
+#                    '__miui_version_name', '__thememanager_version', 'almanacRespCode', 'ampm',
+#                    'applied_light_wallpaper', 'aqi_level', 'automaticRotary', 'automaticRotaryValue', 'battery_level',
+#                    'battery_state', 'bigEventRespCode', 'call_missed_count', 'calories_value', 'cityid', 'cityname',
+#                    'cityname_en', 'cityname_tw', 'clock_button', 'constellationRespCode', 'constellationsId',
+#                    'cur_aqi_co', 'cur_aqi_level', 'cur_aqi_no', 'cur_aqi_no2', 'cur_aqi_o3', 'cur_aqi_so',
+#                    'cur_avg_aqi', 'cur_avg_pm25', 'cur_pm10', 'cur_pressure', 'cur_uv_desc', 'cur_uv_index',
+#                    'cur_visibility', 'cur_weather', 'cur_weather_direct', 'cur_weather_humidity', 'cur_weather_power',
+#                    'cur_weather_temp', 'cur_weather_type', 'date', 'date_lunar', 'day_temp', 'day_weather_type',
+#                    'defaultScreen_x', 'defaultScreen_y', 'deviceTime', 'distance_value', 'feast', 'festival',
+#                    'flashlight', 'flashlightValue', 'face_enable', 'face_detect_state_msg', 'face_detect_help_msg',
+#                    'fod_enable', 'fod_height', 'fod_state_msg', 'fod_width', 'fod_x', 'fod_y', 'frame_rate',
+#                    'hasSteps', 'hasWeather', 'hassteps', 'health1', 'heart_rate_value', 'hour', 'hour12', 'hour24',
+#                    'isPreviewMode', 'isMatePad_H_2560', 'isMatePad_V_1600', 'isSupportMicro',
+#                    'is_music_playing', 'is_work_day', 'ishour12', 'lunarDay', 'lunarMonth', 'lunarYear',
+#                    'lunar_solar_term', 'mCivetCode_000', 'mCivetCode_001', 'mCivetCode_002',
+#                    'mCivetCode_003', 'mCivetCode_004', 'mCivetCode_005', 'mCivetCode_006', 'mCivetCode_007',
+#                    'mCivetCode_008', 'mCivetCode_009', 'mCivetCode_010', 'mGlobalVar', 'mGlobalVar_2H', 'media_genres',
+#                    'media_like_status', 'media_loading_status', 'media_mode_status', 'media_play_status',
+#                    'media_subtitle', 'media_title', 'microPhone_state', 'microPhone_volume', 'microphone_state',
+#                    'minute', 'month', 'month1', 'month_lunar', 'month_lunar_leap', 'musicPlayDuration',
+#                    'musicPlaySecond',
+#                    'musicTotalDuration', 'musicTotalSecond', 'music_active', 'music_album_cover', 'music_control',
+#                    'music_display', 'music_next', 'music_pause', 'music_play', 'music_prev', 'next_alarm_time',
+#                    'night_temp', 'night_weather_type', 'noticeDown', 'notification', 'ownerinfo', 'point_count',
+#                    'pollingTime', 'processCpuFree', 'processCpuRate', 'rain_probability', 'raw_screen_height',
+#                    'raw_screen_width', 'real_feel_temp', 'repeat_mode', 'resting_heart_rate_value', 'screen_density',
+#                    'second', 'shake', 'shake_record', 'x_acc', 'y_acc', 'z_acc',
+#                    'sms_unread_count', 'sport_value', 'step', 'step_today', 'steps_value',
+#                    'storageFree', 'storageFreeNum', 'storageTotal', 'storageTotalNum', 'sunrise_time', 'sunset_time',
+#                    'system.date', 'system.time.ampm', 'system.time.hour1', 'system.time.hour2', 'system.time.min1',
+#                    'system.time.min2', 'systemVersion', 'time', 'timeZone', 'time_format', 'time_sys',
+#                    'touch_begin_time', 'touch_begin_x', 'touch_begin_y', 'touch_pressure', 'touch_x', 'touch_y',
+#                    'vibration', 'view_height', 'view_width', 'volume_level', 'volume_level_old', 'volume_type',
+#                    'weather', 'weather1', 'weather2', 'weather3', 'weatherRespCode', 'weather_', 'weather_city',
+#                    'weather_condition', 'weather_cur_temp', 'weather_description', 'weather_high_temp', 'weather_id',
+#                    'weather_location', 'weather_low_temp', 'weather_publish_time', 'weather_sunrise', 'weather_sunset',
+#                    'weather_temperature', 'weather_tmphighs', 'weather_tmplows', 'weather_wind_dir', 'weather_wind_pow',
+#                    'year_lunar', 'year_lunar1864', 'year_lunar_leap', 'lunar_calendar_enable', 'battery_enable',
+#                    'notification_enable', 'preview_mode', 'connectedStatus', 'headsetName', 'headsetBatteryLevel',
+#                    'in_preview_mode']
+
 
 var_alias_list = 1
 var_alias_anti = 1
@@ -360,10 +377,10 @@ var_alias_anti = 1
 lib_slot_xml = "$.dll"
 process_xml = "$0.dll"
 parse_xml = "$1.dll"
-success_xml = maml_main_xml.replace(maml_file_name, 'manifest.xml')
+success_xml = maml_main_xml.replace(maml_rule_file, 'manifest')
 anti_xml = "antiAliasing.xml"
-config_xml = maml_main_xml.replace(maml_file_name, 'config.xml')
-var_config_xml = maml_main_xml.replace(maml_file_name, 'var_config.xml')
+config_xml = maml_main_xml.replace(maml_rule_file, 'config')
+var_config_xml = maml_main_xml.replace(maml_rule_file, 'var_config')
 # var_config_xml = "var_config.xml"
 
 # langs_id = 0
@@ -444,14 +461,26 @@ def dirLib(is_lib_folder):
     return lib
 
 
-def getLibFile(lib_file):
-    if os.path.exists('' + lib_folder_name + '/' + lib_file + '/' + lib_file + '.xml'):
-        lib_file_name = '' + lib_folder_name + '/' + lib_file + '/' + lib_file + '.xml'
+def getLibFile(lib_file, _mode=0, plugin_src='.'):
+    if _mode <= 1:
+        if os.path.exists('' + lib_folder_name + '/' + lib_file + '/' + lib_file + '.xml'):
+            lib_file_name = '' + lib_folder_name + '/' + lib_file + '/' + lib_file + '.xml'
+        else:
+            lib_file_name = '' + lib_folder_name + '/' + lib_file + '/' + 'manifest.xml'
+        soup = BeautifulSoup(open(lib_file_name, encoding='utf-8'), 'lxml-xml')
+        soup = cleanComments(soup)
+        if soup.find(recursive=False).name == 'Template':
+            lib_mode = 1
+        elif soup.find(recursive=False).name == 'ROOT':
+            lib_mode = 0
+        # print(lib_file, lib_mode)
     else:
-        lib_file_name = '' + lib_folder_name + '/' + lib_file + '/' + 'manifest.xml'
-    soup = BeautifulSoup(open(lib_file_name, encoding='utf-8'), 'lxml-xml')
-    soup = cleanComments(soup)
-    lib_mode = 'Props' in str(soup)
+        # V2
+        lib_mode = 2
+        plugin_file_name = plugin_src + '/' + 'manifest.xml'
+        soup = BeautifulSoup(open(plugin_file_name, encoding='utf-8'), 'lxml-xml')
+        soup = cleanComments(soup)
+
     return soup.prettify(), lib_mode
 
 
@@ -460,6 +489,8 @@ def getBsAttrs(soup, value):
     for attr in soup.find_all(True, limit=1):
         if attr.get(value):
             result = attr['value']
+        else:
+            result = '0'
     return result
 
 
@@ -467,19 +498,33 @@ def getBsAttrs(soup, value):
 def parseXML(parse_xml):
     global manifest_root, manifest_sw, manifest_sh, _dev_time
 
+    # 读取文件内容
+    with open(parse_xml, 'r') as file:
+        content = file.read()
+        print(content)
+    content = content.replace('&gt;', '&amp;gt;')
+    content = content.replace('&lt;', '&amp;lt;')
+    # 将替换后的内容写回文件
+    with open(parse_xml, 'w', encoding='utf-8') as file:
+        file.write(content)
+
     _soup = BeautifulSoup(open(parse_xml, encoding='utf-8'), 'lxml-xml')
 
     # 输出根标签
-    for root in _soup.find_all(True, limit=1):
-        manifest_root = str(root.name)
-        manifest_sw = int(root.get('screenWidth'))
-        manifest_sh = int(root.get('screenHeight', -1))
+    # for root in _soup.find_all(True, limit=1):
+    #     manifest_root = str(root.name)
+    #     manifest_sw = int(root.get('screenWidth'))
+    #     manifest_sh = int(root.get('screenHeight', -1))
+    root = _soup.find(recursive=False)
+    manifest_root = root.name
+    manifest_sw = root.get('screenWidth', 1080)
+    manifest_sh = root.get('screenHeight', -1)
 
     # 注释清理
     _soup = cleanComments(_soup)
 
     # 删除原本的Key
-    key_store = 1
+    key_store = not RELEASE
     if key_store:
         keygen = _soup.find('Var', {'name': 'Key'})
         if keygen:
@@ -508,18 +553,6 @@ def saveXML(soup, save_file):
     global var_split_group
     global var_alias
 
-    # minidom格式化
-
-    # if line != '':
-    #     _soup_indent = xml.dom.minidom.parseString(line)
-    #     soup_dom_str = _soup_indent.toprettyxml()
-    # # print('soup_dom_str: ?', soup_dom_str)
-    # else:
-    #     _soup_indent = BeautifulSoup(open(parse_xml, encoding="utf-8"), features="lxml-xml")
-    #     # soup_dom_str = str(soup_indent).replace('&amp;', '&amp;amp;') 稳定，不敢动
-    #     # soup_dom_str = str(soup_indent).replace('&gt;', '&amp;gt;') 稳定，不敢动
-    #     soup_dom_str = str(_soup_indent).replace('&lt;', '&amp;lt;')
-    # # 	soup_dom_str = soup_dom_str.replace('\t \n', '\n').replace('\n\n\t', '\n\t')
     print('\t')
     print(f"LangsId: {langs_id}")
     print(f'Root: {manifest_root}')
@@ -562,6 +595,10 @@ def saveXML(soup, save_file):
         '_getSource') == "1" else 0
     print(f'Root[_getSource]: {var_get_source}')
 
+    var_procress_honor = 0 if str(_soup.Lockscreen.get('_processHonorVar')).upper() == "FALSE" or _soup.Lockscreen.get(
+        '_processHonorVar') == "0" else 1
+    print(f'Root[_processHonorVar]: {var_procress_honor}')
+
     if _soup.Lockscreen.get('_splitExt') is not None:
         del _soup.Lockscreen['_splitExt']
     if _soup.Lockscreen.get('_splitGroup') is not None:
@@ -578,6 +615,7 @@ def saveXML(soup, save_file):
             for FunCom in fun_soup.find_all('FunCom'):
                 FunName = FunCom.get('target')
                 FunParams = FunCom.get('params', "{'': ''}")
+                FunCondition = FunCom.get('condition')
                 if FunName:
                     if FunParams:
                         FunParams = eval(FunParams)
@@ -591,8 +629,13 @@ def saveXML(soup, save_file):
                         else:
                             for key, value in FunParams.items():
                                 FunTag = str(FunTag).replace(f'{{{key}}}', value)
-                                # print(FunTag)
                                 FunTag = BeautifulSoup(str(FunTag), 'lxml-xml')
+                                if FunCondition:
+                                    for tag in FunTag.find_all():
+                                        if tag.name.endswith('Command'):
+                                            tag_condition = tag.get('condition', '1')
+                                            tag['condition'] = f'{tag_condition}*({FunCondition})'
+                                            print(tag)
                             for F in range(len(FunTag.Fun.contents)):
                                 FunContent = str(FunTag.Fun.contents[F])
                                 FunContent = BeautifulSoup(f'{FunContent}', 'lxml-xml')
@@ -613,39 +656,40 @@ def saveXML(soup, save_file):
 
         # TextSize处理
         # text_size = []
-        for text in _soup.find_all('TextSize'):
-            text_size = text.get('value', '100').split(', ')
-            for _t in range(len(text_size)):
-                text_size_var = _soup.new_tag('Var')
-                text_size_var['name'] = str(text.get('_port', 'mTextSize_')) + str(text_size[_t])
-                text_size_var['expression'] = f'int(sqrt({text_size[_t]})*#mTextSize_Var)'
-                # text_size_var['type'] = 'number'
-                print(f'TextSize: {text_size_var}')
-                text.insert_before(text_size_var)
-            text.decompose()
+        if not RELEASE:
+            for text in _soup.find_all('TextSize'):
+                text_size = text.get('value', '100').split(', ')
+                for _t in range(len(text_size)):
+                    text_size_var = _soup.new_tag('Var')
+                    text_size_var['name'] = str(text.get('_port', 'mTextSize_')) + str(text_size[_t])
+                    text_size_var['expression'] = f'int(sqrt({text_size[_t]})*#mTextSize_Var)'
+                    # text_size_var['type'] = 'number'
+                    print(f'TextSize: {text_size_var}')
+                    text.insert_before(text_size_var)
+                text.decompose()
 
-        # <TextSize alias="系统字体" _port="mTextSize_" value="100,90,80,70,60,50" />
-        # <Var name="mTextSize_TextSizeVal_1" expression="int(sqrt(TextSizeVal_1)*#mTextSize_Var)" type="number" />
+            # <TextSize alias="系统字体" _port="mTextSize_" value="100,90,80,70,60,50" />
+            # <Var name="mTextSize_TextSizeVal_1" expression="int(sqrt(TextSizeVal_1)*#mTextSize_Var)" type="number" />
 
-        # DateTime自动获取
-        for date_time in _soup.find_all('DateTime'):
-            date_time_size = str(date_time.get('size'))
-            if str('"mTextSize_' + date_time_size + '"') not in str(_soup) and date_time_size.isnumeric():
-                date_time_var = _soup.new_tag('Var')
-                date_time_var['name'] = 'mTextSize_' + date_time_size
-                date_time_var['expression'] = f'int(sqrt({date_time_size})*#mTextSize_Var)'
-                print(f'DateTimeVar: {date_time_var}')
-                _soup.Lockscreen.append(date_time_var)
+            # DateTime自动获取
+            for date_time in _soup.find_all('DateTime'):
+                date_time_size = str(date_time.get('size'))
+                if str('"mTextSize_' + date_time_size + '"') not in str(_soup) and date_time_size.isnumeric():
+                    date_time_var = _soup.new_tag('Var')
+                    date_time_var['name'] = 'mTextSize_' + date_time_size
+                    date_time_var['expression'] = f'int(sqrt({date_time_size})*#mTextSize_Var)'
+                    print(f'DateTimeVar: {date_time_var}')
+                    _soup.Lockscreen.append(date_time_var)
 
-        # Text自动获取
-        for text_tag in _soup.find_all('Text'):
-            text_tag_size = str(text_tag.get('size'))
-            if str('"mTextSize_' + text_tag_size + '"') not in str(_soup) and text_tag_size.isnumeric():
-                text_tag_var = _soup.new_tag('Var')
-                text_tag_var['name'] = 'mTextSize_' + text_tag_size
-                text_tag_var['expression'] = f'int(sqrt({text_tag_size})*#mTextSize_Var)'
-                print(f'TextVar: {text_tag_var}')
-                _soup.Lockscreen.append(text_tag_var)
+            # Text自动获取
+            for text_tag in _soup.find_all('Text'):
+                text_tag_size = str(text_tag.get('size'))
+                if str('"mTextSize_' + text_tag_size + '"') not in str(_soup) and text_tag_size.isnumeric():
+                    text_tag_var = _soup.new_tag('Var')
+                    text_tag_var['name'] = 'mTextSize_' + text_tag_size
+                    text_tag_var['expression'] = f'int(sqrt({text_tag_size})*#mTextSize_Var)'
+                    print(f'TextVar: {text_tag_var}')
+                    _soup.Lockscreen.append(text_tag_var)
 
         # C_Array 数组标签处理
         from tools.arrayc import c_array
@@ -656,8 +700,29 @@ def saveXML(soup, save_file):
             code.insert_after(c_array_r)
             code.extract()
 
-        # 若 Image['rotation'] == '0' del Image['pivotX'], Image['pivotY'], Image['rotation'] // HONOR
+        # 历史遗漏：C_Array嵌套问题
+
         for image in _soup.find_all('Image'):
+            pivotX = "$self.w/2-$self.x+#3D_centerX_2"
+            pivotY = "$self.h/2-$self.y+#_py"
+            rotation = "#_r*#3D_rotationX_2"
+
+            image_x = image.get('x')
+            image_y = image.get('y')
+            image_w = image.get('w')
+            image_h = image.get('h')
+            image_rotation = image.get('rotation')
+            image_px = image.get('pivotX')
+            image_py = image.get('pivotY')
+            if '$' in str(image_px):
+                image['pivotX'] = image_px.replace('$self.w', image_w).replace('$self.x', image_x)
+            if '$' in str(image_py):
+                image['pivotY'] = image_py.replace('$self.h', image_h).replace('$self.y', image_y)
+            if '$' in str(image_rotation):
+                image['rotation'] = image_rotation.replace('$self.w', image_w).replace('$self.x', image_x).replace('$self.h', image_h).replace('$self.y', image_y)
+
+        # 若 Image['rotation'] == '0' del Image['pivotX'], Image['pivotY'], Image['rotation'] // HONOR
+        for image in _soup.find_all(['Image', 'Rectangle']):
             image_w = image.get('w')
             image_h = image.get('h')
             image_px = image.get('pivotX')
@@ -690,7 +755,9 @@ def saveXML(soup, save_file):
                 _action_visibility = '1'
                 _action_content = ''
                 for ac in _soup.find_all():
-                    if ac.name == _action_tag_id_ or (ac.name == 'Compose' and ac.get('class') == _action_tag_id_):
+                    if ac.name == _action_tag_id_ \
+                            or (ac.name == 'Compose' and ac.get('class') == _action_tag_id_) \
+                            or (ac.name == 'Compose' and ac.get('act') == _action_tag_id_):
                         _action_condition = ac.get('condition', '1')
                         _action_visibility = ac.get('visibility', '1')
                         ac_contents = [item for item in ac.contents if item != '\n']
@@ -800,11 +867,11 @@ def getAlias():
 
     # var_alias = 1
     global _success_xml
-    _success_xml = maml_main_xml.replace(maml_file_name, 'manifest.xml')
+    _success_xml = maml_main_xml.replace(maml_rule_file, 'manifest')
     _origin_xml = "source.xml"
     _anti_xml = "anti.xml"
     _anti_list_xml = "disable.xml"
-    _source_xml = maml_main_xml.replace(maml_file_name, _origin_xml)
+    _source_xml = maml_main_xml.replace(maml_rule_file, 'source')
 
     # shutil.copy2(_success_xml, _origin_xml)
 
@@ -867,6 +934,18 @@ def getAlias():
         _soup_temp = str(_soup_final2)
         # print(f'删除变量动画: {_soup_temp})
 
+        # 删除无用的变量 BETA ==> VariableCommand // 2024.07.10
+        for var_tag in _soup_final.find_all('VariableCommand'):
+            var_search = var_tag.get('name')
+
+            # 两种情况下不删除: 1:[#|@]{varName} 2:声明变量Var
+            if f'#{var_search}' in str(_soup_final) or f'@{var_search}' in str(_soup_final)\
+                    or f'name="{var_search}"' in str(_soup_final):
+                pass
+            else:
+                # print(var_tag)
+                var_tag.extract()
+
         _vars = []
         # 遍历Var标签
         for var_tag in _soup_final.find_all('Var'):
@@ -905,6 +984,20 @@ def getAlias():
                 for _i in range(len(_vars)):
                     if com_name == str(_vars[_i]):
                         _tags.decompose()
+            if _tags.name == 'StereoView':
+                stereo_w = _tags.get('w', '1')
+                stereo_h = _tags.get('h', '1')
+                _image_dict = {
+                    'x': '0',
+                    'y': '0',
+                    'w': stereo_w,
+                    'h': stereo_h,
+                    'src': 'bg.png',
+                    'alpha': '1'
+                }
+                for _group in _tags.find_all('StereoGroup'):
+                    _image_slot = _soup_final.new_tag('Image', attrs=_image_dict)
+                    _group.insert(0, _image_slot)
 
         # 删除空闲 threshold
         for var in _soup_final.find_all('Var'):
@@ -928,12 +1021,35 @@ def getAlias():
                     _del_var.decompose()
 
         for _del_tag in _soup_final.find_all('Button'):
-            if _del_tag.get('disabled') is not None:
-                if _del_tag.get('disabled') != '0':
-                    # print(_del_tag)
-                    _del_tag.decompose()
+            if _del_tag.get('disabled') is not None and _del_tag.get('disabled') != '0':
+                # print(_del_tag)
+                _del_tag.decompose()
+            else:
+                _button_x = _del_tag.get('x')
+                _button_y = _del_tag.get('y')
+                _button_w = _del_tag.get('w')
+                _button_h = _del_tag.get('h')
 
-        # 若变量动画 改变帧率控制器 自动获取最大时间
+                _button_align = _del_tag.get('align')
+                _button_alignV = _del_tag.get('alignV')
+
+                _button_x_left = _button_x
+                _button_x_center = evalNum(f'({_button_x})-int(({_button_w})/2)')
+                _button_x_right = evalNum(f'({_button_x})-int(({_button_w}))')
+
+                _button_y_top = _button_y
+                _button_y_center = evalNum(f'({_button_y})-int(({_button_h})/2)')
+                _button_y_bottom = evalNum(f'({_button_y})-int(({_button_h}))')
+
+                if _button_align:
+                    exec(f"_del_tag['x'] = _button_x_{_button_align}")
+                    del _del_tag['align']
+
+                if _button_alignV:
+                    exec(f"_del_tag['y'] = _button_y_{_button_alignV}")
+                    del _del_tag['alignV']
+
+        # 若变量动画 改变帧率控制器 自动获取最大时间 FOR 小米小部件
         if _soup_final.FramerateController and manifest_root == 'Widget':
             frame_control_time = [0, 100, 101]
             frame_time_collect = []
@@ -972,11 +1088,11 @@ def getAlias():
                     frame_point += 1
                     frame_time['time'] = frame_control_time[frame_point]
 
-        # 带 condition 属性的 SoundCommand 标签单独处理
+        # 带 condition 属性的 SoundCommand 标签单独处理（新增 _condition 属性屏蔽处理）
         print('SoundCommand: ')
         _sound_collect = []
         for sound in _soup_final.find_all('SoundCommand'):
-            if sound.get('condition') is not None:
+            if sound.get('condition') is not None and sound.get('_condition') is None:
                 print(f"\t{sound}")
 
                 time_sys = str(time.time())
@@ -1013,6 +1129,12 @@ def getAlias():
         # print(_soup_final)
         # time.sleep(10000)
         print('\t')
+
+        # 优化 Rectangle['cornerRadius']
+        for rect in _soup_final.find_all('Rectangle'):
+            cornrer = rect.get('cornerRadius')
+            if cornrer and ',' not in str(cornrer):
+                rect['cornerRadius'] = f'{cornrer},{cornrer}'
 
         # eval {eval_content} eg: "{0+1}" => "1"
         # Beta Test
@@ -1142,7 +1264,7 @@ def getAlias():
             print('\t')
 
         # 存储Key
-        key_store = 1
+        key_store = not RELEASE
         if manifest_root == 'Lockscreen' and key_store:
             # 找到了满足条件的标签
             # 执行你的代码
@@ -1194,106 +1316,364 @@ def getAlias():
 
 # 主程序
 lib = dirLib(lib_folder_name)
-soup = parseXML(maml_main_xml)
+shutil.copy(maml_main_xml, parse_xml)
+soup = parseXML(parse_xml)
+_lib_soup_json_ = {}
+_lib_soup_json_r_ = {}
+_lib_soup_id_ = {}
 
 print('Disabled:')
 # Main / Start / 开始
+global _id_local_
 for tag in soup.find_all(True):
-    # 匹配库文件标签
-    for i in range(len(lib)):
-        if tag.name == lib[i] and tag.get('card') not in ['Almanac', 'Constellations', 'BigEvent']:
-            # 检测【disabled】属性是否存在，若存在则删除标签，并重新写入soup
-            if tag.get('disabled') is None:
-                tag.disabled = 0
-            elif tag.get('disabled') == '0':
-                tag.disabled = 0
-            else:
-                tag.disabled = int(tag.get('disabled'))
 
-            if tag.disabled or tag.name == 'i_Hidden':
-                # print(f'\t{tag.name}.extract()')
-                tag.extract()
-            else:
-                _lib_callback_ = getLibFile(tag.name)[0]
-                _lib_soup_ = BeautifulSoup(str(_lib_callback_), 'lxml-xml')
-                _lib_mode_ = getLibFile(tag.name)[1]
-                if tag.get('_id') is None:
-                    _lib_id_ = ''
+    # 检测【disabled】属性是否存在，若存在则删除标签，并重新写入soup
+    if tag.get('disabled') is None:
+        tag.disabled = 0
+    elif tag.get('disabled') == '0':
+        tag.disabled = 0
+    else:
+        tag.disabled = int(tag.get('disabled'))
+
+    if tag.disabled or tag.name == 'i_Hidden':
+        # print(f'\t{tag.name}.extract()')
+        tag.extract()
+        _id_local_ = ''
+
+    else:
+
+        # 匹配库文件标签
+        for i in range(len(lib)):
+            if tag.name == lib[i] and tag.get('card') not in ['Almanac', 'Constellations', 'BigEvent']:
+                if 1:
+                    _lib_callback_ = getLibFile(tag.name)[0]
+                    _lib_soup_ = BeautifulSoup(str(_lib_callback_), 'lxml-xml')
+                    _lib_mode_ = getLibFile(tag.name)[1]
+                    if tag.get('_id') is None:
+                        _lib_id_ = ''
+                    else:
+                        _lib_id_ = '_' + tag.get('_id')
+
+                    # [ROOT] MODE
+                    if _lib_mode_ == 0:
+                        _value_holder_ = _lib_soup_.find_all('ValueHolder')
+                        for _value_ in range(len(_value_holder_)):
+                            _holder_name_ = _value_holder_[_value_].get('name')
+                            _holder_value_def_ = _value_holder_[_value_].get('default')
+                            _holder_value_ = tag.find_all(name='ValueHolder', attrs={'name': _holder_name_})
+                            if _holder_value_:
+                                _holder_value_ = getBsAttrs(_holder_value_, 'value')
+                            else:
+                                # ROOT.ValueHolder 默认值分配
+                                _holder_value_ = _holder_value_def_
+                            _lib_soup_ = str(_lib_soup_).replace(_holder_name_, _holder_value_)
+                        _lib_soup_ = BeautifulSoup(str(_lib_soup_), 'lxml-xml')
+                        for _value_tag_ in _lib_soup_.find_all('ValueHolder'):
+                            _value_tag_.extract()
+
+                        for _place_holder_ in _lib_soup_.find_all('PlaceHolder'):
+                            if _place_holder_.get('name'):
+                                _place_name_ = _place_holder_.get('name')
+                                for _place_in_ in soup.find_all(_place_name_):
+                                    _place_in_null_ = len(_place_in_.contents) == 1 and str(_place_in_.contents[0]).strip() == ''
+                                    if not _place_in_null_:
+                                        for _p_in_ in range(len(_place_in_.contents) - 1, -1, -1):
+                                            _p_insert_contents_ = _place_in_.contents[_p_in_]
+                                            _p_insert_ = BeautifulSoup(str(_p_insert_contents_), 'lxml-xml')
+                                            # print(len(_p_insert_))
+                                            if len(_p_insert_) and _place_holder_.parent:
+                                                _place_holder_.insert_after(_p_insert_)
+                                    _place_holder_.extract()
+
+                        with open(process_xml, 'w', encoding='utf-8') as f:
+                            f.write(str(_lib_soup_))
+                        refactor(process_xml, 2, var_forbid_name, _lib_id_)
+                        _lib_soup_ = BeautifulSoup(open(process_xml, encoding='utf-8'), 'lxml-xml')
+
+                        # print(process_xml, _lib_soup_)
+                        # print(_lib_soup_.Template)
+
+                        if 1:
+                            for _in_ in range(len(_lib_soup_.ROOT.contents) - 1, -1, -1):
+                                _insert_contents_ = _lib_soup_.ROOT.contents[_in_]
+                                # print(_insert_contents_)
+                                _insert_ = BeautifulSoup(str(_insert_contents_), 'lxml-xml')
+                                tag.insert_after(_insert_)
+                            tag.extract()
+
+                    # [Template] MODE
+                    elif _lib_mode_ == 1:
+                        if _lib_soup_.Props:
+                            _props_ = _lib_soup_.find_all('Props')[0].find_all('item')
+                            _props_item_ = {}
+                            for _item_ in _props_:
+                                # print(_item_['name'], _item_['default'])
+                                for key, value in _item_.attrs.items():
+                                    _props_item_[_item_['name']] = _item_['default']
+                                _props_item_ = dict(sorted(_props_item_.items(), key=lambda item: len(item[0]), reverse=True))
+                            # print(_props_item_)
+
+                            for attr, value in tag.attrs.items():
+                                for item_key, item_value in _props_item_.items():
+                                    if str(item_key) == str(attr):
+                                        _props_item_[item_key] = str(value)
+                            # print(_props_item_)
+
+                            for key, value in _props_item_.items():
+                                _lib_soup_ = str(_lib_soup_).replace(f'${str(key)}', str(value))
+                            _lib_soup_ = BeautifulSoup(_lib_soup_, 'lxml-xml')
+                            for _props_tag_ in _lib_soup_.find_all('Props'):
+                                _props_tag_.extract()
+
+                        with open(process_xml, 'w', encoding='utf-8') as f:
+                            f.write(str(_lib_soup_))
+                        refactor(process_xml, 2, var_forbid_name, _lib_id_)
+                        _lib_soup_ = BeautifulSoup(open(process_xml, encoding='utf-8'), 'lxml-xml')
+
+                        for _pro_in_ in range(len(_lib_soup_.Template.contents) - 1, -1, -1):
+                            _pro_insert_contents_ = _lib_soup_.Template.contents[_pro_in_]
+                            # print(_pro_insert_contents_)
+                            _pro_insert_ = BeautifulSoup(str(_pro_insert_contents_), 'lxml-xml')
+                            tag.insert_after(_pro_insert_)
+                        tag.extract()
+
+                    else:
+                        print('"_lib_mode_" is greater than 1! ')
+
+        if tag.get('src'):
+            _state_name_ = tag.get('src').split('/')[-1] + '.'
+            _state_name_ = 'state.'
+
+        if tag.name == 'Plugin':
+
+            # 该函数不可移动位置
+
+            def _module_add_(module_tag='', main_tag='', module_soup='', tag=''):
+                if module_tag and main_tag and module_soup:
+                    while module_soup.find_all(module_tag):
+                        for slot in tag.find_all(main_tag, limit=1):
+                            for slots in module_soup.find_all(module_tag, limit=1):
+                                _slot_ = list(slot.contents)
+                                if module_tag == 'Emits':
+                                    _button_ = _lib_soup_.new_tag('Button', attrs=slots.attrs)
+                                    for _s_ in range(len(_slot_) - 1, -1, -1):
+                                        _button_.append(BeautifulSoup(str(_slot_[_s_]), 'lxml-xml'))
+                                    # _button_['x'] = _props_item_['x']
+                                    # _button_['y'] = _props_item_['y']
+                                    # _button_['w'] = _props_item_['w']
+                                    # _button_['h'] = _props_item_['h']
+                                    # print(_button_)
+                                    # sys.exit(8)
+                                    slots.insert_after(_button_)
+                                elif module_tag == 'Slots':
+                                    _group_ = _lib_soup_.new_tag('Group', attrs=slots.attrs)
+                                    print(_group_)
+                                    for _s_ in range(len(_slot_) - 1, -1, -1):
+                                        _group_.append(BeautifulSoup(str(_slot_[_s_]), 'lxml-xml'))
+                                    slots.insert_after(_group_)
+                                else:
+                                    for _s_ in range(len(_slot_) - 1, -1, -1):
+                                        slots.insert_after(BeautifulSoup(str(_slot_[_s_]), 'lxml-xml'))
+                                slots.extract()
+                    return module_soup
                 else:
-                    _lib_id_ = '_' + tag.get('_id')
+                    print('请检查 Plugin 标签！')
+                    sys.exit(0)
 
-                if _lib_mode_ == 0:
-                    _value_holder_ = _lib_soup_.find_all('ValueHolder')
-                    for _value_ in range(len(_value_holder_)):
-                        _holder_name_ = _value_holder_[_value_].get('name')
-                        _holder_value_ = tag.find_all(name='ValueHolder', attrs={'name': _holder_name_})
-                        _holder_value_ = getBsAttrs(_holder_value_, 'value')
-                        _lib_soup_ = str(_lib_soup_).replace(_holder_name_, _holder_value_)
-                    _lib_soup_ = BeautifulSoup(str(_lib_soup_), 'lxml-xml')
-                    for _value_tag_ in _lib_soup_.find_all('ValueHolder'):
-                        _value_tag_.extract()
+            _lib_callback_ = getLibFile(tag.name, 2, tag.get('src'))[0]
+            _lib_soup_ = BeautifulSoup(str(_lib_callback_), 'lxml-xml')
+            _lib_mode_ = getLibFile(tag.name, 2, tag.get('src'))[1]
+            if tag.get('_id') is None:
+                _lib_id_ = '_' + hex(int(time.time() * 1000))[-7:-1]
+                library_mode = 2
+            else:
+                _lib_id_ = '_' + tag.get('_id')
+                library_mode = 2
 
-                    for _place_holder_ in _lib_soup_.find_all('PlaceHolder'):
-                        if _place_holder_.get('name'):
-                            _place_name_ = _place_holder_.get('name')
-                            for _place_in_ in soup.find_all(_place_name_):
-                                _place_in_null_ = len(_place_in_.contents) == 1 and str(_place_in_.contents[0]).strip() == ''
-                                if not _place_in_null_:
-                                    for _p_in_ in range(len(_place_in_.contents) - 1, -1, -1):
-                                        _p_insert_contents_ = _place_in_.contents[_p_in_]
-                                        _p_insert_ = BeautifulSoup(str(_p_insert_contents_), 'lxml-xml')
-                                        # print(_p_insert_)
-                                        _place_holder_.insert_after(_p_insert_)
-                                _place_holder_.extract()
-
-                    with open(process_xml, 'w', encoding='utf-8') as f:
-                        f.write(str(_lib_soup_))
-                    refactor(process_xml, 2, var_forbid_name, _lib_id_)
-                    _lib_soup_ = BeautifulSoup(open(process_xml, encoding='utf-8'), 'lxml-xml')
-
-                    for _in_ in range(len(_lib_soup_.ROOT.contents) - 1, -1, -1):
-                        _insert_contents_ = _lib_soup_.ROOT.contents[_in_]
-                        # print(_insert_contents_)
-                        _insert_ = BeautifulSoup(str(_insert_contents_), 'lxml-xml')
-                        tag.insert_after(_insert_)
-                    tag.extract()
-
-                elif _lib_mode_ == 1:
+            # [Template] MODE [version=2]
+            if _lib_mode_ == 2:
+                if _lib_soup_.Props:
                     _props_ = _lib_soup_.find_all('Props')[0].find_all('item')
                     _props_item_ = {}
+                    _props_item_type_ = {}
                     for _item_ in _props_:
                         # print(_item_['name'], _item_['default'])
                         for key, value in _item_.attrs.items():
                             _props_item_[_item_['name']] = _item_['default']
+                            _props_item_type_[_item_['name']] = _item_['type']
                         _props_item_ = dict(sorted(_props_item_.items(), key=lambda item: len(item[0]), reverse=True))
+                        _props_item_type_ = dict(sorted(_props_item_type_.items(), key=lambda item: len(item[0]), reverse=True))
                     # print(_props_item_)
+                    # print(_props_item_type_)
 
                     for attr, value in tag.attrs.items():
                         for item_key, item_value in _props_item_.items():
                             if str(item_key) == str(attr):
                                 _props_item_[item_key] = str(value)
-                    # print(_props_item_)
 
                     for key, value in _props_item_.items():
-                        _lib_soup_ = str(_lib_soup_).replace(f'${str(key)}', str(value))
+                        if _props_item_type_[key] not in ['select', 'bool']:
+                            _lib_soup_ = str(_lib_soup_).replace(f'${str(key)}', str(value))
+                        elif _props_item_type_[key] == 'select':
+                            _lib_soup_ = BeautifulSoup(str(_lib_soup_), 'lxml-xml')
+                            for _select_ in _lib_soup_.find_all('Select', attrs={'index': f'${str(key)}'}):
+                                # print(_select_, value)
+                                _select_tag_ = _select_.find_all('Item')[int(value)]
+                                # print(_select_tag_)
+                                for _slt_ in list(_select_tag_.contents):
+                                    _select_.parent.append(_slt_)
+                                _select_.extract()
+                                # print(_lib_soup_)
+                            _lib_soup_ = BeautifulSoup(str(_lib_soup_), 'lxml-xml')
+                        elif _props_item_type_[key] == 'bool':
+                            _lib_soup_ = str(_lib_soup_).replace(f'${str(key)}', str(value))
+                            _lib_soup_ = BeautifulSoup(str(_lib_soup_), 'lxml-xml')
+                            for _inset_ in _lib_soup_.find_all(True):
+                                _bool_ = str(_inset_.get('inset', True)).upper() == 'TRUE'
+                                if _bool_ is False:
+                                    _inset_.extract()
+                                else:
+                                    del _inset_['inset']
+                            _lib_soup_ = BeautifulSoup(str(_lib_soup_), 'lxml-xml')
+
+                            # print(_props_item_[key])
                     _lib_soup_ = BeautifulSoup(_lib_soup_, 'lxml-xml')
+
                     for _props_tag_ in _lib_soup_.find_all('Props'):
                         _props_tag_.extract()
 
-                    with open(process_xml, 'w', encoding='utf-8') as f:
-                        f.write(str(_lib_soup_))
-                    refactor(process_xml, 2, var_forbid_name, _lib_id_)
-                    _lib_soup_ = BeautifulSoup(open(process_xml, encoding='utf-8'), 'lxml-xml')
+                    # print(_lib_soup_)
 
-                    for _pro_in_ in range(len(_lib_soup_.Template.contents) - 1, -1, -1):
-                        _pro_insert_contents_ = _lib_soup_.Template.contents[_pro_in_]
-                        # print(_pro_insert_contents_)
-                        _pro_insert_ = BeautifulSoup(str(_pro_insert_contents_), 'lxml-xml')
-                        tag.insert_after(_pro_insert_)
-                    tag.extract()
+                if tag.Slot:
+                    _lib_soup_ = _module_add_('Slots', 'Slot', _lib_soup_, tag)
+                if tag.Animation:
+                    _lib_soup_ = _module_add_('Animations', 'Animation', _lib_soup_, tag)
+                if tag.Emit:
+                    _lib_soup_ = _module_add_('Emits', 'Emit', _lib_soup_, tag)
 
+                # 注意:动画仅支持元素动画的添加
+
+                # for _item_ in _lib_soup_.find_all('Item', attrs=None):
+                #     _item_.extract()
+
+                with open(process_xml, 'w', encoding='utf-8') as f:
+                    f.write(str(_lib_soup_))
+                _lib_soup_json_[tag.get('name')] = _lib_soup_
+
+                # refactor(process_xml, library_mode, var_forbid_name, _lib_id_)
+                _lib_soup_id_[tag.get('name')] = '_' + str(refactor(process_xml, library_mode, var_forbid_name, _lib_id_))
+                _id_local_ = _lib_id_[1:]
+
+                _lib_soup_ = BeautifulSoup(open(process_xml, encoding='utf-8'), 'lxml-xml')
+
+                # if _id_local_:
+                #     _id_tag_ = _lib_soup_.new_tag('Var', attrs={'name': f"$_id_{_id_local_}$", 'expression': f"'{_id_local_}'", 'type': 'string'})
+                #     _lib_soup_.Template.append(_id_tag_)
+
+                _pro_group_ = _lib_soup_.new_tag('Group', attrs={'name': tag.get('name')})
+                for _pro_in_ in range(len(_lib_soup_.Template.contents)):
+                    _pro_insert_contents_ = _lib_soup_.Template.contents[_pro_in_]
+                    # print(_pro_insert_contents_)
+                    _pro_insert_ = BeautifulSoup(str(_pro_insert_contents_), 'lxml-xml')
+                    _pro_group_.append(_pro_insert_)
+                tag.insert_after(_pro_group_)
+                _lib_soup_json_r_[tag.get('name')] = _pro_group_
+
+                tag.extract()
+
+        if tag.name == 'Store':
+            _lib_callback_ = getLibFile(tag.name, 2, tag.get('src'))[0]
+            _lib_soup_ = BeautifulSoup(str(_lib_callback_), 'lxml-xml')
+            _lib_mode_ = getLibFile(tag.name, 2, tag.get('src'))[1]
+
+            # [Template] MODE [version=2]
+            if _lib_mode_ == 2:
+                for var in _lib_soup_.find_all('Var'):
+                    var['name'] = f"{_state_name_}{var.get('name')}"
+                    tag.insert_after(var)
+                tag.extract()
+
+        if tag.name == 'StoreCommit':
+            # [Template] MODE [version=2]
+            tag.name = 'VariableCommand'
+            tag['name'] = _state_name_ + tag.get('name')
+
+        def _plugin_get(plugin, foo, src):
+            plugin = plugin.replace('$', '')
+            if foo[0] == '#':
+                foo_type = 'number'
+            if foo[0] == '@':
+                foo_type = 'string'
+            foo = foo[1:]
+            soup = BeautifulSoup(str(src), 'lxml-xml')
+            bar = ''
+            for var in soup.Template.find_all('Var', attrs={'name': foo}):
+                if foo_type == 'string' and var.get('type') == 'string':
+                    bar1 = var.get('expression')
+                    bar = bar1
+                if foo_type == 'number' and var.get('type') != 'string':
+                    bar2 = var.get('expression')
+                    bar = bar2
+            return str(bar)
+
+        for _attr, _value in tag.attrs.items():
+            pattern = r'get\(\$([^,]+),([^,]+)\)'
+            if re.search(pattern, _value):
+                result = re.search(pattern, _value)
+                result = result.group()
+                rr_a = result.split('get(')[1]
+                rr_b = rr_a.split(')')[0]
+                rr_0 = rr_b.split(',')[0].replace('$', '')
+                rr_1 = rr_b.split(',')[1]
+                # exec(f'_plugin_{result.group()}')
+                print('\t', str(f'[0xff{_id_local_}]'), rr_1, _id_local_)
+                if rr_1 != '@_id':
+                    replacement = _plugin_get(rr_0, rr_1, _lib_soup_json_[rr_0])
                 else:
-                    print('"_lib_mode_" is Unknown Type! ')
+                    replacement = _id_local_
+                print('\t', str(f'[0xff{_id_local_}]'), _value, ':', str(result), '==>', str(replacement))
+                tag[_attr] = _value.replace(str(result), str(replacement))
+
+            if _attr == 'bind':
+                _bind_ = xml_var_alias(str(tag), str(tag), 2, var_forbid_name, _lib_soup_id_[_value])
+                _bind_ = BeautifulSoup(_bind_, 'lxml-xml')
+                for _b_ in _bind_.find_all(True):
+                    if _b_.get('bind'):
+                        del _b_['bind']
+                tag.insert_after(_bind_)
+                tag.extract()
+
+# PluginCommands 替换法（需优化）
+
+_plugin_content = {}
+for tag in soup.find_all('PluginCommand'):
+    _target = tag.get('target')
+    _command = tag.get('command')
+    _plg_tgr_contents = ''
+
+    for _plg_grp in soup.find_all('Group'):
+        if _plg_grp.get('name') == str(_target):
+            for _plg_cmd in _plg_grp.find_all('PluginCommands'):
+                for _plg_tgr in _plg_cmd.find_all('Trigger'):
+                    if _plg_tgr.get('action') == str(_command):
+                        for _ct in _plg_tgr.contents:
+                            _plg_tgr_contents += str(_ct)
+                        _plugin_content[(_target, _command, '_tag')] = (_plg_tgr_contents, str(tag))
+                        # print('contents', _plg_tgr.contents)
+# print(_plugin_content)
+
+for tag in soup.find_all(True):
+    if tag.name in ['PluginCommands', 'NameHolder']:
+        tag.extract()
+
+# 二维字典替换
+for _k, _v in _plugin_content.items():
+    soup = str(soup).replace(str(_v[1]), str(_v[0]))
+    soup = BeautifulSoup(str(soup), 'lxml-xml')
+    # print(soup)
+
+for tag in soup.find_all('i_Hidden'):
+    tag.decompose()
 
 # 重新解析XML
 dev_time = _dev_time
@@ -1369,7 +1749,8 @@ def calculateMemory(folder_path=None):
     folder_path = os.path.dirname(folder_path)
 
     total_memory = 0
-    image_compress_ratio = 800 / 1080
+    image_compress_ratio = 720 / 1080
+    # image_compress_ratio = 1 / 960 * 720
     image_compress_mode = 0
 
     print(f'CompressMode: {image_compress_mode}')
@@ -1387,7 +1768,7 @@ def calculateMemory(folder_path=None):
                         pass
                         print(f"Exception: {_file_e}")
 
-                if any(_file_path.endswith(ext) for ext in ['.xml', '.mp3', '.mp4']) or \
+                if any(_file_path.endswith(ext) for ext in ['.xml', '.mp3', '.mp4', '.jpg']) or \
                         _file_path_abs.startswith('gitignore'):
                     continue  # 检查文件扩展名是否为.xml .mp3 .mp4 跳过
                 try:
@@ -1397,12 +1778,13 @@ def calculateMemory(folder_path=None):
                     # print(_file_path)
 
                     if not any(os.path.basename(_file_path) == ext for ext in ['bg.png', 'statusbar.png']):
-                        if memory_mb >= 1:
+                        if memory_mb >= 1.28:
                             # if memory_mb >= 3 and width > 720:
                             print(
                                 f"Oversize: {width} x {height}, {_file_path_abs}, {memory_mb} MB")
-                            if (_file_path_abs.startswith('assets') or _file_path_abs.startswith(
-                                    'bz')) and image_compress_mode:
+                            if image_compress_mode:
+                                # (_file_path_abs.startswith('assets') or _file_path_abs.startswith(
+                                #     'bz')) and
                                 new_width = int(width * image_compress_ratio)
                                 new_height = int(height * image_compress_ratio)
                                 resized_image = image.resize((new_width, new_height))

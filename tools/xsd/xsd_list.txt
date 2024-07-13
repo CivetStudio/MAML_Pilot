@@ -1,0 +1,63 @@
+
+基础动效delay属性必须为数值且大于等于0==>delay="${this.delay}",!1,!1
+基础动效repeat属性必须为数值且大于等于0==>repeat="${this.repeat}",!1,!1
+发现未定义name的Var标签==>${JSON.stringify(e
+VarArray标签的type类型有误==>${n},!0,!1
+
+文本标签shadow属性错误==>${this.shadow},!1,!1
+
+EditText标签editId属性值重复==>${i},!1,!1
+SensorBinder标签type="${Q9}"里的index值必须为数值==>${n},!1,!1
+SensorBinder标签type="${Q9}"里的index值超出范围==>${n},!1
+
+VirtualScreen标签名称重复==>${n},!1,!1
+
+进度条Var="Progress"的mode的值需在0-4之间，否则无效==>mode="${"string"==typeof n?n:""}",!1
+MusicControl标签名称重复==>${n},!1,!1
+
+根标签帧率frameRate设置错误==>frameRate="${n}"
+
+变量名称与系统变量冲突==>${e},!0,!1
+变量expression括号不完整==>${t},!0,!1
+表达式括号不完整==>${n},!0,!1
+正在重复定义变量==>${e},!0
+
+字符解析错误：${t[1]}, 提示：变量前面请加#或@，字符串请加单引号==> ${n},!0,!1
+
+
+    解析颜色字符串失败==>${n}，请检查
+    调用substr表达式出错===>substr(${e},${t},${n}
+    调用argb表达式出错==>argb(${e},${t},${n},${i}
+    Video地址不存在==>${e},!1,!1
+    录制视频出错onerror==>${e},!1,!1
+    本设备不支持音频录制==>${t.message},!1,!1
+
+    ImageNumber的number属性必须是数值==>${this.number},!0,!1
+    vivo平台ImageNumber的number属性必须大于0==>${this.number},!0,!1
+    ImageSeries参数错误==>${this.mapList}
+    Time资源图片不存在==>${t},!0,!1
+
+    "Slider/Unlocker==>没有定义StartPoint",!1,!1
+    CountDownTime标签的countDownType为${i}时，date不是有效值==>${a},!1,!1
+    SourceImage标签中的to需要比from大且为数值，否则达不到预期的效果==>from="${e.from}" to="${e.to}"
+
+    ${n}标签的cornerRadius必须为两个数值用逗号分割==>cornerRadius="${e.cornerRadius}",!0,!1
+    ${n}标签的cornerRadius填写错误==>cornerRadius="${e.cornerRadius}",!0,!1
+    ${n}标签的cap填写错误==>cap="${e.cap}",!0,!1
+    ${n}标签的dottedLine至少两个数值用逗号分割==>dottedLine="${e.dottedLine}",!0,!1
+    ${n}标签的dottedLine逗号分割值必须为数值==>dottedLine="${e.dottedLine}",!0,!1
+    ${n}标签的cap填写错误==>cap="${e.cap}",!0,!1
+    ${n}标签的dottedLine至少两个数值用逗号分割==>dottedLine="${e.dottedLine}",!0,!1
+    ${n}标签的dottedLine逗号分割值必须为数值==>dottedLine="${e.dottedLine}",!0,!1
+    ${n}标签的cap填写错误==>cap="${e.cap}",!0,!1
+    ${n}标签的dottedLine至少两个数值用逗号分割==>dottedLine="${e.dottedLine}",!0,!1
+    ${n}标签的dottedLine逗号分割值必须为数值==>dottedLine="${e.dottedLine}",!0,!1
+    ${n}标签的cap填写错误==>cap="${e.cap}",!0,!1
+    ${n}标签的dottedLine至少两个数值用逗号分割==>dottedLine="${e.dottedLine}",!0,!1
+    ${n}标签的dottedLine逗号分割值必须为数值==>dottedLine="${e.dottedLine}",!0,!1
+    ${n}标签的cap填写错误==>cap="${e.cap}",!0,!1
+    ${n}标签的dottedLine至少两个数值用逗号分割==>dottedLine="${e.dottedLine}",!0,!1
+    ${n}标签的dottedLine逗号分割值必须为数值==>dottedLine="${e.dottedLine}",!0,!1
+
+    解析错误，详情信息：${"string"==typeof _S?_S:_S.message}==> ${n},!0,!1
+    解析错误：${"string"==typeof _S?_S:_S.message}==> ${n},!0,!1

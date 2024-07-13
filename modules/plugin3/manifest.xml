@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Template version="2" >
+    <Props>
+        <item name="x" default="0" type="number" description="x坐标" />
+        <item name="y" default="0" type="number" description="y坐标" />
+        <item name="w" default="100" type="number" description="宽度" />
+        <item name="h" default="100" type="number" description="高度" />
+    </Props>
+    <Animations />
+    <Rectangle x="$x" y="$y" w="$w" h="$h" fillColor="#ffffff" />
+</Template >

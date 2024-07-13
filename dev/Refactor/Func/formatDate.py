@@ -164,74 +164,6 @@ def LunarCalendar(nian, lunar_type=1):  # type=1时截止到次年冬至朔，=0
     return ymb, shuoJD  # 月名表，合朔JD日期表
 
 
-def PerpetualCalendar(year, month=0):  # 万年历（农历及公历对照），不指定月份时输出全年
-    if year == 0: return print('不存在公元0年')
-    ymb, shuoJD = LunarCalendar(year, 0)
-    if DateCompare(ephem.julian_date((year, 12, 31)), shuoJD[-2] + 29):
-        ymb1, shuoJD1 = LunarCalendar(year + 1)
-        ymb = ymb[:-2] + ymb1[:2]
-        shuoJD = shuoJD[:-2] + shuoJD1[:3]
-    days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-    days[1] = 29 if (year % 4 == 0 and year % 100 != 0) or year % 400 == 0 else 28
-    if year < 1582 and year % 4 == 0: days[1] = 29
-    week = ['一', '二', '三', '四', '五', '六', '日', ]
-    for j in range(12):
-        if month != 0 and j + 1 != month: continue
-        print('【' + str(year) + '年 ' + str(j + 1) + '月  日历】')
-        ysJD = ephem.julian_date((year, j + 1))
-        szy = findSZY(ysJD, shuoJD)  # 公历岁首对应的农历月
-        ysRQ = DateDiffer(ysJD, shuoJD[szy])  # 每月1日的农历日期
-        yue0 = DateDiffer(shuoJD[szy + 1], shuoJD[szy])
-        yue1 = DateDiffer(shuoJD[szy + 2], shuoJD[szy + 1])
-        blank = int((ysJD + 0.5) % 7)
-        flag = False
-        for row in range(6 * 2 + 1):
-            if row % 2 == 1 and flag: break
-            for k in range(7):
-                if row % 2 == 1:  # 公历行
-                    day = row // 2 * 7 + k - blank + 1
-                    if year == 1582 and j == 9:
-                        if day > 4: day += 10
-                elif row != 0:  # 农历行
-                    if row == 2 and k >= blank or row > 2:
-                        rqx = ysRQ + row // 2 * 7 - 7 + k - blank
-                        if rqx == 0:
-                            rq = ymb[szy]
-                        elif 0 < rqx < yue0:
-                            rq = ee[rqx]
-                        elif rqx == yue0:
-                            rq = ymb[szy + 1]
-                        elif yue0 < rqx < yue0 + yue1:
-                            rq = ee[rqx - yue0]
-                        elif rqx == yue0 + yue1:
-                            rq = ymb[szy + 2]
-                        elif rqx > yue0 + yue1:
-                            rq = ee[rqx - yue0 - yue1]
-                # 输出排版
-                if row == 0:
-                    print(" {:<5}".format(week[k]), end='')
-                elif row == 1 or row == 2:  # 首行
-                    if k == 0:
-                        print('       ' * blank, end='')
-                    if row == 1 and k >= blank:
-                        print(" {:<6d}".format(day), end='')
-                    if row == 2 and k >= blank:
-                        print("{0:{1}<3}".format(rq, '\u3000'), end=' ')
-                else:
-                    if row % 2 == 1 and row != 1:
-                        if day <= days[j]:
-                            print(" {:<6d}".format(day), end='')
-                        else:
-                            flag = True
-                            break
-                    if row % 2 == 0 and row != 0 and row != 2:
-                        if year == 1582 and j == 9 and day > days[j]: break
-                        print("{0:{1}<3}".format(rq, '\u3000'), end=' ')
-                        if row // 2 * 7 + k - blank - 6 >= days[j]: break
-            print()
-        print()
-
-
 class SolarToLunarConverter:
     def __init__(self):
 
@@ -564,7 +496,7 @@ if __name__ == '__main__':
         农历: N月e t
         时辰地支: II
         '''
-        format_date = 'yyyy年MM月dd日 EEEE 农历NNNN\nNN月 ee日 II时'
+        format_date = 'yyyy年MM月dd日 EEEE 农历NNNN\nYY年 NN月 ee日 II时'
         textExp = formatDate(format_date, time_sys)
         print(textExp)
         print(bool(type(textExp) is str))

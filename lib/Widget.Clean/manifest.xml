@@ -35,5 +35,7 @@
 	<!-- 手机剩余存储 -->
 	<Var name="__availableSpace" expression="ifelse(#_availableSpace { 1000000000, int(#_availableSpace/1000000), preciseeval('#_availableSpace/1000000000',1))" type="string" />
 	<Var name="__availableSpace_unit" expression="ifelse(#_availableSpace { 1000000000, 'MB', 'GB')" type="string" />
+	<Var name="mSpaceLevel" expression="int(#_availableSpace/#_totalSpace*100)" type="number" />
+	<Var name="mGarbageLevel" expression="int(#_garbageSize/#_occupiedSpace*100)" type="number" />
 
 </Template>

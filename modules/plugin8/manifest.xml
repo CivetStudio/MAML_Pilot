@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Template version="2" >
+    <Props>
+        <item name="x" default="0" type="number" description="x坐标" />
+        <item name="y" default="0" type="number" description="y坐标" />
+        <item name="r" default="0" type="number" description="半径" />
+        <item name="w" default="100" type="number" description="宽度" />
+        <item name="h" default="100" type="number" description="高度" />
+        <item name="circle" default="true" type="bool" description="添加圆" />
+    </Props>
+    <Rectangle x="$x" y="$y" w="$w" h="$h" fillColor="#ffffff" />
+    <Circle x="$x" y="$y" r="$r" fillColor="#ffffff" inset="$circle" />
+</Template >

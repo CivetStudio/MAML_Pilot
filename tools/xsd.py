@@ -11,7 +11,7 @@ def validate_xml_syntax(xml_string):
     try:
         # Parse the XML string
         minidom.parseString(xml_string)
-        print("XML syntax is valid.")
+        print("[minidom] XML syntax is valid.")
         validate_xml_syntax = 1
     except Exception as e:
         print(f"Error: {e}")
@@ -30,7 +30,7 @@ def validate_xml_with_xsd(xml_content, xsd_content):
         return False
 
 
-def main():
+def main(maml_main_xml=None):
     script_dir = os.path.dirname(os.path.abspath(__file__))
     xsd_filename = "xsd/manifest.xsd"
     # xsd_filename = "xsd/manifest_hw.xsd"
@@ -41,19 +41,21 @@ def main():
         xsd_content = xsd_file.read()
 
     try:
-        # Read the XML content from the specified XML file path
-        # maml_main_xml = input("Enter the path of the XML file: ")
-        maml_main_xml = pyperclip.paste().replace('\\', '/').replace('"', '')
+        if maml_main_xml is None:
+            # Read the XML content from the specified XML file path
+            # maml_main_xml = input("Enter the path of the XML file: ")
+            maml_main_xml = pyperclip.paste().replace('\\', '/').replace('"', '')
 
-        maml_file_name = os.path.basename(maml_main_xml)
-        maml_rule_file = '.xml'
+            maml_file_name = os.path.basename(maml_main_xml)
+            maml_rule_file = '.xml'
 
-        # 判断 maml_file_name 是否以 maml_rule_file 结尾
-        if maml_rule_file not in maml_file_name:
-            print(f"Error: File must be '{maml_rule_file}'")
-            sys.exit(1)
+            # 判断 maml_file_name 是否以 maml_rule_file 结尾
+            if maml_rule_file not in maml_file_name:
+                print(f"Error: File must be '{maml_rule_file}'")
+                sys.exit(1)
 
-        print('\t')
+            print('\t')
+
         print(f'Source: {maml_main_xml}\n')
         if not os.path.isfile(maml_main_xml):
             print("Error: XML file not found.")
@@ -68,14 +70,16 @@ def main():
 
             if validate_xml_with_xsd(xml_content, xsd_content):
                 print("✅Success: XML is valid according to the XSD.")
+                return 1
                 # You can proceed with further processing or use the XML data here.
             else:
                 print("Error: XML validation failed.")
+                return -1
 
     except (etree.XMLSyntaxError, pyperclip.PyperclipException) as e:
         print("Error: Unable to read XML content or XSD content. Make sure the files exist and are valid.")
         print(e)
-        sys.exit(1)
+        sys.exit(-1)
 
 
 if __name__ == "__main__":

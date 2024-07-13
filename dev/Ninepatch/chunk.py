@@ -3,6 +3,14 @@ import pyperclip
 from PIL import Image
 
 
+# Dev Documents:
+# ChatGPT
+# https://github.com/completejavascript/nine-patch-js
+# https://github.com/andrepl/pyninepatch
+# https://pypi.org/project/ninepatch/
+# https://github.com/Anatolii/NinePatchChunk
+
+
 class Res_png_9patch:
     def __init__(self, data):
         global chunk_info

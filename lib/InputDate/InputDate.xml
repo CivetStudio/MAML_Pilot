@@ -1,5 +1,9 @@
 <ROOT>
 
+	<!-- <MXQ_FIX_LYZ1>
+		<Var name="lyz1" expression="#poi" />
+	</MXQ_FIX_LYZ1> -->
+
 	<ValueHolder name="CountStartVal" value="0" alias="倒计时输入格式：0年月日(yyyy/MM/dd) 1月日(MM/dd) 2日(dd)" />
 	<ValueHolder name="CountDigitVal" value="8" alias="0年月日最大输入位数" />
 
@@ -66,6 +70,8 @@
 	<PlaceHolder name="InputDateVar" />
 	<!-- <Var name="CountNum_Sys" expression="0" type="number" /> -->
 
+	<Var name="_forGow" expression="0" type="number" persist_const="true" _const="true" />
+
 	<ExternalCommands>
 
 		<Trigger action="resume" >
@@ -114,13 +120,19 @@
 			<VariableCommand name="Exam_Leap" expression="eq((#Exam_Year%4),0)*ne((#Exam_Year%100),0)+eq((#Exam_Year%400),0)" persist="true" />
 			<VariableCommand name="Exam_AllDays" expression="(ge(#month,1)*31+(28+#Exam_Leap)*ge(#month,2)+ge(#month,3)*31+ge(#month,4)*30+ge(#month,5)*31+ge(#month,6)*30+ge(#month,7)*31+ge(#month,8)*31+ge(#month,9)*30+ge(#month,10)*31+ge(#month,11)*30+ge(#month,12)*31)+(365*#Exam_Year+int(#Exam_Year/4)+int(#Exam_Year/400)-int(#Exam_Year/100))+#date-1+2" persist="true" />
 
-			<VariableCommand condition="not($#_forGow$)" name="Exam_Month" expression="max(min(#EventMonth,12),1)" persist="true" />
-			<VariableCommand condition="not($#_forGow$)" name="Exam_Date" expression="max(min(#EventDate,#EventMaxDate),1)" persist="true" />
+			<VariableCommand name="Month.Max" expression="ifelse(#_forGow,23,12)" type="number" />
+			<VariableCommand name="Month.Min" expression="ifelse(#_forGow,0,1)" type="number" />
+			<VariableCommand name="Date.Max" expression="ifelse(#_forGow,59,#EventMaxDate)" type="number" />
+			<VariableCommand name="Date.Min" expression="ifelse(#_forGow,0,1)" type="number" />
+
+			<VariableCommand name="Exam_Month" expression="max(min(#EventMonth,#Month.Max),#Month.Min)" persist="true" />
+			<VariableCommand name="Exam_Date" expression="max(min(#EventDate,#Date.Max),#Date.Min)" persist="true" />
+
 			<VariableCommand name="EventYear" expression="#EventYear_0*1000+#EventYear_1*100+#EventYear_2*10+#EventYear_3" persist="true" />
 			<!-- <VariableCommand name="EventYear" expression="max(#EventYear_0*1000+#EventYear_1*100+#EventYear_2*10+#EventYear_3,1900)" persist="true" /> -->
 
-			<VariableCommand condition="not($#_forGow$)" name="EventMonth" expression="max(min(#EventMonth_0*10+#EventMonth_1,12),1)" persist="true" />
-			<VariableCommand condition="not($#_forGow$)" name="EventDate" expression="max(min(#EventDate_0*10+#EventDate_1,#EventMaxDate),1)" persist="true" />
+			<VariableCommand name="EventMonth" expression="max(min(#EventMonth_0*10+#EventMonth_1,#Month.Max),#Month.Min)" persist="true" />
+			<VariableCommand name="EventDate" expression="max(min(#EventDate_0*10+#EventDate_1,#Date.Max),#Date.Min)" persist="true" />
 
 			<VariableCommand name="EventMaxDate" expression="ifelse(eq(#Exam_Month,1),31,eq(#Exam_Month,2),28+#Exam_lyz1,eq(#Exam_Month,3),31,eq(#Exam_Month,4),30,eq(#Exam_Month,5),31,eq(#Exam_Month,6),30,eq(#Exam_Month,7),31,eq(#Exam_Month,8),31,eq(#Exam_Month,9),30,eq(#Exam_Month,10),31,eq(#Exam_Month,11),30,eq(#Exam_Month,12),31,31)" persist="true" />
 			<VariableCommand name="Exam_lyz1" expression="eq((#Exam_Year%4),0)*ne((#Exam_Year%100),0)+eq((#Exam_Year%400),0)" const="false" />
@@ -395,15 +407,15 @@
 
 				<VariableCommand name="InputYearNum" expression="max(#InputYearNum-1,ifelse(eq(CountStartVal,0),-1,eq(CountStartVal,1),3,5))" persist="true" condition="#CountDateSet" />
 				<VariableCommand name="EventYear_0" expression="0" persist="true" condition="#CountDateSet*lt(#InputYearNum,0)" />
-				<VariableCommand name="EventYear_1" expression="0" persist="true" condition="#CountDateSet*lt(#InputYearNum,0)" />
-				<VariableCommand name="EventYear_2" expression="0" persist="true" condition="#CountDateSet*lt(#InputYearNum,0)" />
-				<VariableCommand name="EventYear_3" expression="0" persist="true" condition="#CountDateSet*lt(#InputYearNum,0)" />
+				<VariableCommand name="EventYear_1" expression="0" persist="true" condition="#CountDateSet*lt(#InputYearNum,1)" />
+				<VariableCommand name="EventYear_2" expression="0" persist="true" condition="#CountDateSet*lt(#InputYearNum,2)" />
+				<VariableCommand name="EventYear_3" expression="0" persist="true" condition="#CountDateSet*lt(#InputYearNum,3)" />
 
-				<VariableCommand name="EventMonth_0" expression="0" persist="true" condition="#CountDateSet*lt(#InputYearNum,0)" />
-				<VariableCommand name="EventMonth_1" expression="0" persist="true" condition="#CountDateSet*lt(#InputYearNum,0)" />
+				<VariableCommand name="EventMonth_0" expression="0" persist="true" condition="#CountDateSet*lt(#InputYearNum,4)" />
+				<VariableCommand name="EventMonth_1" expression="0" persist="true" condition="#CountDateSet*lt(#InputYearNum,5)" />
 
-				<VariableCommand name="EventDate_0" expression="0" persist="true" condition="#CountDateSet*lt(#InputYearNum,0)" />
-				<VariableCommand name="EventDate_1" expression="0" persist="true" condition="#CountDateSet*lt(#InputYearNum,0)" />
+				<VariableCommand name="EventDate_0" expression="0" persist="true" condition="#CountDateSet*lt(#InputYearNum,6)" />
+				<VariableCommand name="EventDate_1" expression="0" persist="true" condition="#CountDateSet*lt(#InputYearNum,7)" />
 
 			</Trigger>
 		</Triggers>

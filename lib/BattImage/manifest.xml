@@ -12,26 +12,23 @@
 		<item name="number" type="string" description="绑定变量" default="#battery_level" />
 		<item name="unit_space" type="string" description="百分比间距" default="0" />
 		<item name="space" type="string" description="图片源-间距" default="0" />
-		<!-- <item name="hide_zero" type="string" description="隐藏数字0" default="1" /> -->
+		<item name="hide_zero" type="string" description="隐藏数字0" default="1" />
 	</Props>
 
-	<!-- <Var name="mBattImage_align" expression="ifelse(eqs('$align','left'),0,eqs('$align','right'),2,1)" type="number" /> -->
-	<Var expression="int(#time/5)" threshold="1" >
-		<Trigger>
-			<VariableCommand name="$id_mBattLevelImg.bmp_width" expression="#$id_mBattImage.v0*#$id_mBattLevelImg.a.bmp_width+#$id_mBattImage.v1*#$id_mBattLevelImg.b.bmp_width+#$id_mBattImage.v2*#$id_mBattLevelImg.c.bmp_width+2*($space)" type="number" />
-			<VariableCommand name="$id_vv0" expression="ifelse(ge(#$id_digit,3)+eq(#$id_digit,0),1,0)" type="number" />
-			<VariableCommand name="$id_vv1" expression="ifelse(ge(#$id_digit,2)+eq(#$id_digit,0),1,0)" type="number" />
-			<VariableCommand name="$id_vv2" expression="ifelse(ge(#$id_digit,1)+eq(#$id_digit,0),1,0)" type="number" />
-			<VariableCommand name="$id_mBattImage.v0" expression="ifelse(eq($number,#battery_level)+eq(#LangsId,5)+eq(#$id_hide_zero,1),ge($number,100),1)*#$id_vv0" type="number" />
-			<VariableCommand name="$id_mBattImage.v1" expression="ifelse(eq($number,#battery_level)+eq(#LangsId,5)+eq(#$id_hide_zero,1),ge($number,10),1)*#$id_vv1" type="number" />
-			<VariableCommand name="$id_mBattImage.v2" expression="ifelse(eq($number,#battery_level)+eq(#LangsId,5)+eq(#$id_hide_zero,1),ge($number,0),1)*#$id_vv2" type="number" />
-			<VariableCommand name="$id_mBattImage.i0" expression="int($number/100%10)" type="number" />
-			<VariableCommand name="$id_mBattImage.i1" expression="int($number/10%10)" type="number" />
-			<VariableCommand name="$id_mBattImage.i2" expression="int($number/1%10)" type="number" />
-			<VariableCommand name="$id_mBattImage.x" expression="$x-(#$id_mBattLevelImg.bmp_width+2+($unit_space)+#$id_mBattLevelPct.bmp_width)/2*$align" type="number" />
+	<!-- For OPPO Widget -->
+	<Var name="$id_mBattLevelImg.bmp_width" expression="#$id_mBattImage.v0*#$id_mBattLevelImg.a.bmp_width+#$id_mBattImage.v1*#$id_mBattLevelImg.b.bmp_width+#$id_mBattImage.v2*#$id_mBattLevelImg.c.bmp_width+2*($space)" type="number" />
+	<Var name="$id_vv0" expression="ifelse(ge(#$id_digit,3)+eq(#$id_digit,0),1,0)" type="number" />
+	<Var name="$id_vv1" expression="ifelse(ge(#$id_digit,2)+eq(#$id_digit,0),1,0)" type="number" />
+	<Var name="$id_vv2" expression="ifelse(ge(#$id_digit,1)+eq(#$id_digit,0),1,0)" type="number" />
+	<Var name="$id_mBattImage.v0" expression="ifelse(eq($number,#battery_level)+eq(#LangsId,5)+eq(#$id_hide_zero,1)+eq($hide_zero,1),ge($number,100),1)*#$id_vv0" type="number" />
+	<Var name="$id_mBattImage.v1" expression="ifelse(eq($number,#battery_level)+eq(#LangsId,5)+eq(#$id_hide_zero,1)+eq($hide_zero,1),ge($number,10),1)*#$id_vv1" type="number" />
+	<Var name="$id_mBattImage.v2" expression="ifelse(eq($number,#battery_level)+eq(#LangsId,5)+eq(#$id_hide_zero,1)+eq($hide_zero,1),ge($number,0),1)*#$id_vv2" type="number" />
+	<Var name="$id_mBattImage.i0" expression="int($number/100%10)" type="number" />
+	<Var name="$id_mBattImage.i1" expression="int($number/10%10)" type="number" />
+	<Var name="$id_mBattImage.i2" expression="int($number/1%10)" type="number" />
+	<Var name="$id_mBattImage.x" expression="$x-(#$id_mBattLevelImg.bmp_width+2+($unit_space)+#$id_mBattLevelPct.bmp_width)/2*$align" type="number" />
 
-		</Trigger>
-	</Var>
+	<!-- <Var name="mBattImage_align" expression="ifelse(eqs('$align','left'),0,eqs('$align','right'),2,1)" type="number" /> -->
 
 	<Group visibility="$visibility" >
 		<!-- <ImageNumber x="0" y="$y" align="left" alignV="$alignV" src="$src" number="$number" name="$id_mBattLevelImg" space="$space" /> -->

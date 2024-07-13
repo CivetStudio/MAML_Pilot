@@ -367,53 +367,10 @@ if __name__ == '__main__':
 
     # 示例的毫秒级时间戳
     # 使用 formatDate 函数将时间格式化成字符串
-    time_sys = str(int(time.time() * 1000))
     date_format = 'yyyy/MM/dd HH:mm:ss:S N月e D aa t'
     textExp = formatDate(date_format, time_sys)
     print(textExp)  # 输出：'12:00'
 
     print('\t')
-
-    day_of_week = int(datetime.datetime.fromtimestamp(int(time_sys) / 1000).weekday() + 2) % 7
-    day_of_week = 7 if day_of_week == 0 else day_of_week
-
-    simulation_screen_width = 1080
-    simulation_screen_height = 1920
-
-    Var = {
-        # 触摸
-        '#touch_x': 0,
-        '#touch_y': 0,
-        '#touch_begin_x': 0,
-        '#touch_begin_y': 0,
-        '#touch_begin_time': 0,
-        # 屏幕
-        '#screen_width': simulation_screen_width,
-        '#screen_height': simulation_screen_height,
-        '#view_width': 0,
-        '#view_height': 0,
-        '#raw_screen_width': simulation_screen_width,
-        '#raw_screen_height': simulation_screen_height,
-        '#view_x': 0,
-        '#view_y': 0,
-        # 日期
-        '#time': int(int(time_sys) / 1000),
-        '#time_sys': time_sys,
-        '#year': int(formatDate('yyyy', time_sys)),
-        '#month': int(int(formatDate('M', time_sys)) - 1 + 12) % 12,
-        '#month1': int(formatDate('M', time_sys)),
-        '#date': int(formatDate('d', time_sys)),
-        '#day_of_week': day_of_week,
-        '#day_of_week-1': day_of_week - 1,
-        '#hour12': int(formatDate('h', time_sys)),
-        '#hour24': int(formatDate('H', time_sys)),
-        '#minute': int(formatDate('m', time_sys)),
-        '#second': int(formatDate('s', time_sys)),
-        '#ampm': 0 if int(formatDate('H', time_sys)) < 12 else 1,
-        '#time_format': 0,
-    }
-
-    for key, value in Var.items():
-        print(f'{key}: {value}')
 
 

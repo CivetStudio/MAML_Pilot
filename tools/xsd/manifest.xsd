@@ -93,6 +93,8 @@
             <xs:attribute name="_splitGroup" type="stringType"/>
             <xs:attribute name="_preload" type="stringType"/>
             <xs:attribute name="_getSource" type="stringType"/>
+            <xs:attribute name="_pauseIntent" type="stringType"/>
+            <xs:attribute name="displayDesktop" type="stringType"/>
         </xs:complexType>
     </xs:element>
     <xs:element name="CollisionWorld" substitutionGroup="CollisionWord"/>
@@ -2231,7 +2233,8 @@
     </xs:simpleType>
     <!-- 表达式 未定-->
     <xs:simpleType name="expression">
-        <xs:restriction base="stringType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[^+\-*/]*([+\-*/][^+\-*/]+)*[+\-*/]?[^+\-*/]*" />
         </xs:restriction>
     </xs:simpleType>
     <!-- 字符串-->
